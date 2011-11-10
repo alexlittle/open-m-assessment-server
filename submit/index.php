@@ -1,7 +1,6 @@
 <?php
 include_once("../config.php");
 
-$receipts_dir = "../receipts/";
 header("Content-type:text/plain;charset:utf-8");
 
 $username = optional_param("username","",PARAM_TEXT);
@@ -12,14 +11,6 @@ if($username == "" || $password == "" || $content == ""){
 	echo "failure";
 	die;
 }
-$date = date('l jS \of F Y h:i:s A')."\n";
-
-$myFile = $receipts_dir."submit.txt";
-$fh = fopen($myFile, 'a') or die("can't open file");
-fwrite($fh,$date);
-fwrite($fh,$username);
-fwrite($fh, stripslashes($content));
-fclose($fh);
 
 try {
 	$json = json_decode(stripslashes($content));
