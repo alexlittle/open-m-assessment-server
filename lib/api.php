@@ -20,6 +20,114 @@ class API {
 	    return $this->DB;
 	}
 	
+	function cleanUpDB(){
+		if( $this->DB != false ){
+			mysql_close($this->DB);
+		}
+		$this->DB = false;
+	}
+	
+	function getUser($user){
+		$sql = "SELECT * FROM user WHERE username ='".$user->username."' LIMIT 0,1";
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return;
+		}
+		while($row = mysql_fetch_array($result)){
+			$user->userid = $row['userid'];
+			$user->username = $row['username'];
+			$user->firstname = $row['firstname'];
+			$user->lastname =  $row['lastname'];
+		}
+		return $user;
+	}
+	
+	function getUsers(){
+		$sql = "SELECT * FROM user u
+					INNER JOIN healthpoint hp ON hp.hpid = u.hpid
+					ORDER BY u.firstname";
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return;
+		}
+		$users = array();
+		while($row = mysql_fetch_object($result)){
+			array_push($users,$row);
+		}
+		return $users;
+	}
+	
+	function getUserProperties(&$user){
+		$sql = "SELECT * FROM userprops WHERE userid=".$user->userid;
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return;
+		}
+		while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
+			$user->props[$row['propname']] = $row['propvalue'];
+		}
+	}
+	
+	function setUserProperty($userid,$name,$value){
+		// first check to see if it exists already
+		$sql = sprintf("SELECT * FROM userprops WHERE userid= %d AND propname='%s'",$userid,$name);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return;
+		}
+		while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
+			$updateSql = sprintf("UPDATE userprops SET propvalue='%s' WHERE userid= %d AND propname='%s'",$value,$userid,$name);
+			$result = _mysql_query($updateSql,$this->DB);
+			if (!$result){
+				writeToLog('error','database',$sql);
+			}
+			return;
+		}
+	
+		$insertSql = sprintf("INSERT INTO userprops (propvalue, userid,propname) VALUES ('%s',%d,'%s')",$value,$userid,$name);
+		$result = _mysql_query($insertSql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+		}
+	}
+	
+	function userValidatePassword($username,$password){
+		global $USER;
+		$sql = sprintf("SELECT userid FROM user WHERE username='%s' AND password=md5('%s')",$username,$password);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return false;
+		}
+		while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
+			return true;
+		}
+		return false;
+	}
+	
+	function userChangePassword($newpass){
+		global $USER;
+		$sql = sprintf("UPDATE user SET password = md5('%s') WHERE userid=%d",$newpass,$USER->userid);
+		$result = _mysql_query($sql,$this->DB);
+		if($result){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/*
+	 *
+	*/
+	function writeLog($loglevel,$userid,$logtype,$logmsg,$ip,$logpagephptime,$logpagemysqltime,$logpagequeries){
+		$sql = sprintf("INSERT INTO log (loglevel,userid,logtype,logmsg,logip,logpagephptime,logpagemysqltime,logpagequeries) VALUES ('%s',%d,'%s','%s','%s',%f,%f,%d)", $loglevel,$userid,$logtype,mysql_real_escape_string($logmsg),$ip,$logpagephptime,$logpagemysqltime,$logpagequeries);
+		_mysql_query($sql,$this->DB);
+	}
+	
 	function insertQuizAttempt($qa){
 		$sql = sprintf("INSERT INTO quizattempt (quizref,qadate,qascore,qauser,submituser, maxscore) 
 					VALUES ('%s',%d, %d, '%s', '%s',%d)",
