@@ -1,5 +1,8 @@
 <?php
+include_once ('../config.php');
 header("Content-type:text/plain;Charset:UTF-8");
+
+$quizzes = $API->getQuizzes($_SESSION["session_lang"]);
 
 $page = curPageURL();
 if(endsWith($page,'/')){
@@ -25,6 +28,14 @@ $predataam = array(	'id'=>"PreTestAm",
 array_push($json,$predata);
 array_push($json,$postdata);
 array_push($json,$predataam);
+
+foreach($quizzes as $q){
+	$o = array(	'id'=>$q->ref,
+					'name'=>$q->title,
+					'url'=>$url_prefix."getquiz.php?ref=".$q->ref);
+	array_push($json,$o);
+	
+}
 
 echo json_encode($json);
 

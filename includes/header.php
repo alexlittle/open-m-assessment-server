@@ -1,4 +1,8 @@
 <?php 
+header('Content-Type:text/html; charset=UTF-8');
+
+global $PAGE,$CONFIG,$MSG,$API;
+
 $nologinpages = array ("login","index","register");
 
 if (!in_array($PAGE,$nologinpages)){
@@ -9,13 +13,16 @@ $lang = optional_param("lang","",PARAM_TEXT);
 if ($lang != ""){
 	setLang($lang,true);
 }
-header("Content-type:text/html;charset:utf-8");
+
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title><?php echo getstring("app.title");?></title>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript" src="./includes/jquery-1.7.min.js"></script>
+	<script type="text/javascript" src="./includes/quiz.php"></script>
 	<link rel="StyleSheet" href="<?php echo $CONFIG->homeAddress; ?>/includes/style.css" type="text/css" media="screen">
 	<link rel="StyleSheet" href="<?php echo $CONFIG->homeAddress; ?>/includes/printstyle.css" type="text/css" media="print">
 	<link rel="shortcut icon" href="<?php echo $CONFIG->homeAddress; ?>/images/favicon.ico" />
@@ -37,8 +44,21 @@ header("Content-type:text/html;charset:utf-8");
 		</div>
 		<div id="userlogin">
 			<ul>
-				<li><a href="login.php">Login</a></li>
-				<li><a href="register.php">Register</a></li>
+				<?php 
+					if (isLoggedIn()){
+				?>
+						<li><?php echo $USER->firstname; ?></li>
+						<li><a href="profile.php">Profile</a></li>
+						<li><a href="logout.php">Logout</a></li>
+				<?php 
+					} else {
+				?>
+						<li><a href="login.php">Login</a></li>
+						<li><a href="register.php">Register</a></li>
+				<?php 
+					}
+				?>
+				
 				<li><form action="" method="post" name="langform" id="langform">
 				<select name="lang" onchange="document.langform.submit();">
 					<?php 

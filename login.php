@@ -1,14 +1,11 @@
 <?php
 include_once "config.php";
 
-global $PAGE,$CONFIG,$MSG,$API;
-
 $PAGE = "login";
 $username = optional_param("username","",PARAM_TEXT);
 $password = optional_param("password","",PARAM_TEXT);
 $submit = optional_param("submit","",PARAM_TEXT);
 $ref = optional_param("ref",$CONFIG->homeAddress."index.php",PARAM_TEXT);
-
 
 // check that user not already logged in
 if(isset($USER->username)){
@@ -34,7 +31,7 @@ if(!empty($MSG)){
     echo "</ul>";
 }
 
-echo getstring("warning.login.required",array("login.php","register.php"));
+echo getstring("warning.login.required",array("register.php"));
 ?>
 
 <form method="post" action="">

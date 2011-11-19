@@ -1,10 +1,10 @@
 <?php 
-$quizzes = $API->getQuizzes();
+$quizzes = $API->getQuizzes($_SESSION["session_lang"]);
 
 
 
 foreach ($quizzes as $q){
-	$scores = $API->getQuizScores($q);
+	$scores = $API->getQuizScores($q->ref);
 ?>	
 	<script type="text/javascript">
 	google.load("visualization", "1", {

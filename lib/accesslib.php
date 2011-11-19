@@ -101,4 +101,13 @@ function checkLogin(){
     }
 }
 
+function isLoggedIn(){
+	global $USER;
+	if(isset($USER->username)){
+		return true;
+	} else {
+		return false;
+	}
+}
+
 
