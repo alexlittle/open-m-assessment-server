@@ -33,13 +33,13 @@ if ($lang != ""){
 <div id="page">
 	<div id="header">
 		<div id="logo">
-		 	<a href="index.php">mQuiz Logo</a>
+		 	<a href="<?php echo $CONFIG->homeAddress; ?>index.php">mQuiz Logo</a>
 		</div>
 		<div id="menu">
 			<ul>
-				<li><a href="myquizzes.php">My Quizzes</a></li>
-				<li><a href="results.php">My Results</a></li>
-				<li><a href="newquiz.php">Create New Quiz</a></li>
+				<li><a href="<?php echo $CONFIG->homeAddress; ?>my/quizzes.php">My Quizzes</a></li>
+				<li><a href="<?php echo $CONFIG->homeAddress; ?>my/results.php">My Results</a></li>
+				<li><a href="<?php echo $CONFIG->homeAddress; ?>quiz/new.php">Create New Quiz</a></li>
 			</ul>
 		</div>
 		<div id="userlogin">
@@ -48,13 +48,13 @@ if ($lang != ""){
 					if (isLoggedIn()){
 				?>
 						<li><?php echo $USER->firstname; ?></li>
-						<li><a href="profile.php">Profile</a></li>
-						<li><a href="logout.php">Logout</a></li>
+						<li><a href="<?php echo $CONFIG->homeAddress; ?>profile.php">Profile</a></li>
+						<li><a href="<?php echo $CONFIG->homeAddress; ?>logout.php">Logout</a></li>
 				<?php 
 					} else {
 				?>
-						<li><a href="login.php">Login</a></li>
-						<li><a href="register.php">Register</a></li>
+						<li><a href="<?php echo $CONFIG->homeAddress; ?>login.php">Login</a></li>
+						<li><a href="<?php echo $CONFIG->homeAddress; ?>register.php">Register</a></li>
 				<?php 
 					}
 				?>

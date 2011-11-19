@@ -1,8 +1,8 @@
 <?php
-include_once("config.php");
+include_once("../config.php");
 $PAGE = "myquizzes";
 
-include_once("./includes/header.php");
+include_once("../includes/header.php");
 $quizzes = $API->getQuizzesForUser($USER->userid,$_SESSION["session_lang"]);
 
 ?>
@@ -16,5 +16,5 @@ foreach ($quizzes as $q){
 	echo "</div>";
 }
 
-include_once("./includes/footer.php");
+include_once("../includes/footer.php");
 ?>

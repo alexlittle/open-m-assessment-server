@@ -1,7 +1,7 @@
 <?php
-include_once("config.php");
+include_once("../config.php");
 $PAGE = "newquiz";
-include_once("./includes/header.php");
+include_once("../includes/header.php");
 
 $submit = optional_param("submit","",PARAM_TEXT);
 
@@ -44,7 +44,7 @@ if ($submit != ""){
 	$API->setProp('quiz', $quizid, 'maxscore', $quizmaxscore);
 	
 	echo "Your quiz has been created!";
-	include_once("./includes/footer.php");
+	include_once("../includes/footer.php");
 	die;
 }
 
@@ -96,5 +96,5 @@ if ($submit != ""){
 </form>
 
 <?php 
-include_once("./includes/footer.php");
+include_once("../includes/footer.php");
 ?>
