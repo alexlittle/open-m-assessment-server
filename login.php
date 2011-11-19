@@ -34,6 +34,7 @@ if(!empty($MSG)){
     echo "</ul>";
 }
 
+echo getstring("warning.login.required",array("login.php","register.php"));
 ?>
 
 <form method="post" action="">

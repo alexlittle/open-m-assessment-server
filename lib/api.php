@@ -43,6 +43,17 @@ class API {
 		return $user;
 	}
 	
+	function addUser($username,$password,$firstname,$surname,$email){
+		$str = "INSERT INTO user (username,password,firstname,lastname,email) VALUES ('%s',md5('%s'),'%s','%s','%s')";
+		$sql = sprintf($str,$username,$password,$firstname,$surname,$email);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return false;
+		}
+		return true;
+	}
+	
 	function getUsers(){
 		$sql = "SELECT * FROM user u
 					INNER JOIN healthpoint hp ON hp.hpid = u.hpid

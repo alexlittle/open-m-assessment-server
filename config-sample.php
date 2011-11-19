@@ -10,7 +10,7 @@ $CONFIG->homePath = "/home/alex/data/websites/assessment-sc/";
 // this must be a writable directory
 $CONFIG->imagecache = "/tmp/";
 
-$CONFIG->langs = array("en"=>"English", "am"=>"Amharic", "tg"=>"Tigrinya");
+$CONFIG->langs = array("en"=>"English", "es"=>"Español");
 $CONFIG->defaultlang = "en";
 
 $CONFIG->dbtype = "mysql";

@@ -1,6 +1,6 @@
 <?php
 include_once("config.php");
-$PAGE = "newquiz";
+$PAGE = "myquizzes";
 include_once("./includes/header.php");
 
 

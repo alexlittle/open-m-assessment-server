@@ -23,8 +23,20 @@ body {
   	min-height:500px;
 }
 
+h1 {
+	font-size: 130%; 
+}
 a:hover, a:visited, a {
 	color:#444;
+	
+}
+
+#content ul {
+	margin-top: 10px;
+	margin-left: 20px;
+}
+
+#content li {
 	
 }
 
@@ -57,7 +69,10 @@ a:hover, a:visited, a {
 	font-size:90%;
 }
 
-
+/* Content */
+#content {
+	margin-top:20px;
+}
 
 /* Forms */
 
