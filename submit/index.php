@@ -12,6 +12,10 @@ if($username == "" || $password == "" || $content == ""){
 	die;
 }
 
+if(!userLogin($username,$password)){
+	$username = "anon";
+}
+
 try {
 	$json = json_decode(stripslashes($content));
 	

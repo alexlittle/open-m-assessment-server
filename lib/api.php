@@ -177,6 +177,44 @@ class API {
 		return $quizzes;
 	}
 	
+	function getQuizzesForUser($userid,$langcode){
+		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
+					INNER JOIN language l ON q.quiztitleref = l.langref
+					WHERE q.createdby = %d",$userid);
+		$result = mysql_query($sql,$this->DB);
+		
+		$quizzes = array();
+		while($r = mysql_fetch_object($result)){
+			$attempts = $this->getQuizNoAttempts($r->quiztitleref);
+			$q = new stdClass;
+			$q->ref = $r->quiztitleref;
+			$q->title = $r->langtext;
+			$q->noattempts = $attempts->noattempts;
+			$q->avgscore = $attempts->avgscore;
+			array_push($quizzes,$q);
+		}
+		return $quizzes;
+	}
+	
+	function getQuizNoAttempts($quizref){
+		$sql = sprintf("SELECT Count(*) as noattempts, AVG(qascore*100/maxscore) as avgscore FROM quizattempt
+							WHERE quizref = '%s'",$quizref);
+		$result = mysql_query($sql,$this->DB);
+		$a = new stdClass;
+		$a->noattempts = 0;
+		$a->avgscore = 0;
+		while($r = mysql_fetch_object($result)){
+			$a->noattempts = $r->noattempts;
+			if($r->avgscore == null){
+				$a->avgscore = 0;
+			} else {
+				$a->avgscore = $r->avgscore;
+			}
+				
+		}
+		return $a;
+	}
+	
 	function getQuizScores($quizref){
 		$sql = sprintf("SELECT Count(*) as NoScores, qascore*100/maxscore as scorepercent FROM quizattempt
 					WHERE quizref = '%s'
@@ -267,7 +305,7 @@ class API {
 	
 	function addQuiz($title,$langcode){
 		global $USER;
-		$quiztitleref = "qt|".$USER->username."|".uniqid();
+		$quiztitleref = "qt".$USER->username.uniqid();
 		$this->addLang($quiztitleref, $title, $langcode);
 		
 		$str = "INSERT INTO quiz (quiztitleref,createdby) VALUES ('%s',%d)";
@@ -279,7 +317,7 @@ class API {
 	
 	function addQuestion($title,$langcode){
 		global $USER;
-		$questiontitleref = "qqt|".$USER->username."|".uniqid();
+		$questiontitleref = "qqt".$USER->username.uniqid();
 		$this->addLang($questiontitleref, $title, $langcode);
 	
 		$str = "INSERT INTO question (questiontitleref,createdby) VALUES ('%s',%d)";
@@ -291,7 +329,7 @@ class API {
 	
 	function addResponse($title,$langcode,$score){
 		global $USER;
-		$responsetitleref = "qqrt|".$USER->username."|".uniqid();
+		$responsetitleref = "qqrt".$USER->username.uniqid();
 		$this->addLang($responsetitleref, $title, $langcode);
 	
 		$str = "INSERT INTO response (responsetitleref,createdby,score) VALUES ('%s',%d,%d)";

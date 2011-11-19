@@ -13,22 +13,6 @@ if(endsWith($page,'/')){
 
 $json = array();
 
-$predata = array (	'id'=>"PreTest",
-					'name'=>"PPH Pre Test",
-					'url'=>$url_prefix."pretest.php");
-
-$postdata = array (	'id'=>"PostTest",
-					'name'=>"PPH Post Test",
-					'url'=>$url_prefix."posttest.php");
-
-$predataam = array(	'id'=>"PreTestAm",
-					'name'=>"PPH Pre Test (Amharic)",
-					'url'=>$url_prefix."pretest-am.php");
-
-array_push($json,$predata);
-array_push($json,$postdata);
-array_push($json,$predataam);
-
 foreach($quizzes as $q){
 	$o = array(	'id'=>$q->ref,
 					'name'=>$q->title,

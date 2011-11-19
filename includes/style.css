@@ -103,3 +103,20 @@ div.formfield {
 div.forminfo {
 	float:left;	
 }
+
+/* Quiz list */
+
+div.quizlist {
+	padding:10px;
+	clear:both;
+	border-bottom: 1px solid #999;
+}
+
+div.quiztitle {
+	float:left;
+	width:200px;
+}
+div.quizattempts {
+	float:left;
+	width:200px;
+}

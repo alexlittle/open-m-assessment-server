@@ -26,15 +26,15 @@ foreach ($quizzes as $q){
 				
 			?>
 	
-			var chart = new google.visualization.PieChart(document.getElementById('chart_div<?php echo $q; ?>'));
+			var chart = new google.visualization.PieChart(document.getElementById('chart_div<?php echo $q->ref; ?>'));
 			chart.draw(data, {
-				width: 450, height: 300, title: '<?php echo $q; ?> Mark distribution'});
+				width: 450, height: 300, title: '<?php echo $q->text; ?> Mark distribution'});
 		}
 		</script>
-		<div id="chart_div<?php echo $q; ?>"></div>
+		<div id="chart_div<?php echo $q->ref; ?>"></div>
 		
 		<?php 
-			$avgscores = $API->getQuizAvgResponseScores($q);
+			$avgscores = $API->getQuizAvgResponseScores($q->ref);
 		?>
 		<script type="text/javascript">
 		google.load("visualization", "1", {

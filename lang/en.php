@@ -1,10 +1,12 @@
 <?php 
 
 $LANG = array();
-$LANG["app.title"] = "Open Quiz";
+$LANG["app.title"] = "mQuiz";
 $LANG['login.password'] = 'Password';
 $LANG['login.submit.button'] = 'Login';
 $LANG['login.username'] = 'Username';
+
+$LANG['myquizzes.title'] = "My Quizzes";
 
 $LANG['quiz.new.submit.button'] = "Create my quiz now";
 $LANG['quiz.new.add'] = 'Add another question';
@@ -20,7 +22,7 @@ $LANG['register.password'] = 'Password';
 $LANG['register.repeatpassword'] = 'Password (again)';
 $LANG['register.submit.button'] = 'Register';
 $LANG['register.surname'] = 'Surname';
-$LANG['register.title'] = 'Register for OpenQuiz';
+$LANG['register.title'] = 'Register for mQuiz';
 $LANG['register.username'] = 'Username';
 
 $LANG['warning.login.invalid'] = "Invalid username or password";

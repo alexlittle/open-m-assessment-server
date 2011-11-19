@@ -33,7 +33,7 @@ if ($lang != ""){
 <div id="page">
 	<div id="header">
 		<div id="logo">
-		 	<a href="index.php">Open Quiz Logo</a>
+		 	<a href="index.php">mQuiz Logo</a>
 		</div>
 		<div id="menu">
 			<ul>
