@@ -33,11 +33,16 @@ h3 {
 	font-size: 100%; 
 }
 
-a:hover, a:visited, a {
-	color:#444;
-	
+a:visited, a {
+	color:#77a240;
+	text-decoration:none;
 }
-
+a:hover {
+	text-decoration:underline;
+}
+.inactive {
+	color:#ccc;
+}
 #content ul {
 	margin-top: 10px;
 	margin-left: 20px;
@@ -47,6 +52,10 @@ a:hover, a:visited, a {
 	
 }
 
+#content p {
+	margin: 5px 0;
+	
+}
 /* Header */
 #header {
 	border-bottom: 1px solid #444;
@@ -104,6 +113,15 @@ div.forminfo {
 	float:left;	
 }
 
+div.responsetext{
+	float:left;
+	width:450px;
+	clear:both;
+}
+div.responsescore {
+	float:left;
+	width:100px;
+}
 /* Quiz list */
 
 div.quizlist {
@@ -114,7 +132,7 @@ div.quizlist {
 
 div.quiztitle {
 	float:left;
-	width:200px;
+	width:250px;
 }
 div.quizattempts {
 	float:left;

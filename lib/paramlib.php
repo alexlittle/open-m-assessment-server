@@ -572,8 +572,8 @@ function cleanAttributes($str){
  */
 function cleanAttributes2($htmlArray){
 
-    global $CFG, $ALLOWED_PROTOCOLS;
-    require_once($CFG->dirAddress .'phplib/kses.php');
+    global $CONFIG, $ALLOWED_PROTOCOLS;
+    require_once($CONFIG->homePath .'lib/kses.php');
 
     $htmlTag = $htmlArray[1];
     

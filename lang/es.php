@@ -1,7 +1,7 @@
 <?php 
 
 $LANG = array();
-$LANG["app.title"] = "Open Quiz";
+$LANG["app.title"] = "mQuiz";
 $LANG['login.password'] = 'Contraseña:';
 $LANG['login.submit.button'] = 'Login';
 $LANG['login.username'] = 'Username:';

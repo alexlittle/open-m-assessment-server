@@ -69,16 +69,17 @@ if ($submit != ""){
 				<div class="formlabel"><?php echo getstring('quiz.new.question'); echo " "; echo $q; ?></div>
 				<div class="formfield">
 					<input type="text" name="q<?php echo $q; ?>" value="" size="60"></input>
-					<h3><?php echo getstring("quiz.new.responses"); ?></h3>
+					<div class="responses">
+					<div class="responsetext">Possible responses</div><div class="responsescore">Score</div>
 					<?php 
 						for($r=1; $r<5;$r++){ 
 					?>
-						<input type="text" name="<?php printf('q%dr%d',$q,$r); ?>" value="" size="40"></input>
-						<input type="text" name="<?php printf('q%dm%d',$q,$r); ?>" value="0" size="5"></input><br/>
+						<div class="responsetext"><input type="text" name="<?php printf('q%dr%d',$q,$r); ?>" value="" size="40"></input></div>
+						<div class="responsescore"><input type="text" name="<?php printf('q%dm%d',$q,$r); ?>" value="0" size="5"></input></div>
 					<?php 
 						}
 					?>
-
+					</div>
 				</div>
 			</div>
 		<?php 

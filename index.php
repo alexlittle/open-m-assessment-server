@@ -43,7 +43,7 @@ $top10recent = $API->get10MostRecentQuizzes();
 	foreach ($top10recent as $t){
 		echo "<li>";
 		printf("<a href='./quiz/view.php?ref=%s'>%s</a>",$t->ref,$t->title);
-		echo "<br/><small>(".date('d M Y',strtotime($t->createdon)).")</small>";
+		echo "<br/><small>(added on  ".date('d M Y',strtotime($t->createdon)).")</small>";
 		echo "</li>";
 	}
 ?>

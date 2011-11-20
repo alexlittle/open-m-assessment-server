@@ -259,6 +259,26 @@ class API {
 		}
 	}
 	
+	function getQuizForUser($ref,$userid){
+		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
+						INNER JOIN language l ON q.quiztitleref = l.langref
+						WHERE q.quiztitleref = '%s' AND createdby=%d",$ref,$userid);
+		$result = _mysql_query($sql,$this->DB);
+		while($r = mysql_fetch_object($result)){
+			$q = new stdClass;
+			$q->quizid = $r->quizid;
+			$q->ref = $r->quiztitleref;
+			$q->title = $r->langtext;
+			$q->props = array();
+			$psql = sprintf("SELECT * FROM quizprop WHERE quizid = %d",$r->quizid);
+			$props = _mysql_query($psql,$this->DB);
+			while($prop = mysql_fetch_object($props)){
+				$q->props[$prop->quizpropname] = $prop->quizpropvalue;
+			}
+			return $q;
+		}
+	}
+	
 	function getQuizQuestions($quizid){
 		$sql = sprintf("SELECT q.questionid, q.questiontitleref, qq.orderno, l.langtext FROM question q 
 						INNER JOIN quizquestion qq ON qq.questionid = q.questionid
@@ -328,9 +348,9 @@ class API {
 	}
 	
 	function addResponse($title,$score){
-		global $USER;
+		global $USER,$CONFIG;
 		$responsetitleref = "qqrt".$USER->username.uniqid();
-		$this->addLang($responsetitleref, $title);
+		$this->addLang($responsetitleref, $title,$CONFIG->defaultlang);
 	
 		$str = "INSERT INTO response (responsetitleref,createdby,score) VALUES ('%s',%d,%d)";
 		$sql = sprintf($str,$responsetitleref,$USER->userid,$score);
@@ -373,6 +393,38 @@ class API {
 		$insertSql = sprintf("INSERT INTO %sprop (%spropvalue, %sid,%spropname) VALUES ('%s',%d,'%s')",$obj,$obj,$obj,$obj,$value,$id,$name);
 		$result = _mysql_query($insertSql,$this->DB);
 
+	}
+	
+	
+	function removeQuiz($ref){
+		$questions = $this->getQuizQuestions($ref);
+		foreach ($questions as $q){
+			$responses = $this->getQuestionResponses($q->id);
+			foreach ($responses as $r){
+				$this->removeResponse($r->refid);
+			}
+			$this->removeQuestion($q->refid);
+		}
+	}
+	
+	function removeLang($ref){
+		$sql = sprintf("DELETE FROM language WHERE langref='%s'",$ref);
+		_mysql_query($sql,$this->DB);
+	}
+	
+	function removeResponse($ref){
+		$sql = sprintf("DELETE FROM response WHERE responsetitleref='%s'",$ref);
+		_mysql_query($sql,$this->DB);
+	}
+	
+	function removeQuestion($ref){
+		$sql = sprintf("DELETE FROM question WHERE questiontitleref='%s'",$ref);
+		_mysql_query($sql,$this->DB);
+	}
+	
+	function updateLang($ref,$text){
+		$sql = sprintf("UPDATE language SET langtext='%s' WHERE langref='%s'",$text,$ref);
+		_mysql_query($sql,$this->DB);
 	}
 	
 	function get10PopularQuizzes(){

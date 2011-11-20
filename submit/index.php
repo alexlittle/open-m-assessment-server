@@ -7,8 +7,8 @@ $username = optional_param("username","",PARAM_TEXT);
 $password = optional_param("password","",PARAM_TEXT);
 $content = optional_param("content","",PARAM_TEXT);
 
-if($username == "" || $password == "" || $content == ""){
-	echo "failure";
+if($content == ""){
+	echo "failure - no content";
 	die;
 }
 
