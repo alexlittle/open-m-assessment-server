@@ -404,6 +404,7 @@ class API {
 			$r = new stdClass();
 			$r->ref = $o->quiztitleref;
 			$r->title = $o->langtext;
+			$r->createdon = $o->createdon;
 			array_push($top10,$r);
 		}
 		return $top10;

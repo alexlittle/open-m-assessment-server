@@ -25,8 +25,8 @@ $top10recent = $API->get10MostRecentQuizzes();
 <?php 	
 	foreach ($top10popular as $t){
 		echo "<li>";
-		echo $t->title;
-		echo " (<small>".$t->noattempts." attempts</small>)";
+		printf("<a href='./quiz/view.php?ref=%s'>%s</a>",$t->ref,$t->title);
+		echo "<br/><small>(".$t->noattempts." attempts)</small>";
 		echo "</li>";
 	}
 ?>
@@ -40,10 +40,10 @@ $top10recent = $API->get10MostRecentQuizzes();
 <h3>10 Most Recent Quizzes</h3>
 <ol>
 <?php 
-	print_r($top10recent); 
 	foreach ($top10recent as $t){
 		echo "<li>";
-		echo $t->title;
+		printf("<a href='./quiz/view.php?ref=%s'>%s</a>",$t->ref,$t->title);
+		echo "<br/><small>(".date('d M Y',strtotime($t->createdon)).")</small>";
 		echo "</li>";
 	}
 ?>

@@ -134,6 +134,11 @@ div.homewidget {
 
 div.homewidget h3{
 	text-align: center;
+	margin-bottom:5px;
+}
+
+div.homewidget ol,li{
+	margin-left:15px;
 }
 
 div.homestart {
@@ -149,4 +154,7 @@ div.homestart {
 
 div.homestart h3{
 	text-align: center;
+	
 }
+
+
