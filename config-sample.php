@@ -15,7 +15,7 @@ $CONFIG->defaultlang = "en";
 
 $CONFIG->dbtype = "mysql";
 $CONFIG->dbhost = "localhost";
-$CONFIG->dbname = "assessment";
+$CONFIG->dbname = "mquiz";
 $CONFIG->dbuser = "XXXXXX";
 $CONFIG->dbpass = "XXXXXX"; 
 

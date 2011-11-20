@@ -3,7 +3,7 @@ header('Content-Type:text/html; charset=UTF-8');
 
 global $PAGE,$CONFIG,$MSG,$API;
 
-$nologinpages = array ("login","index","register");
+$nologinpages = array ("login","index","register","faqs","terms","about","developer","phoneapps");
 
 if (!in_array($PAGE,$nologinpages)){
 	checkLogin();
@@ -21,8 +21,8 @@ if ($lang != ""){
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title><?php echo getstring("app.title");?></title>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	<script type="text/javascript" src="./includes/jquery-1.7.min.js"></script>
-	<script type="text/javascript" src="./includes/quiz.php"></script>
+	<script type="text/javascript" src="<?php echo $CONFIG->homeAddress; ?>/includes/jquery-1.7.min.js"></script>
+	<script type="text/javascript" src="<?php echo $CONFIG->homeAddress; ?>/includes/quiz.php"></script>
 	<link rel="StyleSheet" href="<?php echo $CONFIG->homeAddress; ?>/includes/style.css" type="text/css" media="screen">
 	<link rel="StyleSheet" href="<?php echo $CONFIG->homeAddress; ?>/includes/printstyle.css" type="text/css" media="print">
 	<link rel="shortcut icon" href="<?php echo $CONFIG->homeAddress; ?>/images/favicon.ico" />
@@ -40,6 +40,8 @@ if ($lang != ""){
 				<li><a href="<?php echo $CONFIG->homeAddress; ?>my/quizzes.php">My Quizzes</a></li>
 				<li><a href="<?php echo $CONFIG->homeAddress; ?>my/results.php">My Results</a></li>
 				<li><a href="<?php echo $CONFIG->homeAddress; ?>quiz/new.php">Create New Quiz</a></li>
+				<li><a href="<?php echo $CONFIG->homeAddress; ?>phoneapps.php">Phone Apps</a></li>
+				<li><a href="<?php echo $CONFIG->homeAddress; ?>faqs.php">FAQs</a></li>
 			</ul>
 		</div>
 		<div id="userlogin">

@@ -3,17 +3,22 @@ include_once ('../config.php');
 header("Content-type:text/plain;Charset:UTF-8");
 
 $ref = optional_param('ref','',PARAM_TEXT);
+$username = optional_param("username","",PARAM_TEXT);
+$password = optional_param("password","",PARAM_TEXT);
+userLogin($username,$password);
 
-$quiz = $API->getQuiz($ref,$_SESSION["session_lang"]);
+writeToLog("info","pagehit",$_SERVER["REQUEST_URI"]);
+
+$quiz = $API->getQuiz($ref);
 
 $questions = array();
 
-$qq = $API->getQuizQuestions($quiz->quizid,$_SESSION["session_lang"]);
+$qq = $API->getQuizQuestions($quiz->quizid);
 
 foreach($qq as $q){
 	
 	$responses = array();
-	$resps = $API->getQuestionResponses($q->id,$_SESSION["session_lang"]);
+	$resps = $API->getQuestionResponses($q->id);
 	foreach($resps as $o){
 		$r = array(
 					'refid'=> $o->refid,

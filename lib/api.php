@@ -136,7 +136,7 @@ class API {
 	*/
 	function writeLog($loglevel,$userid,$logtype,$logmsg,$ip,$logpagephptime,$logpagemysqltime,$logpagequeries){
 		$sql = sprintf("INSERT INTO log (loglevel,userid,logtype,logmsg,logip,logpagephptime,logpagemysqltime,logpagequeries) VALUES ('%s',%d,'%s','%s','%s',%f,%f,%d)", $loglevel,$userid,$logtype,mysql_real_escape_string($logmsg),$ip,$logpagephptime,$logpagemysqltime,$logpagequeries);
-		_mysql_query($sql,$this->DB);
+		mysql_query($sql,$this->DB);
 	}
 	
 	function insertQuizAttempt($qa){
@@ -163,10 +163,10 @@ class API {
 		mysql_query($sql,$this->DB);
 	}
 	
-	function getQuizzes($langcode){
+	function getQuizzes(){
 		$sql = "SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q 
 				INNER JOIN language l ON q.quiztitleref = l.langref";
-		$result = mysql_query($sql,$this->DB);
+		$result = _mysql_query($sql,$this->DB);
 		$quizzes = array();
 		while($r = mysql_fetch_object($result)){
 			$q = new stdClass;
@@ -177,11 +177,11 @@ class API {
 		return $quizzes;
 	}
 	
-	function getQuizzesForUser($userid,$langcode){
+	function getQuizzesForUser($userid){
 		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
 					INNER JOIN language l ON q.quiztitleref = l.langref
 					WHERE q.createdby = %d",$userid);
-		$result = mysql_query($sql,$this->DB);
+		$result = _mysql_query($sql,$this->DB);
 		
 		$quizzes = array();
 		while($r = mysql_fetch_object($result)){
@@ -199,7 +199,7 @@ class API {
 	function getQuizNoAttempts($quizref){
 		$sql = sprintf("SELECT Count(*) as noattempts, AVG(qascore*100/maxscore) as avgscore FROM quizattempt
 							WHERE quizref = '%s'",$quizref);
-		$result = mysql_query($sql,$this->DB);
+		$result = _mysql_query($sql,$this->DB);
 		$a = new stdClass;
 		$a->noattempts = 0;
 		$a->avgscore = 0;
@@ -219,7 +219,7 @@ class API {
 		$sql = sprintf("SELECT Count(*) as NoScores, qascore*100/maxscore as scorepercent FROM quizattempt
 					WHERE quizref = '%s'
 					group by qascore",$quizref);
-		$result = mysql_query($sql,$this->DB);
+		$result = _mysql_query($sql,$this->DB);
 		$resp = array();
 		while($r = mysql_fetch_object($result)){
 			$resp[$r->scorepercent] = $r->NoScores; 
@@ -231,7 +231,7 @@ class API {
 				INNER JOIN quizattempt qa ON qa.id = qar.qaid
 				WHERE quizref = '%s'
 				GROUP BY questionrefid",$quizref);
-		$result = mysql_query($sql,$this->DB);
+		$result = _mysql_query($sql,$this->DB);
 		$resp = array();
 		while($r = mysql_fetch_object($result)){
 			$resp[$r->questionrefid] = $r->avgscore;
@@ -239,11 +239,11 @@ class API {
 		return $resp;
 	}
 	
-	function getQuiz($ref,$langcode){
+	function getQuiz($ref){
 		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
 					INNER JOIN language l ON q.quiztitleref = l.langref
 					WHERE q.quiztitleref = '%s'",$ref);
-		$result = mysql_query($sql,$this->DB);
+		$result = _mysql_query($sql,$this->DB);
 		while($r = mysql_fetch_object($result)){
 			$q = new stdClass;
 			$q->quizid = $r->quizid;
@@ -251,7 +251,7 @@ class API {
 			$q->title = $r->langtext;
 			$q->props = array();
 			$psql = sprintf("SELECT * FROM quizprop WHERE quizid = %d",$r->quizid);
-			$props = mysql_query($psql,$this->DB);
+			$props = _mysql_query($psql,$this->DB);
 			while($prop = mysql_fetch_object($props)){
 				$q->props[$prop->quizpropname] = $prop->quizpropvalue;
 			}
@@ -259,13 +259,13 @@ class API {
 		}
 	}
 	
-	function getQuizQuestions($quizid,$langcode){
+	function getQuizQuestions($quizid){
 		$sql = sprintf("SELECT q.questionid, q.questiontitleref, qq.orderno, l.langtext FROM question q 
 						INNER JOIN quizquestion qq ON qq.questionid = q.questionid
 						INNER JOIN language l ON l.langref = q.questiontitleref
 						WHERE qq.quizid = %d
 						ORDER BY orderno ASC",$quizid);
-		$result = mysql_query($sql,$this->DB);
+		$result = _mysql_query($sql,$this->DB);
 		$questions = array();
 		while($r = mysql_fetch_object($result)){
 			$q = new stdClass;
@@ -284,13 +284,13 @@ class API {
 		return $questions;
 	}
 	
-	function getQuestionResponses($questionid,$langcode){
+	function getQuestionResponses($questionid){
 		$sql = sprintf("SELECT r.responseid, r.responsetitleref, qr.orderno, l.langtext, r.score FROM response r 
 						INNER JOIN questionresponse qr ON qr.responseid = r.responseid
 						INNER JOIN language l ON l.langref = r.responsetitleref
 						WHERE qr.questionid = %d
 						ORDER BY orderno ASC",$questionid);
-		$result = mysql_query($sql,$this->DB);
+		$result = _mysql_query($sql,$this->DB);
 		$responses = array();
 		while($o = mysql_fetch_object($result)){
 			$r = new stdClass;
@@ -303,10 +303,10 @@ class API {
 		return $responses;
 	}
 	
-	function addQuiz($title,$langcode){
-		global $USER;
+	function addQuiz($title){
+		global $USER, $CONFIG;
 		$quiztitleref = "qt".$USER->username.uniqid();
-		$this->addLang($quiztitleref, $title, $langcode);
+		$this->addLang($quiztitleref, $title,$CONFIG->defaultlang);
 		
 		$str = "INSERT INTO quiz (quiztitleref,createdby) VALUES ('%s',%d)";
 		$sql = sprintf($str,$quiztitleref,$USER->userid);
@@ -315,10 +315,10 @@ class API {
 		return $result;
 	}
 	
-	function addQuestion($title,$langcode){
-		global $USER;
+	function addQuestion($title){
+		global $USER, $CONFIG;
 		$questiontitleref = "qqt".$USER->username.uniqid();
-		$this->addLang($questiontitleref, $title, $langcode);
+		$this->addLang($questiontitleref, $title,$CONFIG->defaultlang);
 	
 		$str = "INSERT INTO question (questiontitleref,createdby) VALUES ('%s',%d)";
 		$sql = sprintf($str,$questiontitleref,$USER->userid);
@@ -327,10 +327,10 @@ class API {
 		return $result;
 	}
 	
-	function addResponse($title,$langcode,$score){
+	function addResponse($title,$score){
 		global $USER;
 		$responsetitleref = "qqrt".$USER->username.uniqid();
-		$this->addLang($responsetitleref, $title, $langcode);
+		$this->addLang($responsetitleref, $title);
 	
 		$str = "INSERT INTO response (responsetitleref,createdby,score) VALUES ('%s',%d,%d)";
 		$sql = sprintf($str,$responsetitleref,$USER->userid,$score);
@@ -342,36 +342,70 @@ class API {
 	function addQuestionToQuiz($quizid,$questionid,$orderno){
 		$str = "INSERT INTO quizquestion (quizid,questionid,orderno) VALUES (%d,%d,%d)";
 		$sql = sprintf($str,$quizid,$questionid,$orderno);
-		$result = mysql_query($sql,$this->DB);
+		$result = _mysql_query($sql,$this->DB);
 		return $result;
 	}
 	
 	function addResponseToQuestion($questionid,$responseid,$orderno){
 		$str = "INSERT INTO questionresponse (questionid,responseid,orderno) VALUES (%d,%d,%d)";
 		$sql = sprintf($str,$questionid,$responseid,$orderno);
-		$result = mysql_query($sql,$this->DB);
+		$result = _mysql_query($sql,$this->DB);
 		return $result;
 	}
 	
 	function addLang($ref,$text,$langcode){
 		$str = "INSERT INTO language (langref,langtext,langcode) VALUES ('%s','%s','%s')";
 		$sql = sprintf($str,$ref,$text,$langcode);
-		$result = mysql_query($sql,$this->DB);
+		$result = _mysql_query($sql,$this->DB);
 	}
 	
 	function setProp($obj,$id,$name,$value){
 		// first check to see if it exists already
 		$sql = sprintf("SELECT * FROM %sprop WHERE %sid= %d AND %spropname='%s'",$obj,$obj,$id,$obj,$name);
-		$result = mysql_query($sql,$this->DB);
+		$result = _mysql_query($sql,$this->DB);
 
 		while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
 			$updateSql = sprintf("UPDATE %sprop SET %spropvalue='%s' WHERE %sid= %d AND %spropname='%s'",$obj,$obj,$value,$obj,$id,$obj,$name);
-			mysql_query($updateSql,$this->DB);
+			_mysql_query($updateSql,$this->DB);
 			return;
 		}
 		
 		$insertSql = sprintf("INSERT INTO %sprop (%spropvalue, %sid,%spropname) VALUES ('%s',%d,'%s')",$obj,$obj,$obj,$obj,$value,$id,$name);
-		$result = mysql_query($insertSql,$this->DB);
+		$result = _mysql_query($insertSql,$this->DB);
 
+	}
+	
+	function get10PopularQuizzes(){
+		$sql = "SELECT Count(qa.id) as noattempts, qa.quizref, l.langtext FROM quizattempt qa
+					INNER JOIN language l ON l.langref = qa.quizref
+					GROUP BY qa.quizref
+					ORDER BY Count(qa.id) DESC
+					LIMIT 0,10";
+		$result = _mysql_query($sql,$this->DB);
+		$top10 = array();
+		while($o = mysql_fetch_object($result)){
+			$r = new stdClass();
+			$r->ref = $o->quizref;
+			$r->title = $o->langtext;
+			$r->noattempts = $o->noattempts;
+			array_push($top10,$r);
+		}
+		return $top10;
+	}
+	
+	function get10MostRecentQuizzes(){
+		$sql = "SELECT q.quiztitleref,createdon, l.langtext FROM quiz q
+					INNER JOIN language l ON l.langref = q.quiztitleref
+					ORDER BY createdon DESC
+					LIMIT 0,10";
+		$result = _mysql_query($sql,$this->DB);
+		$top10 = array();
+		while($o = mysql_fetch_object($result)){
+			$r = new stdClass();
+			$r->ref = $o->quiztitleref;
+			$r->title = $o->langtext;
+			array_push($top10,$r);
+		}
+		return $top10;
 	}
 }

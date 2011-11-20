@@ -27,13 +27,13 @@ if ($submit != ""){
 	}
 	// check all fields completed
 	if ($firstname == ""){
-		array_push($MSG,"Your enter your firstname");
+		array_push($MSG,"Enter your firstname");
 	}
 	if ($surname == ""){
-		array_push($MSG,"Your enter your surname");
+		array_push($MSG,"Enter your surname");
 	}
 	if ($email == ""){
-		array_push($MSG,"Your enter your email");
+		array_push($MSG,"Enter your email");
 	}
 	
 	// check username doesn't already exist

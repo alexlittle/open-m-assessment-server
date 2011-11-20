@@ -120,3 +120,33 @@ div.quizattempts {
 	float:left;
 	width:200px;
 }
+
+/* home widgets */
+div.homewidget {
+	float:left;
+	width:20%;
+	border: 1px solid #ccc;
+	margin:10px;
+	padding: 5px;
+	-moz-border-radius: 1em 1em;
+  	border-radius: 1em 1em;
+}
+
+div.homewidget h3{
+	text-align: center;
+}
+
+div.homestart {
+	float:left;
+	width:20%;
+	border: 1px solid #ccc;
+	margin:10px;
+	padding: 5px;
+	-moz-border-radius: 1em 1em;
+  	border-radius: 1em 1em;
+  	min-height:75px;
+}
+
+div.homestart h3{
+	text-align: center;
+}

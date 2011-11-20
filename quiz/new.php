@@ -7,45 +7,48 @@ $submit = optional_param("submit","",PARAM_TEXT);
 
 if ($submit != ""){
 	$title = optional_param("title","",PARAM_TEXT);
-	// create the quiz object
-	$quizid = $API->addQuiz($title, $_SESSION["session_lang"]);
 	
-	$noquestions = optional_param("noquestions",0,PARAM_INT);
-	$quizmaxscore = 0;
-	// create each question
-	for ($q=1;$q<$noquestions+1;$q++){
-		$ref = "q".($q);
-		$questiontitle = optional_param($ref,"",PARAM_TEXT);
-		if($questiontitle != ""){
-			$questionid = $API->addQuestion($questiontitle, $_SESSION["session_lang"]);
-			$API->addQuestionToQuiz($quizid,$questionid,$q);
-			$questionmaxscore = 0;
-			// create each response
-			for ($r=1;$r<5;$r++){
-				$rref = "q".($q)."r".($r);
-				$mref = "q".($q)."m".($r);
-				$responsetitle = optional_param($rref,"",PARAM_TEXT);
-				$score= optional_param($mref,0,PARAM_INT);
-				if($responsetitle != ""){
-					$responseid = $API->addResponse($responsetitle, $_SESSION["session_lang"],$score);
-					$API->addResponsetoQuestion($questionid,$responseid,$r);
-					$questionmaxscore += $score;
+	if ($title != ""){
+		// create the quiz object
+		$quizid = $API->addQuiz($title);
+		
+		$noquestions = optional_param("noquestions",0,PARAM_INT);
+		$quizmaxscore = 0;
+		// create each question
+		for ($q=1;$q<$noquestions+1;$q++){
+			$ref = "q".($q);
+			$questiontitle = optional_param($ref,"",PARAM_TEXT);
+			if($questiontitle != ""){
+				$questionid = $API->addQuestion($questiontitle);
+				$API->addQuestionToQuiz($quizid,$questionid,$q);
+				$questionmaxscore = 0;
+				// create each response
+				for ($r=1;$r<5;$r++){
+					$rref = "q".($q)."r".($r);
+					$mref = "q".($q)."m".($r);
+					$responsetitle = optional_param($rref,"",PARAM_TEXT);
+					$score= optional_param($mref,0,PARAM_INT);
+					if($responsetitle != ""){
+						$responseid = $API->addResponse($responsetitle,$score);
+						$API->addResponsetoQuestion($questionid,$responseid,$r);
+						$questionmaxscore += $score;
+					}
 				}
+				
+				//set max score for question
+				$API->setProp('question', $questionid, 'maxscore', $questionmaxscore);
+				
+				$quizmaxscore += $questionmaxscore;
 			}
-			
-			//set max score for question
-			$API->setProp('question', $questionid, 'maxscore', $questionmaxscore);
-			
-			$quizmaxscore += $questionmaxscore;
 		}
-	}
-
-	// set the maxscore for quiz
-	$API->setProp('quiz', $quizid, 'maxscore', $quizmaxscore);
 	
-	echo "Your quiz has been created!";
-	include_once("../includes/footer.php");
-	die;
+		// set the maxscore for quiz
+		$API->setProp('quiz', $quizid, 'maxscore', $quizmaxscore);
+		
+		echo "Your quiz has been created!";
+		include_once("../includes/footer.php");
+		die;
+	}
 }
 
 ?>

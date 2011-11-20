@@ -1,6 +1,6 @@
 <?php
 include_once("config.php");
-$PAGE = "profile";
+$PAGE = "faqs";
 include_once("./includes/header.php");
 ?>
 

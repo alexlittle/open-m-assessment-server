@@ -2,7 +2,9 @@
 	</div> <!-- end content -->
 </div> <!-- page -->
 <div id="footer">
-<a href="about.php">About</a> | <a href="developer.php">Developer</a><br/>
+<a href="<?php echo $CONFIG->homeAddress; ?>about.php">About</a> | 
+<a href="<?php echo $CONFIG->homeAddress; ?>terms.php">Terms/License</a> | 
+<a href="<?php echo $CONFIG->homeAddress; ?>developer.php">Developer</a><br/>
 <a href="http://alexlittle.net">Alex Little</a> &copy; <?php echo date('Y');?><br/>
  
 </div>

@@ -1,5 +1,5 @@
 <?php 
-$quizzes = $API->getQuizzes($_SESSION["session_lang"]);
+$quizzes = $API->getQuizzes();
 
 
 

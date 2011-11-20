@@ -3,7 +3,7 @@ include_once("../config.php");
 $PAGE = "myquizzes";
 
 include_once("../includes/header.php");
-$quizzes = $API->getQuizzesForUser($USER->userid,$_SESSION["session_lang"]);
+$quizzes = $API->getQuizzesForUser($USER->userid);
 
 ?>
 <h1><?php echo getstring("myquizzes.title");?></h1>
