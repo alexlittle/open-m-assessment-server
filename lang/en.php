@@ -4,7 +4,7 @@ $LANG = array();
 $LANG["app.title"] = "mQuiz";
 $LANG['login.password'] = 'Password';
 $LANG['login.submit.button'] = 'Login';
-$LANG['login.username'] = 'Username';
+$LANG['login.username'] = 'Username/email';
 
 $LANG['myquizzes.title'] = "My Quizzes";
 
