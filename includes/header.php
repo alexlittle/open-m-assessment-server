@@ -1,7 +1,7 @@
 <?php 
 header('Content-Type:text/html; charset=UTF-8');
 
-global $PAGE,$CONFIG,$MSG,$API;
+global $PAGE,$CONFIG,$MSG,$API,$HEADER;
 
 $nologinpages = array ("login","index","register","faqs","terms","about","developer","phoneapps");
 
@@ -26,6 +26,9 @@ if ($lang != ""){
 	<link rel="StyleSheet" href="<?php echo $CONFIG->homeAddress; ?>/includes/style.css" type="text/css" media="screen">
 	<link rel="StyleSheet" href="<?php echo $CONFIG->homeAddress; ?>/includes/printstyle.css" type="text/css" media="print">
 	<link rel="shortcut icon" href="<?php echo $CONFIG->homeAddress; ?>/images/favicon.ico" />
+	<?php 
+    	echo $HEADER;
+    ?>
 </head>
 
 <body>

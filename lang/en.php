@@ -36,5 +36,7 @@ $LANG['register.username'] = 'Username';
 $LANG['warning.login.invalid'] = "Invalid username or password";
 $LANG['warning.login.nopassword'] = "Please enter your password";
 $LANG['warning.login.required'] = "Please login or <a href='%s'>register</a>";
+$LANG['warning.quiz.notfound'] = "Quiz not found";
+$LANG['warning.graph.unavailable'] = "Chart being generated";
 
 ?>
