@@ -122,20 +122,20 @@ div.responsescore {
 	float:left;
 	width:100px;
 }
-/* Quiz list */
+/* Quiz/attempt list */
 
-div.quizlist {
+div.quizlist, div.attemptlist {
 	padding:10px;
 	clear:both;
 	border-bottom: 1px solid #999;
 }
 
-div.quiztitle {
+div.quiztitle, div.attemptdate {
 	float:left;
 	width:250px;
 }
 
-div.quizattempts {
+div.quizattempts, div.quizopts, div.attemptname, div.attemptscore {
 	float:left;
 	width:150px;
 }
@@ -150,25 +150,7 @@ div.quizopts {
 	width:150px;
 }
 
-/* Attempt list */
-div.attemptlist{
-	padding:10px;
-	clear:both;
-	border-bottom: 1px solid #999;
-}
 
-div.attemptdate{
-	float:left;
-	width:250px;
-}
-div.attemptname{
-	float:left;
-	width:150px;
-}
-div.attemptscore{
-	float:left;
-	width:150px;
-}
 
 /* home widgets */
 div.homewidget {
