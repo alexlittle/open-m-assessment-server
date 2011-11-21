@@ -1,7 +1,7 @@
 <?php
-include_once("config.php");
+include_once("../config.php");
 $PAGE = "phoneapps";
-include_once("./includes/header.php");
+include_once("../includes/header.php");
 ?>
 
 <h1>Smart phone client apps</h1>
@@ -13,5 +13,5 @@ include_once("./includes/header.php");
 
 
 <?php 
-include_once("./includes/footer.php");
+include_once("../includes/footer.php");
 ?>

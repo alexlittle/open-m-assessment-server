@@ -40,8 +40,8 @@ if ($lang != ""){
 				<li><a href="<?php echo $CONFIG->homeAddress; ?>my/quizzes.php">My Quizzes</a></li>
 				<li><a href="<?php echo $CONFIG->homeAddress; ?>my/results.php">My Results</a></li>
 				<li><a href="<?php echo $CONFIG->homeAddress; ?>quiz/new.php">Create New Quiz</a></li>
-				<li><a href="<?php echo $CONFIG->homeAddress; ?>phoneapps.php">Phone Apps</a></li>
-				<li><a href="<?php echo $CONFIG->homeAddress; ?>faqs.php">FAQs</a></li>
+				<li><a href="<?php echo $CONFIG->homeAddress; ?>info/phoneapps.php">Phone Apps</a></li>
+				<li><a href="<?php echo $CONFIG->homeAddress; ?>info/faqs.php">FAQs</a></li>
 			</ul>
 		</div>
 		<div id="userlogin">
