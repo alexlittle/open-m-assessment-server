@@ -1,6 +1,6 @@
 <?php 
 
-$attempts = $API->getQuizAttempts($ref,array('days'=>$days));
+$attempts = $API->getQuizAttemptsSummary($ref,array('days'=>$days));
 
 $summary = array();
 $date = mktime(0,0,0,date('m'),date('d'),date('Y'));
@@ -44,7 +44,7 @@ google.load('visualization', '1.0', {
                 			height: 400,
                 			hAxis: {title: 'Date'},
                 			vAxis: {title: 'No attempts'},
-                			chartArea:{left:50,top:20,width:"80%",height:"75%"}
+                			chartArea:{left:50,top:50,width:"80%",height:"75%"}
 							});
       }
 </script>

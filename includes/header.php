@@ -36,7 +36,7 @@ if ($lang != ""){
 <div id="page">
 	<div id="header">
 		<div id="logo">
-		 	<a href="<?php echo $CONFIG->homeAddress; ?>index.php">mQuiz Logo</a>
+		 	<a href="<?php echo $CONFIG->homeAddress; ?>index.php">mQuiz</a>
 		</div>
 		<div id="menu">
 			<ul>

@@ -15,6 +15,8 @@ $LANG['quiz.edit.quiztitle'] = 'Title';
 $LANG['quiz.edit.questions'] = 'Questions';
 $LANG['quiz.edit.question'] = 'Question';
 $LANG['quiz.edit.responses'] = 'Response options';
+$LANG['quiz.edit.saved'] = 'Changes saved';
+
 
 $LANG['quiz.new.submit.button'] = "Create quiz";
 $LANG['quiz.new.add'] = 'Add another question';
@@ -23,6 +25,7 @@ $LANG['quiz.new.quiztitle'] = 'Title';
 $LANG['quiz.new.questions'] = 'Questions';
 $LANG['quiz.new.question'] = 'Question';
 $LANG['quiz.new.responses'] = 'Response options';
+$LANG['quiz.new.saved'] = 'Your quiz has been created!';
 
 $LANG['register.email'] = 'Email';
 $LANG['register.firstname'] = 'First name';
@@ -33,10 +36,14 @@ $LANG['register.surname'] = 'Surname';
 $LANG['register.title'] = 'Register for mQuiz';
 $LANG['register.username'] = 'Username';
 
+$LANG['user.anon'] = 'Anonymous';
+
 $LANG['warning.login.invalid'] = "Invalid username or password";
 $LANG['warning.login.nopassword'] = "Please enter your password";
 $LANG['warning.login.required'] = "Please login or <a href='%s'>register</a>";
 $LANG['warning.quiz.notfound'] = "Quiz not found";
 $LANG['warning.graph.unavailable'] = "Chart being generated";
+$LANG['warning.quiz.hasattempts'] = "Warning: This quiz already has some responses, editing this quiz may invalidate their scores";
+
 
 ?>

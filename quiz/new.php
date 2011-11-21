@@ -45,7 +45,7 @@ if ($submit != ""){
 		// set the maxscore for quiz
 		$API->setProp('quiz', $quizid, 'maxscore', $quizmaxscore);
 		
-		echo "Your quiz has been created!";
+		printf("<div class='info'>%s</div>", getstring("quiz.new.saved"));
 		include_once("../includes/footer.php");
 		die;
 	}

@@ -62,7 +62,7 @@ if ($submit != ""){
 		// set the maxscore for quiz
 		$API->setProp('quiz', $quizid, 'maxscore', $quizmaxscore);
 	
-		echo "Changes saved";
+		printf("<div class='info'>%s</div>", getstring("quiz.edit.saved"));
 	}
 	//reload quiz (to get updated title)
 	$q = $API->getQuizForUser($ref,$USER->userid);
@@ -70,6 +70,11 @@ if ($submit != ""){
 
 
 $qq = $API->getQuizQuestions($q->quizid);
+
+if ($API->quizHasAttempts($ref)){
+	printf("<div class='warning'>%s</div>", getstring("warning.quiz.hasattempts"));
+}
+
 ?>
 
 <form method="post" action="">

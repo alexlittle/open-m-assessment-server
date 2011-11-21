@@ -23,7 +23,10 @@ google.load("visualization", "1", {
 	
 			var chart = new google.visualization.PieChart(document.getElementById('chart_div<?php echo $ref; ?>'));
 			chart.draw(data, {
-				width: 450, height: 300, title: '<?php echo $quiz->title; ?> Mark distribution'});
+					width: 800, 
+					height: 400, 
+					chartArea:{left:50,top:50,width:"80%",height:"75%"}
+				});
 		}
 		</script>
-		<div id="chart_div<?php echo $quiz->ref; ?>"></div>
+		<div id="chart_div<?php echo $quiz->ref; ?>"><?php echo getstring('warning.graph.unavailable');?></div>

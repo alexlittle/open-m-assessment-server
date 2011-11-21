@@ -8,7 +8,7 @@ $ref = optional_param("ref","",PARAM_TEXT);
 $days = optional_param("days",14,PARAM_INT);
 $view = optional_param("view","bydate",PARAM_TEXT);
 
-$views = array ('bydate'=>'Attempts by date', 'scoredist'=>'Score distribution','list'=>'Full list', 'question'=>'Average marks per question');
+$views = array ('bydate'=>'Attempts by date', 'scoredist'=>'Score distribution', 'question'=>'Average score by question', 'list'=>'Detailed list');
 $quiz = $API->getQuiz($ref);
 
 if($quiz == null){
@@ -35,11 +35,17 @@ foreach($views as $k=>$v){
 echo "</p>";
 
 switch ($view){
-	case 'bydate':
-		include_once('views/bydate.php');
-		break;
 	case 'scoredist':
 		include_once('views/scoredist.php');
+		break;
+	case 'list':
+		include_once('views/list.php');
+		break;
+	case 'question':
+		include_once('views/question.php');
+		break;
+	default:
+		include_once('views/bydate.php');
 		break;
 }
 

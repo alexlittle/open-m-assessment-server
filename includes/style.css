@@ -134,9 +134,40 @@ div.quiztitle {
 	float:left;
 	width:250px;
 }
+
 div.quizattempts {
 	float:left;
+	width:150px;
+}
+
+div.quizavg {
+	float:left;
 	width:200px;
+}
+
+div.quizopts {
+	float:left;
+	width:150px;
+}
+
+/* Attempt list */
+div.attemptlist{
+	padding:10px;
+	clear:both;
+	border-bottom: 1px solid #999;
+}
+
+div.attemptdate{
+	float:left;
+	width:250px;
+}
+div.attemptname{
+	float:left;
+	width:150px;
+}
+div.attemptscore{
+	float:left;
+	width:150px;
 }
 
 /* home widgets */
@@ -173,6 +204,19 @@ div.homestart {
 div.homestart h3{
 	text-align: center;
 	
+}
+
+div.warning {
+	margin:10px;
+	color: #f00;
+	padding:10px;
+	border: 1px solid #ccc;
+}
+
+div.info {
+	margin:10px;
+	padding:10px;
+	border: 1px solid #ccc;
 }
 
 

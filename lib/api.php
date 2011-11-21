@@ -196,7 +196,8 @@ class API {
 	function getQuizzesForUser($userid){
 		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
 					INNER JOIN language l ON q.quiztitleref = l.langref
-					WHERE q.createdby = %d",$userid);
+					WHERE q.createdby = %d
+					ORDER BY l.langtext ASC",$userid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			writeToLog('error','database',$sql);
@@ -216,6 +217,36 @@ class API {
 	}
 	
 	function getQuizAttempts($ref, $opts = array()){
+		if(array_key_exists('days',$opts)){
+			$days = max(0,$opts['days']);
+		} else {
+			$days = DEFAULT_DAYS;
+		}
+		$sql = sprintf("SELECT ((qascore*100)/ maxscore) as score, firstname, lastname, submitdate FROM quizattempt qa
+						LEFT OUTER JOIN user u ON qa.submituser = u.username
+						WHERE quizref = '%s'
+						AND submitdate > DATE_ADD(NOW(), INTERVAL -%d DAY) 
+						ORDER BY submitdate DESC",$ref,$days);
+
+		$summary = array();
+		$result = _mysql_query($sql,$this->DB);
+		while($o = mysql_fetch_object($result)){
+			array_push($summary,$o);
+		}
+		return $summary;
+	}
+	
+	function quizHasAttempts($ref){
+		$sql = sprintf("SELECT * FROM quizattempt WHERE quizref='%s'",$ref);
+		$result = _mysql_query($sql,$this->DB);
+		while($o = mysql_fetch_object($result)){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	function getQuizAttemptsSummary($ref, $opts = array()){
 		if(array_key_exists('days',$opts)){
 			$days = max(0,$opts['days']);
 		} else {
@@ -245,7 +276,7 @@ class API {
 		$sql = sprintf("SELECT Count(*) as noattempts, AVG(qascore*100/maxscore) as avgscore FROM quizattempt
 							WHERE quizref = '%s'",$quizref);
 		$result = _mysql_query($sql,$this->DB);
-		
+
 		$a = new stdClass;
 		$a->noattempts = 0;
 		$a->avgscore = 0;
@@ -280,11 +311,13 @@ class API {
 		}
 		return $resp;
 	}
+	
 	function getQuizAvgResponseScores($quizref){
-		$sql = sprintf("SELECT AVG(qarscore) as avgscore,  questionrefid FROM quizattemptresponse qar
-				INNER JOIN quizattempt qa ON qa.id = qar.qaid
-				WHERE quizref = '%s'
-				GROUP BY questionrefid",$quizref);
+		$sql = sprintf("SELECT AVG(qarscore) as avgscore,  questionrefid, langtext FROM quizattemptresponse qar
+						INNER JOIN quizattempt qa ON qa.id = qar.qaid
+						INNER JOIN language l ON l.langref = qar.questionrefid
+						WHERE quizref = '%s'
+						GROUP BY questionrefid",$quizref);
 		$result = _mysql_query($sql,$this->DB);
 		$resp = array();
 		if (!$result){
@@ -292,15 +325,15 @@ class API {
 			return $resp;
 		}
 		while($r = mysql_fetch_object($result)){
-			$resp[$r->questionrefid] = $r->avgscore;
+			$resp[$r->langtext] = $r->avgscore;
 		}
 		return $resp;
 	}
 	
 	function getQuiz($ref){
 		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
-					INNER JOIN language l ON q.quiztitleref = l.langref
-					WHERE q.quiztitleref = '%s'",$ref);
+						INNER JOIN language l ON q.quiztitleref = l.langref
+						WHERE q.quiztitleref = '%s'",$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			writeToLog('error','database',$sql);
@@ -324,8 +357,11 @@ class API {
 	function getQuizForUser($ref,$userid){
 		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
 						INNER JOIN language l ON q.quiztitleref = l.langref
-						WHERE q.quiztitleref = '%s' AND createdby=%d",$ref,$userid);
+						WHERE q.quiztitleref = '%s' AND createdby=%d
+						ORDER BY l.langtext ASC",$ref,$userid);
+
 		$result = _mysql_query($sql,$this->DB);
+		
 		if (!$result){
 			writeToLog('error','database',$sql);
 			return;
