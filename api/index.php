@@ -39,7 +39,7 @@ if($method == 'register'){
 	$u = new User($email);
 	$user = $API->getUser($u);
 	if($user->userid != ""){
-		echo "Email already registered, please select another";
+		echo "Email already registered";
 		die;
 	}
 	

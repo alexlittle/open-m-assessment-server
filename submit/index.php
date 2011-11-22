@@ -13,7 +13,8 @@ if($content == ""){
 }
 
 if(!userLogin($username,$password)){
-	$username = "anon";
+	echo "Login failed";
+	die;
 }
 
 try {
