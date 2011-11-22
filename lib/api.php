@@ -435,7 +435,7 @@ class API {
 	
 	function addQuiz($title){
 		global $USER, $CONFIG;
-		$quiztitleref = "qt".$USER->username.uniqid();
+		$quiztitleref = $this->createUUID("qt");
 		$this->addLang($quiztitleref, $title,$CONFIG->defaultlang);
 		
 		$str = "INSERT INTO quiz (quiztitleref,createdby) VALUES ('%s',%d)";
@@ -451,7 +451,7 @@ class API {
 	
 	function addQuestion($title){
 		global $USER, $CONFIG;
-		$questiontitleref = "qqt".$USER->username.uniqid();
+		$questiontitleref = $this->createUUID("qqt");
 		$this->addLang($questiontitleref, $title,$CONFIG->defaultlang);
 	
 		$str = "INSERT INTO question (questiontitleref,createdby) VALUES ('%s',%d)";
@@ -467,7 +467,7 @@ class API {
 	
 	function addResponse($title,$score){
 		global $USER,$CONFIG;
-		$responsetitleref = "qqrt".$USER->username.uniqid();
+		$responsetitleref = $this->createUUID("qqrt");
 		$this->addLang($responsetitleref, $title,$CONFIG->defaultlang);
 	
 		$str = "INSERT INTO response (responsetitleref,createdby,score) VALUES ('%s',%d,%d)";
@@ -624,5 +624,10 @@ class API {
 			array_push($top10,$r);
 		}
 		return $top10;
+	}
+	
+	function createUUID($prefix){
+		global $USER;
+		return $prefix.$USER->firstname.uniqid();
 	}
 }

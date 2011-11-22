@@ -135,7 +135,7 @@ div.quiztitle, div.attemptdate {
 	width:250px;
 }
 
-div.quizattempts, div.quizopts, div.attemptname, div.attemptscore {
+div.quizattempts, div.quizopts, div.attemptname, div.attemptscore, div.quizopts {
 	float:left;
 	width:150px;
 }
@@ -143,11 +143,6 @@ div.quizattempts, div.quizopts, div.attemptname, div.attemptscore {
 div.quizavg {
 	float:left;
 	width:200px;
-}
-
-div.quizopts {
-	float:left;
-	width:150px;
 }
 
 
