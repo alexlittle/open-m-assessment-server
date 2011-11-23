@@ -16,14 +16,26 @@ if($q == null){
 $submit = optional_param("submit","",PARAM_TEXT);
 if ($submit != ""){
 	$title = optional_param("title","",PARAM_TEXT);
+	$props = optional_param('props',"",PARAM_TEXT);
 	
 	if ($title != ""){
 		
 		//update quiz title
 		$API->updateLang($ref,$title);
+		
+		//update quiz props
+		$quizprops = array('downloadable','submitable');
+		foreach($quizprops as $qp){
+			if(in_array($qp,$props)){
+				$API->setProp('quiz',$q->quizid,$qp,'true');
+			} else {
+				$API->setProp('quiz',$q->quizid,$qp,'false');
+			}
+		}
+		
+		
 		// remove quiz questions and responses
 		// easier for now to just remove and recreate :-(
-		
 		$API->removeQuiz($q->quizid);
 		
 		// create the quiz object
@@ -80,8 +92,18 @@ if ($API->quizHasAttempts($ref)){
 <form method="post" action="">
 	<div class="formblock">
 		<div class="formlabel"><?php echo getstring('quiz.edit.quiztitle'); ?></div>
-		<div class="formfield"><input type="text" name="title" value="<?php echo $q->title; ?>" size="60"></input></div>
+		<div class="formfield">
+			<input type="text" name="title" value="<?php echo $q->title; ?>" size="60"/><br/>
+			<!-- <span id="optionsshow" onclick="toggleOptionShow();" class="link">Show quiz options</span>
+				<span id="optionshide" onclick="toggleOptionHide();" class="link">Hide quiz options</span> -->
+		</div>
 	</div>
+	<div id="options" class="formblock">
+			<div class='formlabel'>&nbsp;</div>
+			<div class='formfield'>
+				<?php include_once('options.php')?>
+			</div>
+		</div>
 	<div class="formblock">
 		<h2><?php echo getstring("quiz.edit.questions"); ?></h2>
 	</div>
@@ -130,7 +152,9 @@ if ($API->quizHasAttempts($ref)){
 	</div>
 	<input type="hidden" id="noquestions" name="noquestions" value="<?php echo count($qq); ?>">
 </form>
-
+<script type="text/javascript">
+//toggleOptionHide();
+</script>
 <?php 
 include_once("../includes/footer.php");
 ?>

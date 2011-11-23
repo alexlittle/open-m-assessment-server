@@ -7,7 +7,7 @@ $top10recent = $API->get10MostRecentQuizzes();
 ?>
 
 <div id="start1" class="homestart">
-<h3>1. Create a quiz online</h3> 
+<h3>1. Create a quiz</h3> 
 </div>
 
 <div id="start2" class="homestart">
@@ -15,7 +15,7 @@ $top10recent = $API->get10MostRecentQuizzes();
 </div>
 
 <div id="start3" class="homestart">
-<h3>3. View and track results online</h3> 
+<h3>3. View and track results</h3> 
 </div>
 
 <div style="clear:both;">

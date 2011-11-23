@@ -8,6 +8,12 @@ $quizzes = $API->getQuizzesForUser($USER->userid);
 ?>
 <h1><?php echo getstring("myquizzes.title");?></h1>
 <?php
+if (count($quizzes) == 0){
+	echo "<div class='info'>";
+	echo getstring("myquizzes.none",array($CONFIG->homeAddress."quiz/add.php"));
+	echo "</div>";
+}
+
 foreach ($quizzes as $q){
 	echo "<div id='".$q->ref."' class='quizlist'>";
 	echo "<div class='quiztitle'><a href='".$CONFIG->homeAddress."quiz/view.php?ref=".$q->ref."'>".$q->title."</a></div>";

@@ -17,8 +17,30 @@ if(!userLogin($username,$password)){
 	die;
 }
 
+
+
 try {
 	$json = json_decode(stripslashes($content));
+	
+	if (isset($json->quizid)){
+		$quiz = $API->getQuiz($json->quizid);
+		// check if currently downloadable
+		$submitable = true;
+		$props = $API->getQuizProps($quiz->quizid);
+		if(array_key_exists('submitable', $props)){
+			if($props['submitable'] == 'false'){
+				$submitable = false;
+			}
+		}
+		if(!$submitable){
+			echo "Results submissions currently disabled for this quiz";
+			die;
+		}
+	} else {
+		echo "failure";
+		die;
+	}
+	
 	
 	$qa = new QuizAttempt();
 	$qa->quizref = $json->quizid;

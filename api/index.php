@@ -9,6 +9,7 @@ if($method == 'register'){
 	$passwordAgain = optional_param("passwordagain","",PARAM_TEXT);
 	$firstname = optional_param("firstname","",PARAM_TEXT);
 	$lastname = optional_param("lastname","",PARAM_TEXT);
+	
 	if ($email == ""){
 		echo "Enter your email";
 		die;

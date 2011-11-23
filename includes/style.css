@@ -40,6 +40,15 @@ a:visited, a {
 a:hover {
 	text-decoration:underline;
 }
+
+.link {
+	color:#77a240;
+	text-decoration:none;
+}
+.link:hover {
+	text-decoration:underline;
+	cursor:pointer;
+}
 .inactive {
 	color:#ccc;
 }
@@ -145,6 +154,11 @@ div.quizavg {
 	width:200px;
 }
 
+div.quizcell{
+	float:left;
+	width:100px;
+	text-align:center;
+}
 
 
 /* home widgets */
@@ -195,5 +209,10 @@ div.info {
 	padding:10px;
 	border: 1px solid #ccc;
 }
+
+div.options{
+	clear:both;
+}
+
 
 

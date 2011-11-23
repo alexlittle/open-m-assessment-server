@@ -7,10 +7,24 @@ $submit = optional_param("submit","",PARAM_TEXT);
 
 if ($submit != ""){
 	$title = optional_param("title","",PARAM_TEXT);
+	$props = optional_param('props',"",PARAM_TEXT);
 	
 	if ($title != ""){
 		// create the quiz object
 		$quizid = $API->addQuiz($title);
+		
+		$quizprops = array('downloadable','submitable');
+		
+		
+		//set the properties
+		foreach($quizprops as $qp){
+			if(in_array($qp,$props)){
+				$API->setProp('quiz',$quizid,$qp,'true');
+			} else {
+				$API->setProp('quiz',$quizid,$qp,'false');
+			}
+		}
+			
 		
 		$noquestions = optional_param("noquestions",0,PARAM_INT);
 		$quizmaxscore = 0;
@@ -54,51 +68,69 @@ if ($submit != ""){
 ?>
 <h1><?php echo getstring("quiz.new.title"); ?></h1>
 <form method="post" action="">
-	<div class="formblock">
-		<div class="formlabel"><?php echo getstring('quiz.new.quiztitle'); ?></div>
-		<div class="formfield"><input type="text" name="title" value="" size="60"></input></div>
-	</div>
-	<div class="formblock">
-		<h2><?php echo getstring("quiz.new.questions"); ?></h2>
-	</div>
-	<div id="questions">
-		<?php 
-			for($q=1; $q<3;$q++){
-		?>
-			<div class="formblock">
-				<div class="formlabel"><?php echo getstring('quiz.new.question'); echo " "; echo $q; ?></div>
-				<div class="formfield">
-					<input type="text" name="q<?php echo $q; ?>" value="" size="60"></input>
-					<div class="responses">
-					<div class="responsetext">Possible responses</div><div class="responsescore">Score</div>
-					<?php 
-						for($r=1; $r<5;$r++){ 
-					?>
-						<div class="responsetext"><input type="text" name="<?php printf('q%dr%d',$q,$r); ?>" value="" size="40"></input></div>
-						<div class="responsescore"><input type="text" name="<?php printf('q%dm%d',$q,$r); ?>" value="0" size="5"></input></div>
-					<?php 
-						}
-					?>
+	<div id="quizform">
+		<div class="formblock">
+			<div class="formlabel"><?php echo getstring('quiz.new.quiztitle'); ?></div>
+			<div class="formfield">
+				<input type="text" name="title" value="" size="60"/><br/>
+				<!-- <span id="optionsshow" onclick="toggleOptionShow();" class="link">Show quiz options</span>
+				<span id="optionshide" onclick="toggleOptionHide();" class="link">Hide quiz options</span> -->
+			</div>
+		</div>
+		<div id="options" class="formblock">
+			<div class='formlabel'>&nbsp;</div>
+			<div class='formfield'>
+				<?php include_once('options.php')?>
+			</div>
+		</div>
+		<div class="formblock">
+			<h2><?php echo getstring("quiz.new.questions"); ?></h2>
+		</div>
+		<div id="questions">
+			<?php 
+				for($q=1; $q<3;$q++){
+			?>
+				<div class="formblock">
+					<div class="formlabel"><?php echo getstring('quiz.new.question'); echo " "; echo $q; ?></div>
+					<div class="formfield">
+						<input type="text" name="q<?php echo $q; ?>" value="" size="60"></input>
+						<div class="responses">
+							<div class="responsetext">Possible responses</div>
+							<div class="responsescore">Score</div>
+							<?php 
+								for($r=1; $r<5;$r++){ 
+							?>
+								<div class="responsetext"><input type="text" name="<?php printf('q%dr%d',$q,$r); ?>" value="" size="40"></input></div>
+								<div class="responsescore"><input type="text" name="<?php printf('q%dm%d',$q,$r); ?>" value="0" size="5"></input></div>
+							<?php 
+								}
+							?>
+						</div>
 					</div>
 				</div>
-			</div>
-		<?php 
-			}
-		?>
-		
+			<?php 
+				}
+			?>
+			
+	
+		</div>
+		<div class="formblock">
+			<div class="formlabel">&nbsp;</div>
+			<div class="formfield"><input type="button" name="addquestion" value="<?php echo getstring("quiz.new.add"); ?>" onclick="addQuestion()"/></div>
+		</div>
+		<div class="formblock">
+			<div class="formlabel">&nbsp;</div>
+			<div class="formfield"><input type="submit" name="submit" value="<?php echo getstring("quiz.new.submit.button"); ?>"></input></div>
+		</div>
+		<input type="hidden" id="noquestions" name="noquestions" value="2"/>
+	
+	</div>
 
-	</div>
-	<div class="formblock">
-		<div class="formlabel">&nbsp;</div>
-		<div class="formfield"><input type="button" name="addquestion" value="<?php echo getstring("quiz.new.add"); ?>" onclick="addQuestion()"/></div>
-	</div>
-	<div class="formblock">
-		<div class="formlabel">&nbsp;</div>
-		<div class="formfield"><input type="submit" name="submit" value="<?php echo getstring("quiz.new.submit.button"); ?>"></input></div>
-	</div>
-	<input type="hidden" id="noquestions" name="noquestions" value="2">
+
 </form>
-
+<script type="text/javascript">
+	//toggleOptionHide();
+</script>
 <?php 
 include_once("../includes/footer.php");
 ?>

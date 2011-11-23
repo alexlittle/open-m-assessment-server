@@ -6,7 +6,11 @@ $LANG['login.password'] = 'Password';
 $LANG['login.submit.button'] = 'Login';
 $LANG['login.username'] = 'Username/email';
 
+$LANG['myquizzes.none'] = "You haven't created any quizzes yet. Why not <a href='%s'>create one</a>?";
 $LANG['myquizzes.title'] = "My Quizzes";
+
+$LANG['myresults.none'] = "You haven't submitted any quiz results yet.";
+$LANG['myresults.title'] = "My Results";
 
 $LANG['quiz.edit.title'] = "Edit Quiz";
 $LANG['quiz.edit.submit.button'] = "Save changes";

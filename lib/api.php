@@ -47,6 +47,8 @@ class API {
 	}
 	
 	function addUser($username,$password,$firstname,$surname,$email){
+		$username = strtolower($username);
+		$email = strtolower($email);
 		$str = "INSERT INTO user (username,password,firstname,lastname,email) VALUES ('%s',md5('%s'),'%s','%s','%s')";
 		$sql = sprintf($str,$username,$password,$firstname,$surname,$email);
 		$result = _mysql_query($sql,$this->DB);
@@ -111,6 +113,7 @@ class API {
 	
 	function userValidatePassword($username,$password){
 		global $USER;
+		$username = strtolower($username);
 		$sql = sprintf("SELECT userid FROM user WHERE username='%s' AND password=md5('%s')",$username,$password);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
@@ -144,6 +147,8 @@ class API {
 	}
 	
 	function insertQuizAttempt($qa){
+		$qa->submituser = strtolower($qa->submituser);
+		$qa->user = strtolower($qa->user);
 		$sql = sprintf("INSERT INTO quizattempt (quizref,qadate,qascore,qauser,submituser, maxscore) 
 					VALUES ('%s',%d, %d, '%s', '%s',%d)",
 					$qa->quizref,
@@ -176,7 +181,7 @@ class API {
 	}
 	
 	function getQuizzes(){
-		$sql = "SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q 
+		$sql = "SELECT q.quizid, l.langtext as title, q.quiztitleref as ref FROM quiz q 
 				INNER JOIN language l ON q.quiztitleref = l.langref";
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
@@ -185,10 +190,7 @@ class API {
 		}
 		$quizzes = array();
 		while($r = mysql_fetch_object($result)){
-			$q = new stdClass;
-			$q->ref = $r->quiztitleref;
-			$q->title = $r->langtext;
-			array_push($quizzes,$q);
+			array_push($quizzes,$r);
 		}
 		return $quizzes;
 	}
@@ -330,6 +332,58 @@ class API {
 		return $resp;
 	}
 	
+	function getMyQuizScores(){
+		global $USER;
+		$sql = sprintf("SELECT AVG(score) as avgscore, count(*) as noattempts, max(score) as maxscore, min(score) as minscore, langtext as title, langref as ref  FROM 
+						(SELECT ((qascore*100)/ maxscore) as score,  firstname, lastname, submitdate, l.langtext, l.langref FROM quizattempt qa
+						INNER JOIN user u ON qa.submituser = u.username
+						INNER JOIN language l ON l.langref = qa.quizref
+						WHERE u.userid = %d
+						ORDER BY submitdate DESC) a
+						GROUP BY langtext, langref", $USER->userid);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return;
+		}
+		$results = array();
+		while($o = mysql_fetch_object($result)){
+			array_push($results,$o);
+		}
+		return $results;
+	}
+	
+	function getRanking($ref,$userid){
+		$sql = sprintf("SELECT * FROM
+						(SELECT MAX((qascore*100)/ maxscore) as score,  u.userid, l.langref FROM quizattempt qa
+						LEFT OUTER JOIN user u ON qa.submituser = u.username
+						INNER JOIN language l ON l.langref = qa.quizref
+						WHERE qa.quizref = '%s'
+						GROUP BY u.userid, l.langref) a
+						ORDER BY score DESC",$ref);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return;
+		}
+		$rank = 0;
+		$count = 0;
+		$prevscore = -1;
+		$myrank = 0;
+		while($o = mysql_fetch_object($result)){
+			$count++;
+			if($o->score != $prevscore){
+				$rank = $count;
+				$prevscore = $o->score;
+			}
+			if($o->userid == $userid){
+				$myrank = $rank;
+			}
+		}
+		$r = array("myrank"=>$myrank,"total"=>$count);
+		return $r;
+	}
+	
 	function getQuiz($ref){
 		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
 						INNER JOIN language l ON q.quiztitleref = l.langref
@@ -344,12 +398,7 @@ class API {
 			$q->quizid = $r->quizid;
 			$q->ref = $r->quiztitleref;
 			$q->title = $r->langtext;
-			$q->props = array();
-			$psql = sprintf("SELECT * FROM quizprop WHERE quizid = %d",$r->quizid);
-			$props = _mysql_query($psql,$this->DB);
-			while($prop = mysql_fetch_object($props)){
-				$q->props[$prop->quizpropname] = $prop->quizpropvalue;
-			}
+			$q->props = $this->getQuizProps($r->quizid);
 			return $q;
 		}
 	}
@@ -371,14 +420,19 @@ class API {
 			$q->quizid = $r->quizid;
 			$q->ref = $r->quiztitleref;
 			$q->title = $r->langtext;
-			$q->props = array();
-			$psql = sprintf("SELECT * FROM quizprop WHERE quizid = %d",$r->quizid);
-			$props = _mysql_query($psql,$this->DB);
-			while($prop = mysql_fetch_object($props)){
-				$q->props[$prop->quizpropname] = $prop->quizpropvalue;
-			}
+			$q->props = $this->getQuizProps($r->quizid);
 			return $q;
 		}
+	}
+	
+	function getQuizProps($quizid){
+		$psql = sprintf("SELECT * FROM quizprop WHERE quizid = %d",$quizid);
+		$props = _mysql_query($psql,$this->DB);
+		$p = array();
+		while($prop = mysql_fetch_object($props)){
+			$p[$prop->quizpropname] = $prop->quizpropvalue;
+		}
+		return $p;
 	}
 	
 	function getQuizQuestions($quizid){
@@ -628,6 +682,6 @@ class API {
 	
 	function createUUID($prefix){
 		global $USER;
-		return $prefix.$USER->firstname.uniqid();
+		return $prefix.strtolower($USER->firstname).uniqid();
 	}
 }

@@ -23,3 +23,17 @@ function addQuestion(){
 		
 	$('#noquestions').val(qno);
 }	
+
+
+function toggleOptionShow(){
+	$('#options').toggle();
+	$('#optionsshow').hide();
+	$('#optionshide').show();
+}
+
+function toggleOptionHide(){
+	$('#options').toggle();
+	$('#optionsshow').show();
+	$('#optionshide').hide();
+}
+

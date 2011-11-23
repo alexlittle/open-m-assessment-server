@@ -24,10 +24,20 @@ if(endsWith($page,'/')){
 $json = array();
 
 foreach($quizzes as $q){
-	$o = array(	'id'=>$q->ref,
-					'name'=>$q->title,
-					'url'=>$url_prefix."getquiz.php?ref=".$q->ref);
-	array_push($json,$o);
+	
+	$downloadable = true;
+	$props = $API->getQuizProps($q->quizid);
+	if(array_key_exists('downloadable', $props)){
+		if($props['downloadable'] == 'false'){
+			$downloadable = false;
+		}
+	}
+	if($downloadable){
+		$o = array(	'id'=>$q->ref,
+						'name'=>$q->title,
+						'url'=>$url_prefix."getquiz.php?ref=".$q->ref);
+		array_push($json,$o);
+	}
 	
 }
 

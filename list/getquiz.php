@@ -1,6 +1,7 @@
 <?php
 include_once ('../config.php');
 header("Content-type:text/plain;Charset:UTF-8");
+writeToLog("info","pagehit",$_SERVER["REQUEST_URI"]);
 
 $ref = optional_param('ref','',PARAM_TEXT);
 $username = optional_param("username","",PARAM_TEXT);
@@ -10,10 +11,20 @@ if (!userLogin($username,$password)){
 	die;
 }
 
-writeToLog("info","pagehit",$_SERVER["REQUEST_URI"]);
-
 $quiz = $API->getQuiz($ref);
 
+// check if currently downloadable
+$downloadable = true;
+$props = $API->getQuizProps($quiz->quizid);
+if(array_key_exists('downloadable', $props)){
+	if($props['downloadable'] == 'false'){
+		$downloadable = false;
+	}
+}
+if(!$downloadable){
+	echo "Quiz not available for download";
+	die;
+}
 $questions = array();
 
 $qq = $API->getQuizQuestions($quiz->quizid);
