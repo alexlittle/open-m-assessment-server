@@ -640,6 +640,7 @@ class API {
 	function get10PopularQuizzes(){
 		$sql = "SELECT Count(qa.id) as noattempts, qa.quizref, l.langtext FROM quizattempt qa
 					INNER JOIN language l ON l.langref = qa.quizref
+					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 					GROUP BY qa.quizref
 					ORDER BY Count(qa.id) DESC
 					LIMIT 0,10";
@@ -678,6 +679,24 @@ class API {
 			array_push($top10,$r);
 		}
 		return $top10;
+	}
+	
+	function getLeaderboard(){
+		$sql = "SELECT AVG(qascore*100/maxscore) as avgscore, u.firstname, u.lastname FROM quizattempt qa
+					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
+					INNER JOIN user u ON u.username = qa.submituser
+					ORDER BY AVG(qascore*100/maxscore) DESC
+					LIMIT 0,10";
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return ;
+		}
+		$leaders = array();
+		while($o = mysql_fetch_object($result)){
+			array_push($leaders,$o);
+		}
+		return $leaders;
 	}
 	
 	function createUUID($prefix){

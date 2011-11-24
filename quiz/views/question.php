@@ -23,6 +23,7 @@ google.load("visualization", "1", {
 		chart.draw(data, {
 				width: 900, 
 				height: 600,
+				hAxis: {minValue:0},
 				vAxis: {title: 'Question'},
 				chartArea:{left:200,top:50,width:"60%",height:"75%"}
 		});
