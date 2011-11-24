@@ -25,9 +25,11 @@ body {
 
 h1 {
 	font-size: 130%; 
+	margin:20px 0;
 }
 h2 {
 	font-size: 120%; 
+	margin:10px 0;
 }
 h3 {
 	font-size: 100%; 

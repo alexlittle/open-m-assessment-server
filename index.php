@@ -15,7 +15,7 @@ $leaderboard = $API->getLeaderboard();
 </div>
 
 <div id="start2" class="homestart">
-<h3>2. Take the quiz on your smartphone</h3> 
+<h3>2. Take a quiz on your smartphone</h3> 
 <iframe width="220" height="165" src="http://www.youtube.com/embed/kvOAo06CTcI" frameborder="0" allowfullscreen></iframe>
 </div>
 

@@ -229,7 +229,6 @@ class API {
 						WHERE quizref = '%s'
 						AND submitdate > DATE_ADD(NOW(), INTERVAL -%d DAY) 
 						ORDER BY submitdate DESC",$ref,$days);
-
 		$summary = array();
 		$result = _mysql_query($sql,$this->DB);
 		while($o = mysql_fetch_object($result)){
@@ -259,8 +258,12 @@ class API {
 								DAY(submitdate) as day, 
 								MONTH(submitdate) as month, 
 								YEAR(submitdate) as year 
-						FROM quizattempt WHERE quizref='%s' 
+						FROM quizattempt qa
+						LEFT OUTER JOIN user u ON qa.submituser = u.username
+						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
+						WHERE quizref='%s' 
 						AND submitdate > DATE_ADD(NOW(), INTERVAL -%d DAY) 
+						AND u.userid != q.createdby
 						GROUP BY DAY(submitdate), MONTH(submitdate), YEAR(submitdate)",$ref,$days);
 		$result = _mysql_query($sql,$this->DB);
 		$summary = array();
@@ -275,8 +278,11 @@ class API {
 	}
 	
 	function getQuizNoAttempts($quizref){
-		$sql = sprintf("SELECT Count(*) as noattempts, AVG(qascore*100/maxscore) as avgscore FROM quizattempt
-							WHERE quizref = '%s'",$quizref);
+		$sql = sprintf("SELECT Count(*) as noattempts, AVG(qascore*100/maxscore) as avgscore FROM quizattempt qa
+						LEFT OUTER JOIN user u ON qa.submituser = u.username
+						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
+						WHERE quizref = '%s'
+						AND u.userid != q.createdby",$quizref);
 		$result = _mysql_query($sql,$this->DB);
 
 		$a = new stdClass;
@@ -299,9 +305,12 @@ class API {
 	}
 	
 	function getQuizScores($quizref){
-		$sql = sprintf("SELECT Count(*) as NoScores, qascore*100/maxscore as scorepercent FROM quizattempt
-					WHERE quizref = '%s'
-					group by qascore",$quizref);
+		$sql = sprintf("SELECT Count(*) as NoScores, qascore*100/maxscore as scorepercent FROM quizattempt qa
+						LEFT OUTER JOIN user u ON qa.submituser = u.username
+						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
+						WHERE quizref = '%s'
+						AND u.userid != q.createdby
+						GROUP BY qascore",$quizref);
 		$result = _mysql_query($sql,$this->DB);
 		$resp = array();
 		if (!$result){
@@ -317,8 +326,11 @@ class API {
 	function getQuizAvgResponseScores($quizref){
 		$sql = sprintf("SELECT AVG(qarscore) as avgscore,  questionrefid, langtext FROM quizattemptresponse qar
 						INNER JOIN quizattempt qa ON qa.id = qar.qaid
+						LEFT OUTER JOIN user u ON qa.submituser = u.username
+						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						INNER JOIN language l ON l.langref = qar.questionrefid
 						WHERE quizref = '%s'
+						AND u.userid != q.createdby
 						GROUP BY questionrefid",$quizref);
 		$result = _mysql_query($sql,$this->DB);
 		$resp = array();
@@ -685,6 +697,9 @@ class API {
 		$sql = "SELECT AVG(qascore*100/maxscore) as avgscore, u.firstname, u.lastname FROM quizattempt qa
 					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 					INNER JOIN user u ON u.username = qa.submituser
+					WHERE u.userid != q.createdby
+					GROUP BY u.firstname, u.lastname
+					HAVING COUNT(DISTINCT quizref) > 2
 					ORDER BY AVG(qascore*100/maxscore) DESC
 					LIMIT 0,10";
 		$result = _mysql_query($sql,$this->DB);
