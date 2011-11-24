@@ -52,7 +52,7 @@ if ($lang != ""){
 				<?php 
 					if (isLoggedIn()){
 				?>
-						<li><?php echo $USER->firstname; ?></li>
+						<li><?php echo $USER->firstname." ".$USER->lastname; ?></li>
 						<li><a href="<?php echo $CONFIG->homeAddress; ?>profile.php">Profile</a></li>
 						<li><a href="<?php echo $CONFIG->homeAddress; ?>logout.php">Logout</a></li>
 				<?php 

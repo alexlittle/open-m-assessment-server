@@ -225,9 +225,11 @@ class API {
 			$days = DEFAULT_DAYS;
 		}
 		$sql = sprintf("SELECT ((qascore*100)/ maxscore) as score, firstname, lastname, submitdate FROM quizattempt qa
-						LEFT OUTER JOIN user u ON qa.submituser = u.username
+						INNER JOIN user u ON qa.submituser = u.username
+						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						WHERE quizref = '%s'
 						AND submitdate > DATE_ADD(NOW(), INTERVAL -%d DAY) 
+						AND u.userid != q.createdby
 						ORDER BY submitdate DESC",$ref,$days);
 		$summary = array();
 		$result = _mysql_query($sql,$this->DB);
@@ -259,7 +261,7 @@ class API {
 								MONTH(submitdate) as month, 
 								YEAR(submitdate) as year 
 						FROM quizattempt qa
-						LEFT OUTER JOIN user u ON qa.submituser = u.username
+						INNER JOIN user u ON qa.submituser = u.username
 						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						WHERE quizref='%s' 
 						AND submitdate > DATE_ADD(NOW(), INTERVAL -%d DAY) 
@@ -279,7 +281,7 @@ class API {
 	
 	function getQuizNoAttempts($quizref){
 		$sql = sprintf("SELECT Count(*) as noattempts, AVG(qascore*100/maxscore) as avgscore FROM quizattempt qa
-						LEFT OUTER JOIN user u ON qa.submituser = u.username
+						INNER JOIN user u ON qa.submituser = u.username
 						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						WHERE quizref = '%s'
 						AND u.userid != q.createdby",$quizref);
@@ -306,7 +308,7 @@ class API {
 	
 	function getQuizScores($quizref){
 		$sql = sprintf("SELECT Count(*) as NoScores, qascore*100/maxscore as scorepercent FROM quizattempt qa
-						LEFT OUTER JOIN user u ON qa.submituser = u.username
+						INNER JOIN user u ON qa.submituser = u.username
 						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						WHERE quizref = '%s'
 						AND u.userid != q.createdby
@@ -324,14 +326,14 @@ class API {
 	}
 	
 	function getQuizAvgResponseScores($quizref){
-		$sql = sprintf("SELECT AVG(qarscore) as avgscore,  questionrefid, langtext FROM quizattemptresponse qar
+		$sql = sprintf("SELECT AVG(qarscore) as avgscore, langtext FROM quizattemptresponse qar
 						INNER JOIN quizattempt qa ON qa.id = qar.qaid
-						LEFT OUTER JOIN user u ON qa.submituser = u.username
+						INNER JOIN user u ON qa.submituser = u.username
 						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						INNER JOIN language l ON l.langref = qar.questionrefid
 						WHERE quizref = '%s'
 						AND u.userid != q.createdby
-						GROUP BY questionrefid",$quizref);
+						GROUP BY langtext",$quizref);
 		$result = _mysql_query($sql,$this->DB);
 		$resp = array();
 		if (!$result){
@@ -653,6 +655,8 @@ class API {
 		$sql = "SELECT Count(qa.id) as noattempts, qa.quizref, l.langtext FROM quizattempt qa
 					INNER JOIN language l ON l.langref = qa.quizref
 					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
+					INNER JOIN user u ON u.username = qa.submituser
+					WHERE u.userid != q.createdby
 					GROUP BY qa.quizref
 					ORDER BY Count(qa.id) DESC
 					LIMIT 0,10";
