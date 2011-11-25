@@ -24,14 +24,14 @@ if ($submit != ""){
 include_once "includes/header.php";
 
 if(!empty($MSG)){
-	echo "<ul>";
+	echo "<div class='warning'><ul>";
 	foreach ($MSG as $err){
 		echo "<li>".$err."</li>";
     }
-    echo "</ul>";
+    echo "</ul></div>";
 }
 
-echo getstring("warning.login.required",array("register.php"));
+echo getstring("warning.login.required",array("register.php?ref=".$ref));
 ?>
 
 <form method="post" action="">

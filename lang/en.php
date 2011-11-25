@@ -2,9 +2,10 @@
 
 $LANG = array();
 $LANG["app.title"] = "mQuiz";
+
 $LANG['login.password'] = 'Password';
 $LANG['login.submit.button'] = 'Login';
-$LANG['login.username'] = 'Username/email';
+$LANG['login.username'] = 'Email';
 
 $LANG['myquizzes.none'] = "You haven't created any quizzes yet. Why not <a href='%s'>create one</a>?";
 $LANG['myquizzes.title'] = "My Quizzes";
@@ -42,7 +43,7 @@ $LANG['register.username'] = 'Username';
 
 $LANG['user.anon'] = 'Anonymous';
 
-$LANG['warning.login.invalid'] = "Invalid username or password";
+$LANG['warning.login.invalid'] = "Email or password not recognised";
 $LANG['warning.login.nopassword'] = "Please enter your password";
 $LANG['warning.login.required'] = "Please login or <a href='%s'>register</a>";
 $LANG['warning.quiz.notfound'] = "Quiz not found";

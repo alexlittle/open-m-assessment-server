@@ -2,10 +2,11 @@
 include_once("../config.php");
 header("Content-type:text/plain;charset:utf-8");
 $method = optional_param("method","",PARAM_TEXT);
+$username = optional_param("username","",PARAM_TEXT);
+$password = optional_param("password","",PARAM_TEXT);
 
 if($method == 'register'){
 	$email = optional_param("email","",PARAM_TEXT);
-	$password = optional_param("password","",PARAM_TEXT);
 	$passwordAgain = optional_param("passwordagain","",PARAM_TEXT);
 	$firstname = optional_param("firstname","",PARAM_TEXT);
 	$lastname = optional_param("lastname","",PARAM_TEXT);
@@ -48,4 +49,38 @@ if($method == 'register'){
 	echo "success";
 	die;
 }
+
+if($method == 'downloaded'){
+	$quizref = optional_param("quizref","",PARAM_TEXT);
+	// login user
+	if (!userLogin($username,$password)){
+		echo "Login failed";
+		die;
+	}
+	// get quiz
+	$q = $API->getQuiz($quizref);
+	if($q != null){
+	//mark as downloaded
+		$result = $API->setQuizDownloaded($USER->userid, $q->quizid);
+		if($result){
+			echo "success";
+		} else {
+			echo "failure";
+		}
+	} else {
+		echo "Quiz not found";
+	}
+	die;
+}
+
+if($method == 'downloadqueue'){
+	// login user
+	if (!userLogin($username,$password)){
+		echo "Login failed";
+		die;
+	}
+	$queue = $API->getQuizDownloadQueue($USER->userid);
+	echo json_encode($queue);
+}
+
 ?>

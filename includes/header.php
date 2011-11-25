@@ -57,9 +57,10 @@ if ($lang != ""){
 						<li><a href="<?php echo $CONFIG->homeAddress; ?>logout.php">Logout</a></li>
 				<?php 
 					} else {
+						$url = "http" . ((!empty($_SERVER["HTTPS"])) ? "s" : "") . "://".$_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
 				?>
 						<li><a href="<?php echo $CONFIG->homeAddress; ?>login.php">Login</a></li>
-						<li><a href="<?php echo $CONFIG->homeAddress; ?>register.php">Register</a></li>
+						<li><a href="<?php echo $CONFIG->homeAddress; ?>register.php?ref=<?php echo $url; ?>">Register</a></li>
 				<?php 
 					}
 				?>

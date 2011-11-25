@@ -718,6 +718,69 @@ class API {
 		return $leaders;
 	}
 	
+	function addQuizToDownloadQueue($userid,$quizid,$queued){
+		$sql = sprintf("INSERT INTO download (userid,quizid,queued) VALUES (%d,%d,%s)",$userid,$quizid,$queued);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return false;
+		}
+		return true;
+	}
+	
+	function getQuizDownloadQueue($userid){
+		$sql = sprintf("SELECT DISTINCT q.quiztitleref as quizref FROM download d
+						INNER JOIN quiz q ON q.quizid = d.quizid
+						WHERE userid = %d 
+						AND queued = true",$userid);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return false;
+		}
+		$queue = array();
+		while($o = mysql_fetch_object($result)){
+			array_push($queue,$o->quizref);
+		}
+		return $queue;
+	}
+	
+	function setQuizDownloaded($userid,$quizid){
+		// find out if already in queue (so only need to update)
+		$sql = sprintf("SELECT dlid FROM download 
+						WHERE userid = %d 
+						AND quizid = %d 
+						AND queued = true",$userid, $quizid);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return false;
+		}
+		
+		// if queued then just update, otherwise add a record
+		if (mysql_num_rows($result) > 0){
+			while($o = mysql_fetch_object($result)){
+				$usql = sprintf("UPDATE download 
+									SET queued = false,
+									dldate = now()
+								WHERE dlid = %d",$o->dlid);
+				$uresult = _mysql_query($usql,$this->DB);
+				if (!$uresult){
+					writeToLog('error','database',$usql);
+					return false;
+				}
+			}
+		} else {
+			$isql = sprintf("INSERT INTO download (userid,quizid,queued) VALUES (%d,%d,false)",$userid,$quizid);
+			$iresult = _mysql_query($isql,$this->DB);
+			if (!$iresult){
+				writeToLog('error','database',$isql);
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	function createUUID($prefix){
 		global $USER;
 		return $prefix.strtolower($USER->firstname).uniqid();
