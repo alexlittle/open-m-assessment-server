@@ -148,7 +148,7 @@ class API {
 	
 	function insertQuizAttempt($qa){
 		$qa->submituser = strtolower($qa->submituser);
-		$qa->user = strtolower($qa->user);
+		$qa->user = strtolower($qa->submituser);
 		$sql = sprintf("INSERT INTO quizattempt (quizref,qadate,qascore,qauser,submituser, maxscore) 
 					VALUES ('%s',%d, %d, '%s', '%s',%d)",
 					$qa->quizref,
@@ -740,7 +740,7 @@ class API {
 		}
 		$queue = array();
 		while($o = mysql_fetch_object($result)){
-			array_push($queue,$o->quizref);
+			array_push($queue, array('quizref'=> $o->quizref));
 		}
 		return $queue;
 	}
