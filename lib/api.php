@@ -718,12 +718,24 @@ class API {
 		return $leaders;
 	}
 	
-	function addQuizToDownloadQueue($userid,$quizid,$queued){
-		$sql = sprintf("INSERT INTO download (userid,quizid,queued) VALUES (%d,%d,%s)",$userid,$quizid,$queued);
+	function addQuizToDownloadQueue($userid,$quizid){
+		// find out if already in download queue
+		$sql = sprintf("SELECT dlid FROM download
+								WHERE userid = %d 
+								AND quizid = %d 
+								AND queued = true",$userid, $quizid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			writeToLog('error','database',$sql);
 			return false;
+		}
+		if (mysql_num_rows($result) == 0){
+			$isql = sprintf("INSERT INTO download (userid,quizid,queued) VALUES (%d,%d,true)",$userid,$quizid);
+			$iresult = _mysql_query($isql,$this->DB);
+			if (!$result){
+				writeToLog('error','database',$isql);
+				return false;
+			}
 		}
 		return true;
 	}
@@ -780,6 +792,44 @@ class API {
 		}
 		return true;
 	}
+	
+	function getUserDownloadQueue($userid){
+		$sql = sprintf("SELECT DISTINCT q.quiztitleref as quizref, l.langtext as quiztitle, dldate as queuedate FROM download d
+								INNER JOIN quiz q ON q.quizid = d.quizid
+								INNER JOIN language l ON q.quiztitleref = l.langref
+								WHERE userid = %d 
+								AND queued = true",$userid);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return false;
+		}
+		$queue = array();
+		while($o = mysql_fetch_object($result)){
+			array_push($queue,$o);
+		}
+		return $queue;
+	}
+	
+	function getUserDownloadHistory($userid){
+		$sql = sprintf("SELECT q.quiztitleref as quizref, l.langtext as quiztitle, dldate as historydate FROM download d
+						INNER JOIN quiz q ON q.quizid = d.quizid
+						INNER JOIN language l ON q.quiztitleref = l.langref
+						WHERE userid = %d 
+						AND queued = false
+						ORDER BY dldate DESC",$userid);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return false;
+		}
+		$history = array();
+		while($o = mysql_fetch_object($result)){
+			array_push($history,$o);
+		}
+		return $history;
+	}
+	
 	
 	function createUUID($prefix){
 		global $USER;

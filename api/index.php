@@ -1,6 +1,8 @@
 <?php 
 include_once("../config.php");
 header("Content-type:text/plain;charset:utf-8");
+writeToLog("info","pagehit",$_SERVER["REQUEST_URI"]);
+
 $method = optional_param("method","",PARAM_TEXT);
 $username = optional_param("username","",PARAM_TEXT);
 $password = optional_param("password","",PARAM_TEXT);
