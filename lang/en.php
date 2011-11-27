@@ -9,7 +9,7 @@ $LANG['login.username'] = 'Email';
 
 $LANG['mydownloads.history.empty'] = "You haven't downloaded any quizzes to your phone.";
 $LANG['mydownloads.history.title'] = "My download history";
-$LANG['mydownloads.queue.added'] = "'%s' has been added to your download queue";
+$LANG['mydownloads.queue.added'] = "'%s' quiz will be downloaded to your phone next time you start the mQuiz phone application.";
 $LANG['mydownloads.queue.title'] = "Quizzes queued for download";
 $LANG['mydownloads.queue.empty'] = "You don't have any quizzes waiting to be downloaded to your phone.";
 $LANG['mydownloads.title'] = "My Downloaded Quizzes";

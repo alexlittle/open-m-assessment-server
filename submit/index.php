@@ -12,7 +12,7 @@ if($content == ""){
 	die;
 }
 
-if(!userLogin($username,$password)){
+if(!userLogin($username,$password,false)){
 	echo "Login failed";
 	die;
 }

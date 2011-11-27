@@ -1,7 +1,7 @@
 <?php
 
 
-function userLogin($username,$password){
+function userLogin($username,$password,$log = true){
 	global $USER,$MSG;
     clearSession();
     
@@ -17,7 +17,9 @@ function userLogin($username,$password){
             if($passwordCheck){
                 createSession($USER);
                 setLang($USER->getProp('lang'));
-                writeToLog('info','login','user logged in');
+                if($log){
+                	writeToLog('info','login','user logged in');
+                }
                 return true;
             } else {
             	array_push($MSG,getstring('warning.login.invalid'));

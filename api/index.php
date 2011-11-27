@@ -7,6 +7,10 @@ $method = optional_param("method","",PARAM_TEXT);
 $username = optional_param("username","",PARAM_TEXT);
 $password = optional_param("password","",PARAM_TEXT);
 
+/*
+ * Methods with no login required
+ */
+
 if($method == 'register'){
 	$email = optional_param("email","",PARAM_TEXT);
 	$passwordAgain = optional_param("passwordagain","",PARAM_TEXT);
@@ -52,13 +56,21 @@ if($method == 'register'){
 	die;
 }
 
+/*
+ * Login user
+ */
+if (!userLogin($username,$password,false)){
+	echo "Login failed";
+	die;
+}
+
+/*
+ * Methods with login required
+ */
 if($method == 'downloaded'){
 	$quizref = optional_param("quizref","",PARAM_TEXT);
 	// login user
-	if (!userLogin($username,$password)){
-		echo "Login failed";
-		die;
-	}
+	
 	// get quiz
 	$q = $API->getQuiz($quizref);
 	if($q != null){
@@ -76,11 +88,6 @@ if($method == 'downloaded'){
 }
 
 if($method == 'downloadqueue'){
-	// login user
-	if (!userLogin($username,$password)){
-		echo "Login failed";
-		die;
-	}
 	$queue = $API->getQuizDownloadQueue($USER->userid);
 	echo json_encode($queue);
 }

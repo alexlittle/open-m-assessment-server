@@ -5,7 +5,7 @@ header("Content-type:text/plain;Charset:UTF-8");
 
 $username = optional_param("username","",PARAM_TEXT);
 $password = optional_param("password","",PARAM_TEXT);
-if (!userLogin($username,$password)){
+if (!userLogin($username,$password,false)){
 	echo "Login failed";
 	die;
 }
