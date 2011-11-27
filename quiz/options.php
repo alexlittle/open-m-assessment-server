@@ -1,5 +1,5 @@
 <?php 
-if(isset($q)){
+if(isset($q->props)){
 	if(array_key_exists('downloadable',$q->props)){
 		$downloadable = $q->props['downloadable'];
 	}

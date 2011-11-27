@@ -30,14 +30,17 @@ $LANG['quiz.edit.responses'] = 'Response options';
 $LANG['quiz.edit.saved'] = 'Changes saved';
 
 
-$LANG['quiz.new.submit.button'] = "Create quiz";
+
 $LANG['quiz.new.add'] = 'Add another question';
-$LANG['quiz.new.title'] = 'Create a new quiz';
+$LANG['quiz.new.error.notitle'] = 'You must give your quiz a title';
+$LANG['quiz.new.error.noquestions'] = 'You must add at least one question';
 $LANG['quiz.new.quiztitle'] = 'Title';
 $LANG['quiz.new.questions'] = 'Questions';
 $LANG['quiz.new.question'] = 'Question';
 $LANG['quiz.new.responses'] = 'Response options';
 $LANG['quiz.new.saved'] = 'Your quiz has been created!';
+$LANG['quiz.new.submit.button'] = "Create quiz";
+$LANG['quiz.new.title'] = 'Create a new quiz';
 
 $LANG['register.email'] = 'Email';
 $LANG['register.firstname'] = 'First name';

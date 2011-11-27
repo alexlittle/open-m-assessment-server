@@ -8,6 +8,8 @@ printf("<h1>%s</h1>", getstring("mydownloads.title"));
 
 // stuff here to add any new quizzes to download queue (from url)
 $quizref = optional_param("quizref","",PARAM_TEXT);
+$quizref = optional_param("ref",$quizref,PARAM_TEXT);
+
 if($quizref != ""){
 	$quiz = $API->getQuiz($quizref);
 	if ($quiz != null){

@@ -26,7 +26,7 @@ if ($submit != ""){
 		//update quiz props
 		$quizprops = array('downloadable','submitable');
 		foreach($quizprops as $qp){
-			if(in_array($qp,$props)){
+			if(is_array($props) && in_array($qp,$props)){
 				$API->setProp('quiz',$q->quizid,$qp,'true');
 			} else {
 				$API->setProp('quiz',$q->quizid,$qp,'false');

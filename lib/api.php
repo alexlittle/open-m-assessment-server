@@ -417,6 +417,25 @@ class API {
 		}
 	}
 	
+	function getQuizById($quizid){
+		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
+							INNER JOIN language l ON q.quiztitleref = l.langref
+							WHERE q.quizid = %d",$quizid);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return;
+		}
+		while($r = mysql_fetch_object($result)){
+			$q = new stdClass;
+			$q->quizid = $r->quizid;
+			$q->ref = $r->quiztitleref;
+			$q->title = $r->langtext;
+			$q->props = $this->getQuizProps($r->quizid);
+			return $q;
+		}
+	}
+	
 	function getQuizForUser($ref,$userid){
 		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
 						INNER JOIN language l ON q.quiztitleref = l.langref
