@@ -6,9 +6,7 @@ class Mailer{
 		$email = $CONFIG->emailfrom ;
 		$subject = 'mQuiz: New Signup' ;
 		$message = $name. ' just signed up to mQuiz' ;
-		$headers = 'From: '.$CONFIG->emailfrom. '\r\n' .
-		   'Reply-To: '.$CONFIG->emailfrom.'\r\n' .
-		   'X-Mailer: PHP/' . phpversion();
+		$headers = 'From: '.$CONFIG->emailfrom;
 		mail($email, $subject, $message, $headers );
 	}
 }

@@ -2,7 +2,7 @@
 include_once("config.php");
 global $PAGE,$MSG,$API;
 $PAGE = "register";
-include_once("./includes/header.php");
+
 
 $password = optional_param("password","",PARAM_TEXT);
 $repeatpassword = optional_param("repeatpassword","",PARAM_TEXT);
@@ -47,6 +47,7 @@ if ($submit != ""){
 	if(count($MSG) == 0){
 		if($API->addUser($email, $password, $firstname, $surname, $email)){
 			userLogin($email,$password);
+			include_once("./includes/header.php");
 			echo "<div class='info'>";
 			echo "You are now registered, please <a href='".$ref."'>continue</a>";
 			echo "</div>";
@@ -61,6 +62,7 @@ if ($submit != ""){
 	
 }
 
+include_once("./includes/header.php");
 echo "<h1>".getstring("register.title")."</h1>";
 
 if(!empty($MSG)){
