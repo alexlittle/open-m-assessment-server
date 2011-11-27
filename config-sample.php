@@ -20,5 +20,6 @@ $CONFIG->dbuser = "XXXXXX";
 $CONFIG->dbpass = "XXXXXX"; 
 
 $CONFIG->googleanalytics = "";
+$CONFIG->emailfrom = "xxxxxxxx@xxxxxxxxx.com";
 
 include_once("setup.php");

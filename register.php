@@ -51,6 +51,8 @@ if ($submit != ""){
 			echo "You are now registered, please <a href='".$ref."'>continue</a>";
 			echo "</div>";
 			include_once("./includes/footer.php");
+			$m = new Mailer();
+			$m->sendSignUpNotification($firstname." ".$lastname);
 			die;
 		} else {
 			array_push($MSG,"Sorry, registration failure, please try again later");

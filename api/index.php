@@ -52,6 +52,8 @@ if($method == 'register'){
 	}
 	
 	$API->addUser($email, $password, $firstname, $lastname, $email);
+	$m = new Mailer();
+	$m->sendSignUpNotification($firstname." ".$lastname);
 	echo "success";
 	die;
 }

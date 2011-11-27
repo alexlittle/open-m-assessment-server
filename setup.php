@@ -14,15 +14,14 @@ require_once $CONFIG->homePath."lib/api.php";
 require_once $CONFIG->homePath."lib/objects.php";
 require_once $CONFIG->homePath."lib/loglib.php";
 require_once $CONFIG->homePath."lib/i8nlib.php";
-
+require_once $CONFIG->homePath."lib/mailer.php";
 require_once $CONFIG->homePath."lib/user.class.php";
 
 unset($API);
 global $API;
 $API = new API();
 
-//start session
-startSession();
+
     
 unset($USER);
 global $USER;
@@ -37,10 +36,15 @@ unset($MSG);
 global $MSG;
 $MSG = array();
 
-if (isset($_SESSION["session_username"])){
+//start session
+startSession();
+
+if (isset($_SESSION["session_username"]) && $_SESSION["session_username"] != ""){
 	$USER = new User($_SESSION["session_username"]);
 } else {
 	$USER = new User("");
 }
+
+
 
 
