@@ -6,7 +6,7 @@ writeToLog("info","pagehit",$_SERVER["REQUEST_URI"]);
 $ref = optional_param('ref','',PARAM_TEXT);
 $username = optional_param("username","",PARAM_TEXT);
 $password = optional_param("password","",PARAM_TEXT);
-if (!userLogin($username,$password)){
+if (!userLogin($username,$password,false)){
 	echo "Login failed";
 	die;
 }

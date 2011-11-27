@@ -11,6 +11,8 @@ $surname = optional_param("surname","",PARAM_TEXT);
 $email = optional_param("email","",PARAM_TEXT);
 $submit = optional_param("submit","",PARAM_TEXT);
 
+$ref = optional_param("ref",$CONFIG->homeAddress."index.php",PARAM_TEXT);
+
 if ($submit != ""){
 	if ($email == ""){
 		array_push($MSG,"Enter your email");
@@ -38,17 +40,20 @@ if ($submit != ""){
 	$u = new User($email);
 	$user = $API->getUser($u);
 	if($user->userid != ""){
-		array_push($MSG,"Username/email already in use, please select another");
+		array_push($MSG,"Email already in use, please select another");
 	}
 	
 	// create user
 	if(count($MSG) == 0){
 		if($API->addUser($email, $password, $firstname, $surname, $email)){
-			echo "You are now registered, please <a href='login.php'>login</a>";
+			userLogin($email,$password);
+			echo "<div class='info'>";
+			echo "You are now registered, please <a href='".$ref."'>continue</a>";
+			echo "</div>";
 			include_once("./includes/footer.php");
 			die;
 		} else {
-			array_push($MSG,"Registration failure - sorry!");
+			array_push($MSG,"Sorry, registration failure, please try again later");
 		}
 	}
 	

@@ -14,7 +14,6 @@ if($quizref != ""){
 		$API->addQuizToDownloadQueue($USER->userid,$quiz->quizid);
 		echo "<div class='info'>";
 		echo getstring("mydownloads.queue.added",array($quiz->title));
-		echo "<p>This quiz will be downloaded to you phone after you next run the mQuiz phone application.</p>";
 		echo "</div>";
 	}
 }
