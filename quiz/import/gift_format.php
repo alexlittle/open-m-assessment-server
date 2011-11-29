@@ -194,7 +194,7 @@ class qformat_gift extends qformat_default {
             $question->category = $newcategory;
             return $question;
         }
-
+		echo "here";
         // QUESTION NAME parser
         if (substr($text, 0, 2) == '::') {
             $text = substr($text, 2);
@@ -212,7 +212,7 @@ class qformat_gift extends qformat_default {
             $question->name = false;
         }
 
-
+        echo "here";
         // FIND ANSWER section
         // no answer means its a description
         $answerstart = strpos($text, '{');
@@ -230,7 +230,7 @@ class qformat_gift extends qformat_default {
             $answerlength = $answerfinish - $answerstart;
             $answertext = trim(substr($text, $answerstart + 1, $answerlength - 1));
         }
-
+        echo "here";
         // Format QUESTION TEXT without answer, inserting "_____" as necessary
         if ($description) {
             $questiontext = $text;
@@ -241,7 +241,7 @@ class qformat_gift extends qformat_default {
             // inserts blank line for missing word format
             $questiontext = substr_replace($text, "_____", $answerstart, $answerlength+1);
         }
-
+        echo "here";
         // Get questiontext format from questiontext
         $text = $this->parse_text_with_format($questiontext);
         $question->questiontextformat = $text['format'];
@@ -259,14 +259,8 @@ class qformat_gift extends qformat_default {
 
         // determine QUESTION TYPE
         $question->qtype = NULL;
-
-        // give plugins first try
-        // plugins must promise not to intercept standard qtypes
-        // MDL-12346, this could be called from lesson mod which has its own base class =(
-        if (method_exists($this, 'try_importing_using_qtypes') && ($try_question = $this->try_importing_using_qtypes($lines, $question, $answertext))) {
-            return $try_question;
-        }
-
+        echo "here262";
+        echo "here269";
         if ($description) {
             $question->qtype = DESCRIPTION;
 
@@ -302,20 +296,26 @@ class qformat_gift extends qformat_default {
                 $question->qtype = SHORTANSWER;
             }
         }
-
+		echo "here299";
+        echo $question->qtype;
+        
         if (!isset($question->qtype)) {
             $giftqtypenotset = get_string('giftqtypenotset', 'qformat_gift');
             $this->error($giftqtypenotset, $text);
             return false;
         }
-
+        echo "here307";
+        echo "123:".$question->qtype;
+        echo "---".DESCRIPTION."---";
         switch ($question->qtype) {
             case DESCRIPTION:
+            	echo "description";
                 $question->defaultmark = 0;
                 $question->length = 0;
                 return $question;
 
             case ESSAY:
+            	echo "ESSAY";
                 $question->responseformat = 'editor';
                 $question->responsefieldlines = 15;
                 $question->attachments = 0;
@@ -324,6 +324,7 @@ class qformat_gift extends qformat_default {
                 return $question;
 
             case MULTICHOICE:
+            	echo "MULTICHOICE";
                 if (strpos($answertext,"=") === false) {
                     $question->single = 0; // multiple answers are enabled if no single answer is 100% correct
                 } else {
@@ -365,9 +366,11 @@ class qformat_gift extends qformat_default {
                     $question->fraction[$key] = $answer_weight;
                 }  // end foreach answer
 
+                print_r($question);
                 return $question;
 
             case MATCH:
+            	echo "MATCH";
                 $question = $this->add_blank_combined_feedback($question);
 
                 $answers = explode('=', $answertext);
@@ -399,6 +402,7 @@ class qformat_gift extends qformat_default {
                 return $question;
 
             case TRUEFALSE:
+            	echo "TRUEFALSE";
                 list($answer, $wrongfeedback, $rightfeedback) =
                         $this->split_truefalse_comment($answertext, $question->questiontextformat);
 
@@ -413,10 +417,11 @@ class qformat_gift extends qformat_default {
                 }
 
                 $question->penalty = 1;
-
+				print_r($question);
                 return $question;
 
             case SHORTANSWER:
+            	echo "SHORTANSWER";
                 // SHORTANSWER Question
                 $answers = explode("=", $answertext);
                 if (isset($answers[0])) {
@@ -450,6 +455,7 @@ class qformat_gift extends qformat_default {
                 return $question;
 
             case NUMERICAL:
+            	echo "NUMERICAL";
                 // Note similarities to ShortAnswer
                 $answertext = substr($answertext, 1); // remove leading "#"
 
@@ -530,6 +536,7 @@ class qformat_gift extends qformat_default {
                 return $question;
 
             default:
+            	echo "INVALID";
                 $this->error(get_string('giftnovalidquestion', 'qformat_gift'), $text);
                 return false;
 

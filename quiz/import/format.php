@@ -255,27 +255,20 @@ class qformat_default {
         // work out what format we are using
         $formatname = substr(get_class($this), strlen('qformat_'));
         $methodname = "import_from_$formatname";
-
-        //first try importing using a hint from format
-        if (!empty($qtypehint)) {
-            $qtype = question_bank::get_qtype($qtypehint, false);
-            if (is_object($qtype) && method_exists($qtype, $methodname)) {
-                $question = $qtype->$methodname($data, $question, $this, $extra);
-                if ($question) {
-                    return $question;
-                }
-            }
-        }
-
+		echo "here258";
+       
+        echo "here260";
         // loop through installed questiontypes checking for
         // function to handle this question
-        foreach (question_bank::get_all_qtypes() as $qtype) {
+        
+        foreach (get_all_qtypes() as $qtype) {
             if (method_exists($qtype, $methodname)) {
                 if ($question = $qtype->$methodname($data, $question, $this, $extra)) {
                     return $question;
                 }
             }
         }
+        echo "here271";
         return false;
     }
 
@@ -548,7 +541,7 @@ class qformat_default {
      * @param object $context
      * @return array array of question objects
      */
-    protected function readquestions($lines, $context) {
+    function readquestions($lines) {
 
         $questions = array();
         $currentquestion = array();
@@ -568,7 +561,7 @@ class qformat_default {
         }
 
         if (!empty($currentquestion)) {  // There may be a final question
-            if ($question = $this->readquestion($currentquestion, $context)) {
+            if ($question = $this->readquestion($currentquestion)) {
                 $questions[] = $question;
             }
         }
