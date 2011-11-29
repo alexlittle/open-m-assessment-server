@@ -3,6 +3,15 @@
 $LANG = array();
 $LANG["app.title"] = "mQuiz";
 
+$LANG["import.quiz.add.button"] = "Import quiz";
+$LANG["import.quiz.content"] = "Content";
+$LANG["import.quiz.file"] = "Upload a file";
+$LANG["import.quiz.format"] = "Format";
+$LANG["import.quiz.format.gift"] = "GIFT";
+$LANG["import.quiz.title"] = "Title";
+$LANG["import.title"] = "Import Quiz";
+
+
 $LANG['login.password'] = 'Password';
 $LANG['login.submit.button'] = 'Login';
 $LANG['login.username'] = 'Email';

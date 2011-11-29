@@ -1,8 +1,5 @@
 <?php 
 
-define('FORMAT_MOODLE','0');
-define('FORMAT_HTML','0');
-
 function get_config($k, $v){
 
 	if($k == 'quiz' && $v == 'shuffleanswers'){
