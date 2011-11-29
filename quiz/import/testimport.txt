@@ -1,9 +1,9 @@
 // true-false
-::Q1:: 1+1=2 {T}            // not sure if comments are okay here
+::Q1:: 1+1=2 {T}           
 
 // multiple choice with specific feedback
 ::Q2:: What's between orange and green in the spectrum?
-{=yellow # correct! ~red # wrong, it's yellow ~blue # wrong, it's yellow}
+{=yellow # correct! ~red ~blue # wrong, it's yellow}
 
 // fill-in-the-blank
 ::Q3:: Two plus {=two =2} equals four.

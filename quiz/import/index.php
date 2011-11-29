@@ -3,7 +3,7 @@
 include_once('extras.php');
 include_once('format.php');
 include_once('gift_format.php');
-header("Content-type:text/plain;charset:utf-8");
+header("Content-type:text/html;charset:utf-8");
 $file = "testimport.txt";
 if (!file_exists($file)) {
 	echo "file not found";
@@ -12,19 +12,26 @@ if (!file_exists($file)) {
 
 $quiz = file($file);
 
-
+echo "<pre>";
 print_r($quiz);
+echo "</pre>";
 
-print("\n\n----------------------------\n\n");
+print("<hr/>");
 
 $import = new qformat_gift();
+echo "<h2>GIFT Object</h2><pre>";
 print_r($import);
-print("\n\n----------------------------\n\n");
+echo "</pre>";
+print("<hr/>");
 
 $questions = $import->readquestions($quiz);
 
 foreach($questions as $q){
-	$import->readquestion($q);
+	echo "<h2>".$q->questiontext."</h2><pre>";
+	print_r($q);
+	echo "</pre>";
+	print("<hr/>");
+//	echo $import->writequestion($q);
 	
 }
 //print_r($import);

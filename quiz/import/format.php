@@ -255,12 +255,8 @@ class qformat_default {
         // work out what format we are using
         $formatname = substr(get_class($this), strlen('qformat_'));
         $methodname = "import_from_$formatname";
-		echo "here258";
-       
-        echo "here260";
         // loop through installed questiontypes checking for
         // function to handle this question
-        
         foreach (get_all_qtypes() as $qtype) {
             if (method_exists($qtype, $methodname)) {
                 if ($question = $qtype->$methodname($data, $question, $this, $extra)) {
@@ -268,7 +264,6 @@ class qformat_default {
                 }
             }
         }
-        echo "here271";
         return false;
     }
 
@@ -280,156 +275,7 @@ class qformat_default {
         return true;
     }
 
-    /**
-     * Process the file
-     * This method should not normally be overidden
-     * @param object $category
-     * @return bool success
-     */
-    public function importprocess($category) {
-        global $USER, $CFG, $DB, $OUTPUT;
-
-        $context = $category->context;
-        $this->importcontext = $context;
-
-        // reset the timer in case file upload was slow
-        set_time_limit(0);
-
-        // STAGE 1: Parse the file
-        echo $OUTPUT->notification(get_string('parsingquestions', 'question'), 'notifysuccess');
-
-        if (! $lines = $this->readdata($this->filename)) {
-            echo $OUTPUT->notification(get_string('cannotread', 'question'));
-            return false;
-        }
-
-        if (!$questions = $this->readquestions($lines, $context)) {   // Extract all the questions
-            echo $OUTPUT->notification(get_string('noquestionsinfile', 'question'));
-            return false;
-        }
-
-        // STAGE 2: Write data to database
-        echo $OUTPUT->notification(get_string('importingquestions', 'question',
-                $this->count_questions($questions)), 'notifysuccess');
-
-        // check for errors before we continue
-        if ($this->stoponerror and ($this->importerrors>0)) {
-            echo $OUTPUT->notification(get_string('importparseerror', 'question'));
-            return true;
-        }
-
-        // get list of valid answer grades
-        $gradeoptionsfull = question_bank::fraction_options_full();
-
-        // check answer grades are valid
-        // (now need to do this here because of 'stop on error': MDL-10689)
-        $gradeerrors = 0;
-        $goodquestions = array();
-        foreach ($questions as $question) {
-            if (!empty($question->fraction) and (is_array($question->fraction))) {
-                $fractions = $question->fraction;
-                $answersvalid = true; // in case they are!
-                foreach ($fractions as $key => $fraction) {
-                    $newfraction = match_grade_options($gradeoptionsfull, $fraction,
-                            $this->matchgrades);
-                    if ($newfraction === false) {
-                        $answersvalid = false;
-                    } else {
-                        $fractions[$key] = $newfraction;
-                    }
-                }
-                if (!$answersvalid) {
-                    echo $OUTPUT->notification(get_string('invalidgrade', 'question'));
-                    ++$gradeerrors;
-                    continue;
-                } else {
-                    $question->fraction = $fractions;
-                }
-            }
-            $goodquestions[] = $question;
-        }
-        $questions = $goodquestions;
-
-        // check for errors before we continue
-        if ($this->stoponerror && $gradeerrors > 0) {
-            return false;
-        }
-
-        // count number of questions processed
-        $count = 0;
-
-        foreach ($questions as $question) {   // Process and store each question
-
-            // reset the php timeout
-            set_time_limit(0);
-
-            // check for category modifiers
-            if ($question->qtype == 'category') {
-                if ($this->catfromfile) {
-                    // find/create category object
-                    $catpath = $question->category;
-                    $newcategory = $this->create_category_path($catpath);
-                    if (!empty($newcategory)) {
-                        $this->category = $newcategory;
-                    }
-                }
-                continue;
-            }
-            $question->context = $context;
-
-            $count++;
-
-            echo "<hr /><p><b>$count</b>. ".$this->format_question_text($question)."</p>";
-
-            $question->category = $this->category->id;
-            $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
-
-            $question->createdby = $USER->id;
-            $question->timecreated = time();
-            $question->modifiedby = $USER->id;
-            $question->timemodified = time();
-
-            $question->id = $DB->insert_record('question', $question);
-            if (isset($question->questiontextfiles)) {
-                foreach ($question->questiontextfiles as $file) {
-                    question_bank::get_qtype($question->qtype)->import_file(
-                            $context, 'question', 'questiontext', $question->id, $file);
-                }
-            }
-            if (isset($question->generalfeedbackfiles)) {
-                foreach ($question->generalfeedbackfiles as $file) {
-                    question_bank::get_qtype($question->qtype)->import_file(
-                            $context, 'question', 'generalfeedback', $question->id, $file);
-                }
-            }
-
-            $this->questionids[] = $question->id;
-
-            // Now to save all the answers and type-specific options
-
-            $result = question_bank::get_qtype($question->qtype)->save_question_options($question);
-
-            if (!empty($CFG->usetags) && isset($question->tags)) {
-                require_once($CFG->dirroot . '/tag/lib.php');
-                tag_set('question', $question->id, $question->tags);
-            }
-
-            if (!empty($result->error)) {
-                echo $OUTPUT->notification($result->error);
-                return false;
-            }
-
-            if (!empty($result->notice)) {
-                echo $OUTPUT->notification($result->notice);
-                return true;
-            }
-
-            // Give the question a unique version stamp determined by question_hash()
-            $DB->set_field('question', 'version', question_hash($question),
-                    array('id' => $question->id));
-        }
-        return true;
-    }
+  
 
     /**
      * Count all non-category questions in the questions array.
