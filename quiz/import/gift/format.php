@@ -226,18 +226,9 @@ class qformat_default {
      * Handle parsing error
      */
     protected function error($message, $text='', $questionname='') {
-        $importerrorquestion = get_string('importerrorquestion', 'question');
-
-        echo "<div class=\"importerror\">\n";
-        echo "<strong>$importerrorquestion $questionname</strong>";
-        if (!empty($text)) {
-            $text = s($text);
-            echo "<blockquote>$text</blockquote>\n";
-        }
-        echo "<strong>$message</strong>\n";
-        echo "</div>";
-
-         $this->importerrors++;
+    	global $MSG;
+        array_push($MSG, getstring("import.quiz.error.questionformat",array($questionname)));
+		$this->importerrors++;
     }
 
     /**

@@ -161,7 +161,8 @@ class qformat_gift extends qformat_default {
     public function readquestion($lines) {
     // Given an array of lines known to define a question in this format, this function
     // converts it into a question object suitable for processing and insertion into Moodle.
-
+		global $MSG;
+		
         $question = $this->defaultquestion();
         $comment = NULL;
         // define replaced by simple assignment, stop redefine notices
@@ -224,7 +225,8 @@ class qformat_gift extends qformat_default {
             $answertext = '';
             $answerlength = 0;
         } else if (!(($answerstart !== false) and ($answerfinish !== false))) {
-            $this->error(get_string('braceerror', 'qformat_gift'), $text);
+        	array_push($MSG, getstring("import.quiz.error.questionformat",array($question->name)));
+        	//$this->error(get_string('braceerror', 'qformat_gift'), $text);
             return false;
         } else {
             $answerlength = $answerfinish - $answerstart;

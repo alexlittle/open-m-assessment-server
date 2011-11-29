@@ -559,6 +559,7 @@ class API {
 	
 		$str = "INSERT INTO response (responsetitleref,createdby,score) VALUES ('%s',%d,%d)";
 		$sql = sprintf($str,$responsetitleref,$USER->userid,$score);
+
 		mysql_query($sql,$this->DB);
 		$result = mysql_insert_id();
 		if (!$result){

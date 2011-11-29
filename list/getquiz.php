@@ -48,12 +48,17 @@ foreach($qq as $q){
 	} else {
 		$score = 0;
 	}
+	if(array_key_exists('type',$q->props)){
+		$type = $q->props['type'];
+	} else {
+		$type = "multichoice";
+	}
 	$newq = array(
 			'refid'=>$q->refid,
 			'orderno'=> $q->orderno,
 			'text'=>$q->text,
 			'score'=>$score,
-			'type'=>'select1',
+			'type'=>$type,
 			'r'=>$responses
 			);
 	array_push($questions,$newq);

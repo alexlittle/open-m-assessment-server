@@ -5,9 +5,13 @@ $LANG["app.title"] = "mQuiz";
 
 $LANG["import.quiz.add.button"] = "Import quiz";
 $LANG["import.quiz.content"] = "Content";
+$LANG["import.quiz.error.nocontent"] = "You must enter some content";
+$LANG["import.quiz.error.nosuppportedquestions"] = "There are no supported question types to import";
+$LANG["import.quiz.error.notitle"] = "You must give your quiz a title";
+$LANG["import.quiz.error.questionformat"] = "There was an error importing a question %s";
 $LANG["import.quiz.file"] = "Upload a file";
 $LANG["import.quiz.format"] = "Format";
-$LANG["import.quiz.format.gift"] = "GIFT";
+$LANG["import.quiz.format.gift"] = "GIFT (<a target='_blank' href='http://microformats.org/wiki/gift'>more info on GIFT format</a>)";
 $LANG["import.quiz.title"] = "Title";
 $LANG["import.title"] = "Import Quiz";
 

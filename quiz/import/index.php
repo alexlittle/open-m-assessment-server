@@ -2,6 +2,8 @@
 include_once("../../config.php");
 $PAGE = "import";
 include_once("../../includes/header.php");
+
+
 echo "<h1>".getstring("import.title")."</h1>";
 
 $submit = optional_param("submit","",PARAM_TEXT);
@@ -12,39 +14,61 @@ $format = optional_param("format","",PARAM_TEXT);
 $supported_qtypes = array('truefalse','multichoice');
 if ($submit != ""){
 	
+	if($title == ""){
+		array_push($MSG,getstring('import.quiz.error.notitle'));
+	}
+	if($content == ""){
+		array_push($MSG,getstring('import.quiz.error.nocontent'));
+	}
+	$questions_to_import = array();
+	
 	if($format == 'gift'){
-		include_once('./gift/extras.php');
-		include_once('./gift/format.php');
-		include_once('./gift/gift_format.php');
-		
+		include_once('./gift/import.php');
 		$import = new qformat_gift();
-		//echo "<h2>GIFT Object</h2><pre>";
-		//print_r($import);
-		//echo "</pre>";
-		//print("<hr/>");
-		
+			
 		$lines = explode("\n",$content);
 		$questions = $import->readquestions($lines);
-		
+			
 		foreach($questions as $q){
-			echo "<h2>".$q->questiontext."</h2><pre>";
-			echo $q->qtype."\n";
+			/*echo "<h2>".$q->questiontext.":".$q->qtype."</h2>";
+			echo "<pre>";
+			//print_r($q);
+			echo "</pre>";*/
 			if (in_array($q->qtype, $supported_qtypes)){
-				print_r($q);
-			} else {
-				echo "question type not supported";
-			}
-			echo "</pre>";
-			print("<hr/>");
-			//	echo $import->writequestion($q);
-		
+				array_push($questions_to_import,$q);
+			} 			
+		}
+	}
+	
+	if(count($questions_to_import) == 0){
+		array_push($MSG,getstring('import.quiz.error.nosuppportedquestions'));
+	}
+	
+	if(count($MSG) == 0){
+		// now do the actual import
+		if($format == 'gift'){
+			// setup quiz with default props
+			$quizid = $API->addQuiz($title);
+			$API->setProp('quiz',$quizid,'downloadable','true');
+			$API->setProp('quiz',$quizid,'submitable','true');
+			
+			$importer = new GIFTImporter();
+			$importer->quizid = $quizid;
+			$importer->import($questions_to_import);
+			
+			$API->setProp('quiz', $quizid, 'maxscore', $importer->quizmaxscore);
 		}
 	}
 	
 }
 
-
-
+if(!empty($MSG)){
+	echo "<div class='warning'><ul>";
+	foreach ($MSG as $err){
+		echo "<li>".$err."</li>";
+    }
+    echo "</ul></div>";
+}
 ?>
 <form method="post" action="">
 	<div class="formblock">
