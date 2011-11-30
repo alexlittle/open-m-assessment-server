@@ -73,7 +73,7 @@ if ($submit != ""){
 	
 		// set the maxscore for quiz
 		$API->setProp('quiz', $quizid, 'maxscore', $quizmaxscore);
-	
+		$API->setProp('quiz',$quizid,'generatedby','mquiz');
 		printf("<div class='info'>%s</div>", getstring("quiz.edit.saved"));
 	}
 	//reload quiz (to get updated title)
@@ -88,7 +88,7 @@ if ($API->quizHasAttempts($ref)){
 }
 
 ?>
-
+<div id="quizform">
 <form method="post" action="">
 	<div class="formblock">
 		<div class="formlabel"><?php echo getstring('quiz.edit.quiztitle'); ?></div>
@@ -152,6 +152,10 @@ if ($API->quizHasAttempts($ref)){
 	</div>
 	<input type="hidden" id="noquestions" name="noquestions" value="<?php echo count($qq); ?>">
 </form>
+</div>
+<?php 
+	include_once('optionmenu.php');
+?>
 <script type="text/javascript">
 //toggleOptionHide();
 </script>

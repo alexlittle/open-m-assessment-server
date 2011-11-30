@@ -2,7 +2,8 @@
 include_once("../../config.php");
 $PAGE = "import";
 include_once("../../includes/header.php");
-
+global $IMPORT_INFO;
+$IMPORT_INFO = array();
 
 echo "<h1>".getstring("import.title")."</h1>";
 
@@ -36,7 +37,11 @@ if ($submit != ""){
 			echo "</pre>";*/
 			if (in_array($q->qtype, $supported_qtypes)){
 				array_push($questions_to_import,$q);
-			} 			
+			} else {
+				if($q->qtype != 'category'){
+					array_push($IMPORT_INFO, $q->qtype." question type not yet supported ('".$q->questiontext."')");
+				}
+			}	
 		}
 	}
 	
@@ -51,15 +56,29 @@ if ($submit != ""){
 			$quizid = $API->addQuiz($title);
 			$API->setProp('quiz',$quizid,'downloadable','true');
 			$API->setProp('quiz',$quizid,'submitable','true');
-			
+			$API->setProp('quiz',$quizid,'generatedby','import');
 			$importer = new GIFTImporter();
 			$importer->quizid = $quizid;
 			$importer->import($questions_to_import);
 			
 			$API->setProp('quiz', $quizid, 'maxscore', $importer->quizmaxscore);
 		}
-	}
 	
+		$q = $API->getQuizById($quizid);
+		printf("<div class='info'>%s</div>", getstring("quiz.new.saved"));
+		if(!empty($IMPORT_INFO)){
+			echo "<div class='info'>Some of your questions were not imported:<ul>";
+			foreach ($IMPORT_INFO as $info){
+				echo "<li>".$info."</li>";
+			}
+			echo "</ul></div>";
+		}
+		// send mail to owner
+		$m = new Mailer();
+		$m->sendQuizCreated($USER->email,$USER->firstname, $title, $q->ref);
+		include_once("../../includes/footer.php");
+		die;
+	}
 }
 
 if(!empty($MSG)){
@@ -70,6 +89,8 @@ if(!empty($MSG)){
     echo "</ul></div>";
 }
 ?>
+<div class="info">The import facility is still under development, currently only true/false and multichoice questions can be imported - more coming soon though!</div>
+
 <form method="post" action="">
 	<div class="formblock">
 		<div class="formlabel"><?php echo getstring('import.quiz.title'); ?></div>

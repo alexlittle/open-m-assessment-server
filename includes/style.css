@@ -218,5 +218,17 @@ div.options{
 	clear:both;
 }
 
-
+#quizform {
+	float:left;
+	width:800px;
+}
+#quizmenu {
+	float:left;
+	width: 200px;
+	border: 1px solid #ccc;	
+	padding:5px;
+}
+#quizmenu h3{
+	text-align: center;
+}
 

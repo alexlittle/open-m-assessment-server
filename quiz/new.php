@@ -58,6 +58,8 @@ if ($submit != ""){
 		// create the quiz object
 		$quizid = $API->addQuiz($title);
 		
+		$API->setProp('quiz',$quizid,'generatedby','mquiz');
+		
 		//set the properties
 		foreach($quizprops as $qp){
 			if(in_array($qp,$props)){
@@ -121,8 +123,10 @@ if(!empty($MSG)){
     echo "</ul></div>";
 }
 ?>
+
+<div id="quizform">
+
 <form method="post" action="">
-	<div id="quizform">
 		<div class="formblock">
 			<div class="formlabel"><?php echo getstring('quiz.new.quiztitle'); ?></div>
 			<div class="formfield">
@@ -183,11 +187,12 @@ if(!empty($MSG)){
 			<div class="formfield"><input type="submit" name="submit" value="<?php echo getstring("quiz.new.submit.button"); ?>"></input></div>
 		</div>
 		<input type="hidden" id="noquestions" name="noquestions" value="2"/>
-	
-	</div>
-
 
 </form>
+</div>
+<?php 
+	include_once('optionmenu.php');
+?>
 <script type="text/javascript">
 	//toggleOptionHide();
 </script>

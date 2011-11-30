@@ -22,13 +22,13 @@ class GIFTImporter {
 					$maxscore = $this->importMultichoice($q,$counter);
 					break;
 				case 'shortanswer':
-					
+					//array_push($IMPORT_INFO, "Short answer question type not yet supported ('".$q->questiontext."')");
 					break;
 				case 'numerical':
-						
+					//array_push($IMPORT_INFO, "Numerical question type not yet supported ('".$q->questiontext."')");
 					break;
 				case 'essay':
-				
+					//array_push($IMPORT_INFO, "Essay question type not yet supported ('".$q->questiontext."')");
 					break;
 			}
 			$counter++;
