@@ -33,6 +33,10 @@ $LANG['myquizzes.title'] = "My Quizzes";
 $LANG['myresults.none'] = "You haven't submitted any quiz results yet.";
 $LANG['myresults.title'] = "My Results";
 
+$LANG['quiz.delete.button'] = "Yes, please delete";
+$LANG['quiz.delete.cancel.button'] = "No, I've change my mind!";
+$LANG['quiz.delete.title'] = "Delete Quiz";
+
 $LANG['quiz.edit.title'] = "Edit Quiz";
 $LANG['quiz.edit.submit.button'] = "Save changes";
 $LANG['quiz.edit.add'] = 'Add another question';
@@ -71,7 +75,7 @@ $LANG['warning.login.nopassword'] = "Please enter your password";
 $LANG['warning.login.required'] = "Please login or <a href='%s'>register</a>";
 $LANG['warning.quiz.notfound'] = "Quiz not found";
 $LANG['warning.graph.unavailable'] = "Chart being generated";
-$LANG['warning.quiz.hasattempts'] = "Warning: This quiz already has some responses, editing this quiz may invalidate their scores";
+$LANG['warning.quiz.hasattempts'] = "Warning: This quiz already has some responses, editing or removing this quiz may invalidate their scores";
 
 
 ?>

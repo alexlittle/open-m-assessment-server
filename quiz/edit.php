@@ -12,6 +12,10 @@ if($q == null){
 	echo "Quiz not found";
 	include_once("../includes/footer.php");
 	die;
+} else if(isset($q->props['generatedby']) && $q->props['generatedby'] != 'mquiz'){
+	echo "Sorry this was an imported quiz, you cannot edit it with the online tool here, please import again with the changes already made.";
+	include_once("../includes/footer.php");
+	die;
 }
 $submit = optional_param("submit","",PARAM_TEXT);
 if ($submit != ""){

@@ -213,6 +213,7 @@ class API {
 			$q->title = $r->langtext;
 			$q->noattempts = $attempts->noattempts;
 			$q->avgscore = $attempts->avgscore;
+			$q->props = $this->getQuizProps($r->quizid);
 			array_push($quizzes,$q);
 		}
 		return $quizzes;
@@ -623,6 +624,16 @@ class API {
 		}
 	}
 	
+	function deleteQuiz($ref){
+		//remove questions/responses first
+		$this->removeQuiz($ref);
+		$sql = sprintf("DELETE FROM quiz WHERE quiztitleref='%s'",$ref);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return ;
+		}
+	}
 	
 	function removeQuiz($ref){
 		$questions = $this->getQuizQuestions($ref);
