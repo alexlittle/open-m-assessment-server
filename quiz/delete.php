@@ -1,12 +1,19 @@
 <?php
 include_once("../config.php");
-$PAGE = "editquiz";
-include_once("../includes/header.php");
-?>
-<h1><?php echo getstring("quiz.delete.title"); ?></h1>
-<?php
+$PAGE = "deletequiz";
+
 $ref = optional_param('ref',"",PARAM_TEXT);
+$delete = optional_param("delete","", PARAM_TEXT);
+$cancel = optional_param("cancel","", PARAM_TEXT);
 $q = $API->getQuizForUser($ref,$USER->userid);
+
+if($cancel != ""){
+	//return to myquizzes page
+	header('Location: '.$CONFIG->homeAddress.'my/quizzes.php');
+	return;
+}
+include_once("../includes/header.php");
+printf("<h1>%s</h1>",getstring("quiz.delete.title"));
 
 if($q == null){
 	echo "Quiz not found";
@@ -14,20 +21,12 @@ if($q == null){
 	die;
 } 
 
-$delete = optional_param("delete","", PARAM_TEXT);
-$cancel = optional_param("cancel","", PARAM_TEXT);
 if($delete != ""){
 	$API->deleteQuiz($ref);
 	echo "<div class='info'>";
 	echo "'".$q->title."' has now been deleted.";
 	echo "</div>";
 	die;
-}
-
-if($cancel != ""){
-	//return to myquizzes page
-	header('Location: '.$CONFIG->homeAddress.'my/quizzes.php');  
-    return; 
 }
 
 if ($API->quizHasAttempts($ref)){

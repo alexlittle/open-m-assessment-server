@@ -167,10 +167,9 @@ class API {
 	}
 	
 	function insertQuizAttemptResponse($qar){
-		$sql = sprintf("INSERT INTO quizattemptresponse (qaid,responserefid,questionrefid,qarscore,responsetext) 
-					VALUES (%d, '%s', '%s', %d,'%s')",
+		$sql = sprintf("INSERT INTO quizattemptresponse (qaid,questionrefid,qarscore,responsetext) 
+					VALUES (%d, '%s', %d,'%s')",
 					$qar->qaid,
-					$qar->questionResponseRef,
 					$qar->questionRef,
 					$qar->userScore,
 					$qar->text);

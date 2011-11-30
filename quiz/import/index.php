@@ -12,7 +12,7 @@ $title = optional_param("title","",PARAM_TEXT);
 $content = optional_param("content","",PARAM_TEXT);
 $format = optional_param("format","",PARAM_TEXT);
 
-$supported_qtypes = array('truefalse','multichoice');
+$supported_qtypes = array('truefalse','multichoice','essay');
 if ($submit != ""){
 	
 	if($title == ""){
@@ -57,6 +57,7 @@ if ($submit != ""){
 			$API->setProp('quiz',$quizid,'downloadable','true');
 			$API->setProp('quiz',$quizid,'submitable','true');
 			$API->setProp('quiz',$quizid,'generatedby','import');
+			$API->setProp('quiz',$quizid,'content',$content);
 			$importer = new GIFTImporter();
 			$importer->quizid = $quizid;
 			$importer->import($questions_to_import);

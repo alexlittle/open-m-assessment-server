@@ -29,6 +29,7 @@ class GIFTImporter {
 					break;
 				case 'essay':
 					//array_push($IMPORT_INFO, "Essay question type not yet supported ('".$q->questiontext."')");
+					$maxscore = $this->importEssay($q,$counter);
 					break;
 			}
 			$counter++;
@@ -53,7 +54,7 @@ class GIFTImporter {
 		}
 		
 		$API->setProp('question', $questionid, 'maxscore', 10);
-		
+		$API->setProp('question', $questionid, 'type', 'multichoice');
 		return 10;
 	}
 	
@@ -71,7 +72,17 @@ class GIFTImporter {
 			}
 		}
 		$API->setProp('question', $questionid, 'maxscore', 10);
+		$API->setProp('question', $questionid, 'type', 'multichoice');
 		return 10;
+	}
+	
+	private function importEssay($q,$qcount){
+		global $API;
+		$questionid = $API->addQuestion($q->questiontext);
+		$API->addQuestionToQuiz($this->quizid,$questionid,$qcount);
+		$API->setProp('question', $questionid, 'maxscore', 0);
+		$API->setProp('question', $questionid, 'type', 'essay');
+		return 0;
 	}
 	
 }

@@ -97,6 +97,14 @@ if($method == 'downloadqueue'){
 
 if($method == 'list'){
 	$quizzes = $API->getQuizzes();
+	
+	$page = curPageURL();
+	if(endsWith($page,'/')){
+		$url_prefix = $page;
+	} else {
+		$url_prefix = dirname($page)."/";
+	}
+	
 	$json = array();
 	foreach($quizzes as $q){
 		$downloadable = true;
@@ -107,10 +115,10 @@ if($method == 'list'){
 			}
 		}
 		if($downloadable){
-			$url = $CONFIG->homeAddress."api/?method=getquiz&ref=".$q->ref;
+			//$url = $CONFIG->homeAddress."api/?method=getquiz&ref=".$q->ref;
 			$o = array(	'id'=>$q->ref,
 							'name'=>$q->title,
-							'url'=>$url);
+							'url'=>$url_prefix."?method=getquiz&ref=".$q->ref);
 			array_push($json,$o);
 		}
 	}
@@ -236,7 +244,6 @@ if($method == 'submit'){
 			$qar->qaid = $newId;
 			$qar->userScore = $r->score;
 			$qar->questionRef = $r->qid;
-			$qar->questionResponseRef = $r->qrid;
 			$qar->text = $r->qrtext;
 			$API->insertQuizAttemptResponse($qar);
 		}
@@ -247,4 +254,23 @@ if($method == 'submit'){
 	die;
 }
 
+function curPageURL() {
+	$pageURL = 'http';
+	if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
+		$pageURL .= "s";
+	}
+	$pageURL .= "://";
+	if ($_SERVER["SERVER_PORT"] != "80") {
+		$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+	} else {
+		$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+	}
+	return $pageURL;
+}
+
+function endsWith($haystack, $needle){
+	$length = strlen($needle);
+	$start  = $length * -1; //negative
+	return (substr($haystack, $start) === $needle);
+}
 ?>
