@@ -53,12 +53,14 @@ foreach($qq as $q){
 	} else {
 		$type = "multichoice";
 	}
+	
 	$newq = array(
 			'refid'=>$q->refid,
 			'orderno'=> $q->orderno,
 			'text'=>$q->text,
 			'score'=>$score,
 			'type'=>$type,
+			'props'=>$q->props,
 			'r'=>$responses
 			);
 	array_push($questions,$newq);

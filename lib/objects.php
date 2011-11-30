@@ -15,6 +15,7 @@ class QuizAttemptResponse {
 	public $userScore;
 	public $questionRef;
 	public $questionResponseRef;
+	public $text;
 }
 
 ?>

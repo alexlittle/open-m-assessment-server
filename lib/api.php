@@ -167,12 +167,13 @@ class API {
 	}
 	
 	function insertQuizAttemptResponse($qar){
-		$sql = sprintf("INSERT INTO quizattemptresponse (qaid,responserefid,questionrefid,qarscore) 
-					VALUES (%d, '%s', '%s', %d)",
+		$sql = sprintf("INSERT INTO quizattemptresponse (qaid,responserefid,questionrefid,qarscore,responsetext) 
+					VALUES (%d, '%s', '%s', %d,'%s')",
 					$qar->qaid,
 					$qar->questionResponseRef,
 					$qar->questionRef,
-					$qar->userScore);
+					$qar->userScore,
+					$qar->text);
 		$result = mysql_query($sql,$this->DB);
 		if (!$result){
 			writeToLog('error','database',$sql);
