@@ -150,13 +150,15 @@ if($method == 'getquiz'){
 	
 		$responses = array();
 		$resps = $API->getQuestionResponses($q->id);
+		
 		foreach($resps as $o){
+			$props = (object) $o->props;
 			$r = array(
 						'refid'=> $o->refid,
 						'orderno'=> $o->orderno,
 						'text'=>$o->text,
 						'score'=>$o->score,
-						'props'=>$o->props
+						'props'=>$props
 			);
 			array_push($responses,$r);
 		}
@@ -171,13 +173,13 @@ if($method == 'getquiz'){
 		} else {
 			$type = "multichoice";
 		}
-	
+		$props = (object) $q->props;
 		$newq = array(
 				'refid'=>$q->refid,
 				'orderno'=> $q->orderno,
 				'text'=>$q->text,
 				'type'=>$type,
-				'props'=>$q->props,
+				'props'=>$props,
 				'r'=>$responses
 		);
 		array_push($questions,$newq);
