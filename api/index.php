@@ -155,7 +155,8 @@ if($method == 'getquiz'){
 						'refid'=> $o->refid,
 						'orderno'=> $o->orderno,
 						'text'=>$o->text,
-						'score'=>$o->score	
+						'score'=>$o->score,
+						'props'=>$o->props
 			);
 			array_push($responses,$r);
 		}
@@ -175,7 +176,6 @@ if($method == 'getquiz'){
 				'refid'=>$q->refid,
 				'orderno'=> $q->orderno,
 				'text'=>$q->text,
-				'score'=>$score,
 				'type'=>$type,
 				'props'=>$q->props,
 				'r'=>$responses

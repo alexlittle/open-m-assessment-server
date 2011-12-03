@@ -516,6 +516,12 @@ class API {
 			$r->text = $o->langtext;
 			$r->orderno =$o->orderno;
 			$r->score = $o->score;
+			$r->props = array();
+			$psql = sprintf("SELECT * FROM responseprop WHERE responseid = %d",$o->responseid);
+			$props = mysql_query($psql,$this->DB);
+			while($prop = mysql_fetch_object($props)){
+				$r->props[$prop->responsepropname] = $prop->responsepropvalue;
+			}
 			array_push($responses,$r);
 		}
 		return $responses;

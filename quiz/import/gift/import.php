@@ -7,6 +7,7 @@ include_once('gift_format.php');
 
 class GIFTImporter {
 	
+	// TODO define 10 as maxscore
 	public $quizid;
 	public $quizmaxscore;
 	
@@ -22,13 +23,12 @@ class GIFTImporter {
 					$maxscore = $this->importMultichoice($q,$counter);
 					break;
 				case 'shortanswer':
-					//array_push($IMPORT_INFO, "Short answer question type not yet supported ('".$q->questiontext."')");
+					$maxscore = $this->importShortAnswer($q,$counter);
 					break;
 				case 'numerical':
-					//array_push($IMPORT_INFO, "Numerical question type not yet supported ('".$q->questiontext."')");
+					$maxscore = $this->importNumerical($q,$counter);
 					break;
 				case 'essay':
-					//array_push($IMPORT_INFO, "Essay question type not yet supported ('".$q->questiontext."')");
 					$maxscore = $this->importEssay($q,$counter);
 					break;
 			}
@@ -62,9 +62,16 @@ class GIFTImporter {
 		global $API;
 		$questionid = $API->addQuestion($q->questiontext);
 		$API->addQuestionToQuiz($this->quizid,$questionid,$qcount);
+		$no_correct_answers = 0;
 		for($i=0; $i<count($q->answer); $i++){
 			if($q->fraction[$i] == true){
-				$responseid = $API->addResponse($q->answer[$i]['text'],10);
+				$no_correct_answers++;
+			} 
+		}
+		for($i=0; $i<count($q->answer); $i++){
+			if($q->fraction[$i] == true){
+				$score = 10/$no_correct_answers;
+				$responseid = $API->addResponse($q->answer[$i]['text'],$score);
 				$API->addResponsetoQuestion($questionid,$responseid,$i+1);
 			} else {
 				$responseid = $API->addResponse($q->answer[$i]['text'],0);
@@ -72,7 +79,11 @@ class GIFTImporter {
 			}
 		}
 		$API->setProp('question', $questionid, 'maxscore', 10);
-		$API->setProp('question', $questionid, 'type', 'multichoice');
+		if($no_correct_answers>1) {
+			$API->setProp('question', $questionid, 'type', 'multiselect');
+		} else {
+			$API->setProp('question', $questionid, 'type', 'multichoice');
+		}
 		return 10;
 	}
 	
@@ -83,6 +94,45 @@ class GIFTImporter {
 		$API->setProp('question', $questionid, 'maxscore', 0);
 		$API->setProp('question', $questionid, 'type', 'essay');
 		return 0;
+	}
+	
+	private function importShortAnswer($q,$qcount){
+		global $API;
+		$questionid = $API->addQuestion($q->questiontext);
+		$API->addQuestionToQuiz($this->quizid,$questionid,$qcount);
+		$type = 'shortanswer';
+		for($i=0; $i<count($q->answer); $i++){
+			$pos = strpos($q->answer[$i], ' -&gt; ');
+			if($pos !== false){
+				$score = 10/count($q->answer);
+				$type = 'matching';
+			} else {
+				$score = 10;
+			}
+			$responseid = $API->addResponse($q->answer[$i],$score);
+			$API->addResponsetoQuestion($questionid,$responseid,$i+1);
+		}
+		$API->setProp('question', $questionid, 'maxscore', 10);
+		$API->setProp('question', $questionid, 'type', $type);
+		return 10;
+	}
+	
+	private function importNumerical($q,$qcount){
+		global $API;
+		$questionid = $API->addQuestion($q->questiontext);
+		$API->addQuestionToQuiz($this->quizid,$questionid,$qcount);
+		$type = 'numerical';
+		for($i=0; $i<count($q->answer); $i++){
+			$score = 10*$q->fraction[$i];
+			$responseid = $API->addResponse($q->answer[$i],$score);
+			$API->addResponsetoQuestion($questionid,$responseid,$i+1);
+			
+			// add the tolerance for this answer
+			$API->setProp('response', $responseid, 'tolerance', $q->tolerance[$i]);
+		}
+		$API->setProp('question', $questionid, 'maxscore', 10);
+		$API->setProp('question', $questionid, 'type', $type);
+		return 10;
 	}
 	
 }

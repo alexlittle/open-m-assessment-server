@@ -12,7 +12,7 @@ $title = optional_param("title","",PARAM_TEXT);
 $content = optional_param("content","",PARAM_TEXT);
 $format = optional_param("format","",PARAM_TEXT);
 
-$supported_qtypes = array('truefalse','multichoice','essay');
+$supported_qtypes = array('truefalse','multichoice','essay','shortanswer','numerical');
 if ($submit != ""){
 	
 	if($title == ""){
@@ -90,7 +90,7 @@ if(!empty($MSG)){
     echo "</ul></div>";
 }
 ?>
-<div class="info">The import facility is still under development, currently only true/false and multichoice questions can be imported - more coming soon though!</div>
+<div class="info">The import facility is still under development, currently only true/false, multichoice and essay questions can be imported - more coming soon though!</div>
 
 <form method="post" action="">
 	<div class="formblock">

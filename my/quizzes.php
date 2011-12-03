@@ -10,7 +10,7 @@ $quizzes = $API->getQuizzesForUser($USER->userid);
 <?php
 if (count($quizzes) == 0){
 	echo "<div class='info'>";
-	echo getstring("myquizzes.none",array($CONFIG->homeAddress."quiz/add.php"));
+	echo getstring("myquizzes.none",array($CONFIG->homeAddress."quiz/new.php"));
 	echo "</div>";
 }
 

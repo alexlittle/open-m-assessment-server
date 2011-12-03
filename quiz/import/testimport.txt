@@ -5,6 +5,10 @@
 ::Q2:: What's between orange and green in the spectrum?
 {=yellow # correct! ~red ~blue # wrong, it's yellow}
 
+// multiselect answer
+::Q2:: What's the rights answer
+{=yellow # correct! =red # correct too ~blue # wrong, it's yellow}
+
 // fill-in-the-blank
 ::Q3:: Two plus {=two =2} equals four.
 
