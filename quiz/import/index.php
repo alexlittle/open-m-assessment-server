@@ -90,7 +90,6 @@ if(!empty($MSG)){
     echo "</ul></div>";
 }
 ?>
-<div class="info">The import facility is still under development, currently only true/false, multichoice and essay questions can be imported - more coming soon though!</div>
 
 <form method="post" action="">
 	<div class="formblock">

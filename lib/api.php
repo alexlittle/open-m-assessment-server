@@ -632,7 +632,8 @@ class API {
 	
 	function deleteQuiz($ref){
 		//remove questions/responses first
-		$this->removeQuiz($ref);
+		$q = $this->getQuiz($ref);
+		$this->removeQuiz($q->quizid);
 		$sql = sprintf("DELETE FROM quiz WHERE quiztitleref='%s'",$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
@@ -641,8 +642,8 @@ class API {
 		}
 	}
 	
-	function removeQuiz($ref){
-		$questions = $this->getQuizQuestions($ref);
+	function removeQuiz($quizid){
+		$questions = $this->getQuizQuestions($quizid);
 		foreach ($questions as $q){
 			$responses = $this->getQuestionResponses($q->id);
 			foreach ($responses as $r){

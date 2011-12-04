@@ -14,6 +14,9 @@ class GIFTImporter {
 	public function import($questions){
 		$counter = 1;
 		foreach ($questions as $q){
+			//echo "<pre>";
+			//print_r($q);
+			//echo "</pre>";
 			$maxscore = 0;
 			switch ($q->qtype){
 				case 'truefalse':
@@ -39,18 +42,23 @@ class GIFTImporter {
 	
 	private function importTrueFalse($q,$qcount){
 		global $API;
+		
 		$questionid = $API->addQuestion($q->questiontext);
 		$API->addQuestionToQuiz($this->quizid,$questionid,$qcount);
 		if($q->correctanswer == true){
 			$responseid = $API->addResponse('True',10);
 			$API->addResponsetoQuestion($questionid,$responseid,1);
+			$API->setProp('response', $responseid, 'feedback', $q->feedbacktrue['text']);
 			$responseid = $API->addResponse('False',0);
 			$API->addResponsetoQuestion($questionid,$responseid,2);
+			$API->setProp('response', $responseid, 'feedback', $q->feedbackfalse['text']);
 		} else {
 			$responseid = $API->addResponse('True',0);
 			$API->addResponsetoQuestion($questionid,$responseid,1);
+			$API->setProp('response', $responseid, 'feedback', $q->feedbacktrue['text']);
 			$responseid = $API->addResponse('False',10);
 			$API->addResponsetoQuestion($questionid,$responseid,2);
+			$API->setProp('response', $responseid, 'feedback', $q->feedbackfalse['text']);
 		}
 		
 		$API->setProp('question', $questionid, 'maxscore', 10);
@@ -73,9 +81,11 @@ class GIFTImporter {
 				$score = 10/$no_correct_answers;
 				$responseid = $API->addResponse($q->answer[$i]['text'],$score);
 				$API->addResponsetoQuestion($questionid,$responseid,$i+1);
+				$API->setProp('response', $responseid, 'feedback', $q->feedback[$i]['text']);
 			} else {
 				$responseid = $API->addResponse($q->answer[$i]['text'],0);
 				$API->addResponsetoQuestion($questionid,$responseid,$i+1);
+				$API->setProp('response', $responseid, 'feedback', $q->feedback[$i]['text']);
 			}
 		}
 		$API->setProp('question', $questionid, 'maxscore', 10);
@@ -98,6 +108,7 @@ class GIFTImporter {
 	
 	private function importShortAnswer($q,$qcount){
 		global $API;
+		
 		$questionid = $API->addQuestion($q->questiontext);
 		$API->addQuestionToQuiz($this->quizid,$questionid,$qcount);
 		$type = 'shortanswer';
@@ -111,6 +122,7 @@ class GIFTImporter {
 			}
 			$responseid = $API->addResponse($q->answer[$i],$score);
 			$API->addResponsetoQuestion($questionid,$responseid,$i+1);
+			$API->setProp('response', $responseid, 'feedback', $q->feedback[$i]['text']);
 		}
 		$API->setProp('question', $questionid, 'maxscore', 10);
 		$API->setProp('question', $questionid, 'type', $type);
@@ -126,7 +138,7 @@ class GIFTImporter {
 			$score = 10*$q->fraction[$i];
 			$responseid = $API->addResponse($q->answer[$i],$score);
 			$API->addResponsetoQuestion($questionid,$responseid,$i+1);
-			
+			$API->setProp('response', $responseid, 'feedback', $q->feedback[$i]['text']);
 			// add the tolerance for this answer
 			$API->setProp('response', $responseid, 'tolerance', $q->tolerance[$i]);
 		}

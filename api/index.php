@@ -130,6 +130,10 @@ if($method == 'getquiz'){
 	$ref = optional_param('ref','',PARAM_TEXT);
 	$quiz = $API->getQuiz($ref);
 	
+	if($quiz == null){
+		echo "Quiz not found";
+		die;
+	}
 	// check if currently downloadable
 	$downloadable = true;
 	$props = $API->getQuizProps($quiz->quizid);
