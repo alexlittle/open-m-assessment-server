@@ -564,7 +564,7 @@ class API {
 		$responsetitleref = $this->createUUID("qqrt");
 		$this->addLang($responsetitleref, $title,$CONFIG->defaultlang);
 	
-		$str = "INSERT INTO response (responsetitleref,createdby,score) VALUES ('%s',%d,%d)";
+		$str = "INSERT INTO response (responsetitleref,createdby,score) VALUES ('%s',%d,%f)";
 		$sql = sprintf($str,$responsetitleref,$USER->userid,$score);
 
 		mysql_query($sql,$this->DB);
