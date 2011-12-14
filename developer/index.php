@@ -22,10 +22,8 @@ include_once("../includes/header.php");
 <p>Here is a list of the features we'd like to work on:</p>
 
 <ul>
-<li>Create client apps for other phone operating systems (perhaps use <a href="http://phonegap.com/">PhoneGap</a>?)</li>
-<li>Support for more question types, such as multi-select</li>
+<li>Create client apps for other phone operating systems (perhaps using HTML5 or <a href="http://phonegap.com/">PhoneGap</a>?)</li>
 <li>Support for images/media as part of the questions and/or response options</li>
-<li>Import/export to other quiz formats (such as <a href="http://microformats.org/wiki/gift">GIFT</a>)</li>
 <li>Private quizzes - so you can select who else is allowed to answer</li>
 <li>Better sharing of quizzes - so you're able to email/sms a quiz to your friends</li>
 </ul>
