@@ -200,7 +200,6 @@ if($method == 'getquiz'){
 						'maxscore'=>$maxscore,
 						'q'=>$questions);
 	
-	
 	echo json_encode($json);
 	die;
 }

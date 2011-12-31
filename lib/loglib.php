@@ -9,7 +9,9 @@ function writeToLog($loglevel,$logtype,$logmsg,$logpagephptime=0,$logpagemysqlti
 	} else if ( isset($_SERVER["HTTP_CLIENT_IP"]) )    {
 		$ip=$_SERVER["HTTP_CLIENT_IP"];
 	} 
-	$API->writeLog($loglevel,$USER->userid,$logtype,$logmsg,$ip,$logpagephptime,$logpagemysqltime,$logpagequeries);
+	
+	$uagent = new uagent_info();
+	$API->writeLog($loglevel,$USER->userid,$logtype,$logmsg,$ip,$logpagephptime,$logpagemysqltime,$logpagequeries,$uagent->useragent);
 }
 
 function _mysql_query($query,$db) {
