@@ -33,6 +33,13 @@ $LANG['myquizzes.title'] = "My Quizzes";
 $LANG['myresults.none'] = "You haven't submitted any quiz results yet.";
 $LANG['myresults.title'] = "My Results";
 
+
+$LANG['profile.newpassword'] = "New password";
+$LANG['profile.password.info'] = "Change password (or leave blank to keep the same)";
+$LANG['profile.repeatnewpassword'] = "Repeat new password";
+$LANG['profile.submit.button'] = "Save changes";
+$LANG['profile.title'] = "Edit Profile";
+
 $LANG['quiz.delete.button'] = "Yes, please delete";
 $LANG['quiz.delete.cancel.button'] = "No, I've change my mind!";
 $LANG['quiz.delete.title'] = "Delete Quiz";
@@ -45,8 +52,6 @@ $LANG['quiz.edit.questions'] = 'Questions';
 $LANG['quiz.edit.question'] = 'Question';
 $LANG['quiz.edit.responses'] = 'Response options';
 $LANG['quiz.edit.saved'] = 'Changes saved';
-
-
 
 $LANG['quiz.new.add'] = 'Add another question';
 $LANG['quiz.new.error.notitle'] = 'You must give your quiz a title';

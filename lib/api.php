@@ -46,6 +46,43 @@ class API {
 		return $user;
 	}
 	
+	function checkUserNameNotInUse($username){
+		global $USER;
+		$sql = sprintf("SELECT * FROM user WHERE username='%s' AND userid != %d",$username,$USER->userid);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return;
+		}
+		while($row = mysql_fetch_array($result)){
+			return true;
+		}
+		return false;
+	}
+	
+	function updateUser($username,$firstname,$lastname){
+		global $USER;
+		$username = strtolower($username);
+		$sql = sprintf("UPDATE user SET username = '%s', email = '%s', firstname = '%s', lastname = '%s' WHERE userid = %d",$username,$username,$firstname,$lastname,$USER->userid);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return false;
+		}
+		return true;
+	}
+	
+	function updateUserPassword($password){
+		global $USER;
+		$sql = sprintf("UPDATE user SET password = md5('%s') WHERE userid = %d",$password,$USER->userid);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return false;
+		}
+		return true;
+	}
+	
 	function addUser($username,$password,$firstname,$surname,$email){
 		$username = strtolower($username);
 		$email = strtolower($email);

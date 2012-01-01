@@ -26,7 +26,7 @@ if ($submit != ""){
 	}
 	// check passwords match
 	if ($password != $repeatpassword){
-		array_push($MSG,"Your password don't match");
+		array_push($MSG,"Your passwords don't match");
 	}
 	// check all fields completed
 	if ($firstname == ""){
@@ -82,11 +82,11 @@ if(!empty($MSG)){
 	</div>
 	<div class="formblock">
 		<div class="formlabel"><?php echo getstring("register.password"); ?></div>
-		<div class="formfield"><input type="password" name="password" value="<?php echo $password; ?>"></input></div>
+		<div class="formfield"><input type="password" name="password" value=""></input></div>
 	</div>
 	<div class="formblock">
 		<div class="formlabel"><?php echo getstring("register.repeatpassword"); ?></div>
-		<div class="formfield"><input type="password" name="repeatpassword" value="<?php echo $repeatpassword; ?>"></input></div>
+		<div class="formfield"><input type="password" name="repeatpassword" value=""></input></div>
 	</div>
 	<div class="formblock">
 		<div class="formlabel"><?php echo getstring("register.firstname"); ?></div>

@@ -38,7 +38,9 @@ class User {
     function load(){
     	global $API;
     	$API->getUser($this);
-    	$API->getUserProperties($this);
+    	if($this->userid != ""){
+    		$API->getUserProperties($this);
+    	}
     }
     
     /**
