@@ -42,6 +42,7 @@ class API {
 			$user->username = $row['username'];
 			$user->firstname = $row['firstname'];
 			$user->lastname =  $row['lastname'];
+			$user->email =  $row['email'];
 		}
 		return $user;
 	}
