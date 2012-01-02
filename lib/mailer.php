@@ -12,12 +12,11 @@ class Mailer{
 			<p>Hi ".$name.",</p>
 			<p>Your new mQuiz '".$quiztitle."' has been created.</p>
 			<p>To edit your quiz visit: <a href='".$url_edit."'>".$url_edit."</a>.</p>
-			<p>To share your quiz with others please use: <a href='".$url_download."'>".$url_download."</a>.</p>
 			<p>We hope you enjoy using mQuiz!</p>
 			<p>Alex: alex@mquiz.org</p>
 		";
 		$this->sendMail($to,$subject,$message);
-		$this->sendMail("alex@alexlittle.net",$subject,$message);
+		$this->sendMail($CONFIG->emailfrom,$subject,$message);
 	}
 	
 	function sendSignUpNotification($name){
