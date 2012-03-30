@@ -1,6 +1,6 @@
 lang['EN'] = [];
 
-lang['EN']['login_username'] = 'Username:';
+lang['EN']['login_username'] = 'Email:';
 lang['EN']['login_password'] = 'Password:';
 
 lang['EN']['logout'] = 'Logout';

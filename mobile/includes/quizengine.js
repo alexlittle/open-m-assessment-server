@@ -49,16 +49,20 @@ function Quiz(){
 	this.loadMultichoice = function(resp){
 		$('#response').empty();
 		for(var r in resp){
-			var o = $('<input/>').attr({'type':'radio','value':resp[r].refid,'name':'response'});
+			var d = $('<div>').attr({'class':'response'});
+			var l = $('<label>').attr({'for':resp[r].refid});
+			var o = $('<input>').attr({'type':'radio','value':resp[r].refid,'name':'response','id':resp[r].refid,});
 			// find if this question has already been responded to and set response
 			if(this.responses[this.currentQuestion]){
 				if(this.responses[this.currentQuestion].text == resp[r].text){
 					o.attr({'checked':'checked'});
 				}
 			}
-			$('#response').append(o);
-			$('#response').append(resp[r].text);
-			$('#response').append("<br/>");
+			l.append(o);
+			l.append(resp[r].text);
+			d.append(l);
+			
+			$('#response').append(d);
 		}
 	}
 	
@@ -78,7 +82,7 @@ function Quiz(){
 			var q = this.quiz.q[this.currentQuestion];
 			o.qid = q.refid;
 			o.score = 0;
-			o.text = "";
+			o.qrtext = "";
 			// mark question and get text
 			for(var r in q.r){
 				if(q.r[r].refid == opt){
@@ -99,12 +103,12 @@ function Quiz(){
 	}
 	
 	this.showResults = function(){
-		if(!this.saveResponse()){
+		if(!this.saveResponse('next')){
 			alert("You must answer this question before getting your results.");
 			return;
 		} 
 		$('#content').empty();
-		$('#content').append("<h2 name='lang' id='page_title_results'>Your results for "+ this.quiz.title +":</h2>");
+		$('#content').append("<h2 name='lang' id='page_title_results'>Your results for '"+ this.quiz.title +"' quiz:</h2>");
 		// calculate score
 		var total = 0;
 		for(var r in this.responses){
@@ -119,7 +123,7 @@ function Quiz(){
 		content.quizid = this.quiz.refid;
 		content.username = store.get('username');
 		content.maxscore = this.quiz.maxscore;
-		content.userscore = percent;
+		content.userscore = total;
 		content.quizdate = Date.now();
 		content.responses = this.responses;
 
@@ -140,14 +144,14 @@ function Quiz(){
 	
 	this.setNav = function(){
 		if(this.currentQuestion == 0){
-			$('#quiznavprev').attr('disabled', 'disabled');
+			$('#quiznavprevbtn').attr('disabled', 'disabled');
 		} else {
-			$('#quiznavprev').removeAttr('disabled');
+			$('#quiznavprevbtn').removeAttr('disabled');
 		}
 		if(this.currentQuestion+1 == this.quiz.q.length){
-			$('#quiznavnext').attr({'onclick':'Q.showResults()','value':'Get results'});
+			$('#quiznavnextbtn').attr({'onclick':'Q.showResults()','value':'Get results'});
 		} else {
-			$('#quiznavnext').attr({'onclick':'Q.loadNextQuestion()','value':'Next >>'});
+			$('#quiznavnextbtn').attr({'onclick':'Q.loadNextQuestion()','value':'Next >>'});
 		}
 	}
 	

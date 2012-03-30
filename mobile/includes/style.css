@@ -19,6 +19,10 @@ a:hover, a:visited, a {
     cursor:pointer;
 }
 
+.clickable {
+	cursor:pointer;
+}
+
 li {
 	margin-left:15px;	
 }
@@ -26,7 +30,6 @@ li {
 #header {
 	background: #fff;
   	padding:5px 5px;
-  	border-bottom: 1px solid #77a240;
 	text-align: center;
 	margin-bottom: 5px;
 }
@@ -72,6 +75,57 @@ li {
 }
 .homeBtn input {
 	width: 50%;
+}
+
+.quizlist {
+	margin: 10px;
+	color:#77a240;
+}
+
+.quizlist:hover {
+	text-decoration:underline;
+}
+
+#quizheader {
+	background: #9aca3c;
+	padding: 5px;
+	font-weight: bold;
+	text-align: center;
+}
+
+#question {
+	font-weight: bold;
+	padding: 10px;
+}
+
+#response{
+	padding: 10px;
+}
+.response {
+	padding: 5px 0;
+}
+div.quiznavprev {
+	float:left;
+	width:45%;
+}
+
+div.quiznavnext {
+	float:right;
+	width:45%;
+	text-align:right;
+}
+
+#quiznavprevbtn {
+	width:90%;
+}
+#quiznavnextbtn {
+	width:90%;
+}
+
+#quiz_results {
+	font-size: 300%;
+	text-align: center;
+	border: 50px;
 }
 
 #footer {

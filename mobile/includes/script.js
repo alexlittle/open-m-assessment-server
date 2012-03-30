@@ -36,7 +36,7 @@ function showSelectQuiz(){
 	$('#content').append("<h2 name='lang' id='page_title_selectquiz'>"+getString('page_title_selectquiz')+"</h2>");
 	var quizzes = store.get('quizlist');
 	for(var q in quizzes){
-		var quiz = $('<div>').attr({'class': 'quizlist','onclick':'loadQuiz("'+quizzes[q].id+'")'}).html(quizzes[q].name);
+		var quiz = $('<div>').attr({'class': 'quizlist clickable','onclick':'loadQuiz("'+quizzes[q].id+'")'}).html(quizzes[q].name);
 		$('#content').append(quiz);
 	}
 }
@@ -84,11 +84,11 @@ function showQuiz(id){
 	$('#content').append(response);
 	
 	var quiznav = $('<div>').attr({'id':'quiznav'});
-	var quiznavprev = $('<div>').attr({'class':'quiznavprev'}).append($('<input>').attr({'id':'quiznavprev','type':'button','value':'<< Prev','onclick':'Q.loadPrevQuestion()'}));
+	var quiznavprev = $('<div>').attr({'class':'quiznavprev'}).append($('<input>').attr({'id':'quiznavprevbtn','type':'button','value':'<< Prev','onclick':'Q.loadPrevQuestion()'}));
 	quiznav.append(quiznavprev);
-	var quiznavnext = $('<div>').attr({'class':'quiznavnext'}).append($('<input>').attr({'id':'quiznavnext','type':'button','value':'Next >>','onclick':'Q.loadNextQuestion()'}));
+	var quiznavnext = $('<div>').attr({'class':'quiznavnext'}).append($('<input>').attr({'id':'quiznavnextbtn','type':'button','value':'Next >>','onclick':'Q.loadNextQuestion()'}));
 	quiznav.append(quiznavnext);
-	
+	var clear = $('<div>').attr({'style':'clear:both'});
 	$('#content').append(quiznav);
 	Q.loadQuestion();
 	
@@ -213,7 +213,7 @@ function dataUpdate(){
 		   }
 		});
 	
-	// send any unsubmitted responses
+	// TODO send any unsubmitted responses
 }
 
 function setUpdated(){
