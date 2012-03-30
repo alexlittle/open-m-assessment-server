@@ -96,9 +96,8 @@ function showQuiz(id){
 }
 
 function showLogin(){
-	$('#menu').hide();
 	$('#content').empty();
-	$('#content').append("<h1 name='lang' id='page_title_login'>"+getString('page_title_login')+"</h1>");
+	$('#content').append("<h2 name='lang' id='page_title_login'>"+getString('page_title_login')+"</h2>");
 	var form =  $('<div>');
 	form.append("<div class='formblock'>" +
 		"<div class='formlabel' name='lang' id='login_username'>"+getString('login_username')+"</div>" +
@@ -150,7 +149,6 @@ function login(){
 				   store.set('password',$('#password').val());
 				   store.set('lastlogin',Date());
 				   showUsername();
-				   $('#menu').show();
 				   showPage('home');
 			   } else {
 				   alert("Login failed");
@@ -199,7 +197,7 @@ function dataUpdate(){
 	if(lastupdate > now.addMins(-DATA_CACHE_EXPIRY)){
 		return;
 	} 
-	
+
 	// Get the quiz list from remote server
 	$.ajax({
 		   data:{'method':'list','username':store.get('username'),'password':store.get('password')}, 
@@ -215,6 +213,7 @@ function dataUpdate(){
 		   }
 		});
 	
+	// send any unsubmitted responses
 }
 
 function setUpdated(){

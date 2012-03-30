@@ -14,7 +14,7 @@ body {
 }
 
 a:hover, a:visited, a {
-    color: #444444;
+    color: #444;
     text-decoration:underline;
     cursor:pointer;
 }
@@ -26,6 +26,9 @@ li {
 #header {
 	background: #fff;
   	padding:5px 5px;
+  	border-bottom: 1px solid #77a240;
+	text-align: center;
+	margin-bottom: 5px;
 }
 
 #header-title {
@@ -48,15 +51,6 @@ li {
 #header-right {
 	float:right;	
 	text-align:right;
-}
-
-
-#menu {
-	border-top: 1px solid #aaa;
-	text-align: center;
-	padding: 5px;
-	background: #9aca3c;
-	margin-bottom: 5px;
 }
 
 #content {
