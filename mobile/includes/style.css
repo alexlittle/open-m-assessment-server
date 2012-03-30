@@ -11,8 +11,6 @@ body {
 }
 
 #page {
-	background:#fff;
-	border: 1px solid #9aca3c;	
 }
 
 a:hover, a:visited, a {
@@ -26,7 +24,7 @@ li {
 }
 
 #header {
-	background: #9aca3c;
+	background: #fff;
   	padding:5px 5px;
 }
 
@@ -74,7 +72,13 @@ li {
 	color: red;
 }
 
-
+.homeBtn {
+	text-align:center;
+	padding: 10px;
+}
+.homeBtn input {
+	width: 50%;
+}
 
 #footer {
 	text-align:center;

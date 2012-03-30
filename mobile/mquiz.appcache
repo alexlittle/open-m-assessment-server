@@ -1,0 +1,15 @@
+CACHE MANIFEST
+# v1
+
+CACHE:
+includes/style.css
+includes/script.js
+includes/database.js
+includes/i8n.js
+includes/lang/en.js
+includes/quizengine.js
+
+includes/lib/flotr2.min.js
+includes/lib/jquery-1.7.1.min.js
+
+images/dclogo.png

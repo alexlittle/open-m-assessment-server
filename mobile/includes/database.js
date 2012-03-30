@@ -9,6 +9,8 @@ function Store(){
 			localStorage.setItem('username', null);
 			localStorage.setItem('password', null);
 			localStorage.setItem('lang', 'EN');
+			localStorage.setItem('quizlist', null);
+			localStorage.setItem('results', null);
 		}
 	}
 	

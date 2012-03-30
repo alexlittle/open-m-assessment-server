@@ -1,11 +1,20 @@
 <?php 
 include_once("../config.php");
-header("Content-type:text/plain;charset:utf-8");
+
+$format = optional_param("format","plain",PARAM_TEXT);
+if($format == 'json'){
+	header('Content-type: application/json; charset=UTF-8');
+} else {
+	header("Content-type:text/plain;charset:utf-8");
+}
 writeToLog("info","pagehit",$_SERVER["REQUEST_URI"]);
 
 $method = optional_param("method","",PARAM_TEXT);
 $username = optional_param("username","",PARAM_TEXT);
 $password = optional_param("password","",PARAM_TEXT);
+
+
+$response = new stdClass();
 
 /*
  * Methods with no login required
@@ -58,13 +67,26 @@ if($method == 'register'){
 	die;
 }
 
+
+if($method == 'login'){
+	$login = userLogin($username,$password,false);
+	$response->login = $login;
+	echo json_encode($response);
+	die;
+}
+
 /*
  * Login user
  */
 if (!userLogin($username,$password,false)){
-	echo "Login failed";
+	if($format == 'json'){
+		$response->login = false;
+		echo json_encode($response);
+	} else {
+		echo "Login failed";
+	}
 	die;
-}
+} 
 
 /*
  * Methods with login required
@@ -115,7 +137,6 @@ if($method == 'list'){
 			}
 		}
 		if($downloadable){
-			//$url = $CONFIG->homeAddress."api/?method=getquiz&ref=".$q->ref;
 			$o = array(	'id'=>$q->ref,
 							'name'=>$q->title,
 							'url'=>$url_prefix."?method=getquiz&ref=".$q->ref);
@@ -131,7 +152,12 @@ if($method == 'getquiz'){
 	$quiz = $API->getQuiz($ref);
 	
 	if($quiz == null){
-		echo "Quiz not found";
+		if($format == 'json'){
+			$response->error = "Quiz not found";
+			echo json_encode($response);
+		} else {
+			echo "Quiz not found";
+		}
 		die;
 	}
 	// check if currently downloadable
