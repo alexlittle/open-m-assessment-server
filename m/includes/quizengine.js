@@ -1,5 +1,7 @@
 var Q = null;
 
+var inQuiz = false;
+
 function Quiz(){
 	
 	this.quiz = null;
@@ -8,6 +10,7 @@ function Quiz(){
 	
 	this.init = function(q){
 		this.quiz = q;
+		inQuiz = true;
 	}
 	
 	this.setHeader = function(){
@@ -106,6 +109,7 @@ function Quiz(){
 			alert("You must answer this question before getting your results.");
 			return;
 		} 
+		inQuiz = false;
 		$('#content').empty();
 		$('#content').append("<h2 name='lang' id='page_title_results'>Your results for '"+ this.quiz.title +"' quiz:</h2>");
 		// calculate score
@@ -116,6 +120,9 @@ function Quiz(){
 		total = Math.min(total,this.quiz.maxscore);
 		var percent = total*100/this.quiz.maxscore;
 		$('#content').append("<div id='quiz_results'>"+ percent.toFixed(0) +"%</div>");
+		
+		var takeQuizBtn = $('<div>').attr({'class': 'homeBtn'}).append($("<input>").attr({'type':'button','name':'takeQuiz','value':'Take another Quiz','onclick':'showSelectQuiz()'}));
+		$('#content').append(takeQuizBtn);
 		
 		//save for submission to server
 		var content = Object();

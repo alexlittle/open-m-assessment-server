@@ -246,8 +246,12 @@ if($method == 'submit'){
 		saveResult($json,$username);
 	}
 	
-	$response->result = true;
-	echo json_encode($response);
+	if($format == 'json'){
+		$response->result = true;
+		echo json_encode($response);
+	} else {
+		echo 'success';
+	}
 	die;
 }
 

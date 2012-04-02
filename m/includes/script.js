@@ -1,5 +1,4 @@
 
-var PAGE = "";
 var DATA_CACHE_EXPIRY = 360; // no of mins before the data should be updated from server;
 var LOGIN_EXPIRY = 7; // no days before the user needs to log in again
 
@@ -17,7 +16,15 @@ function showPage(page){
 		return;
 	}
 	dataUpdate();
-	PAGE = page;
+	if(inQuiz){
+		var endQuiz = confirm("Are you sure you want to leave this quiz?")
+		if(endQuiz){
+			inQuiz = false;
+		} else {
+			return;
+		}
+		
+	}
 	$('#content').empty();
 	if(page == 'home'){
 		showHome();
@@ -27,8 +34,10 @@ function showPage(page){
 function showHome(){
 	var takeQuizBtn = $('<div>').attr({'class': 'homeBtn'}).append($("<input>").attr({'type':'button','name':'takeQuiz','value':'Take a Quiz','onclick':'showSelectQuiz()'}));
 	$('#content').append(takeQuizBtn);
-	var viewResultsBtn = $('<div>').attr({'class': 'homeBtn'}).append($("<input>").attr({'type':'button','name':'viewResults','value':'View Results','onclick':'showResults()'}));
-	$('#content').append(viewResultsBtn);
+	var getForOfflineBtn = $('<div>').attr({'class': 'homeBtn'}).append($("<input>").attr({'type':'button','name':'getForOffline','value':'Download Quizzes (for use when offline)','onclick':'downloadQuizzesSelect()'}));
+	$('#content').append(getForOfflineBtn);
+	/*var viewResultsBtn = $('<div>').attr({'class': 'homeBtn'}).append($("<input>").attr({'type':'button','name':'viewResults','value':'View Results','onclick':'showResults()'}));
+	$('#content').append(viewResultsBtn);*/
 }
 
 function showSelectQuiz(){
@@ -36,9 +45,55 @@ function showSelectQuiz(){
 	$('#content').append("<h2 name='lang' id='page_title_selectquiz'>"+getString('page_title_selectquiz')+"</h2>");
 	var quizzes = store.get('quizlist');
 	for(var q in quizzes){
-		var quiz = $('<div>').attr({'class': 'quizlist clickable','onclick':'loadQuiz("'+quizzes[q].id+'")'}).html(quizzes[q].name);
+		var quiz = $('<div>').attr({'class': 'quizlist clickable','onclick':'loadQuiz("'+quizzes[q].id+'")'});
+		quiz.html(quizzes[q].name);
+		if(store.get(quizzes[q].id)){
+			quiz.append(" <small>(Saved for offline use)</small>");
+		}
 		$('#content').append(quiz);
 	}
+}
+
+function downloadQuizzesSelect(){
+	$('#content').empty();
+	$('#content').append("<h2 name='lang' id='page_title_selectquiz'>"+getString('page_title_download')+"</h2>");
+	var quizzes = store.get('quizlist');
+	for(var q in quizzes){
+		if(!store.get(quizzes[q].id)){
+			var quiz = $('<div>').attr({'class': 'quizlist'});
+			quiz.append($('<input>').attr({'type':'checkbox','id':'download_'+quizzes[q].id,'value':quizzes[q].id}));
+			var l = $('<label>').attr({'for':'download_'+quizzes[q].id});
+			l.html(quizzes[q].name);
+			quiz.append(l);
+			$('#content').append(quiz);
+		}
+	}
+	var downloadBtn = $('<div>').attr({'class': 'homeBtn'}).append($("<input>").attr({'type':'button','name':'downloadBtn','value':'Download selected','onclick':'downloadQuizzes()'}));
+	$('#content').append(downloadBtn);
+}
+
+function downloadQuizzes(){
+	$('input[name=^download_]:checked').each(function() {
+		var id = $(this).val();
+		$.ajax({
+			   data:{'method':'getquiz','username':store.get('username'),'password':store.get('password'),'ref':id}, 
+			   success:function(data){
+				   if(data.error){
+					   alert(data.error);
+					   return;
+				   }
+				   //check for any error messages
+				   if(data && !data.error){
+					   //save to local cache
+					   store.set(id, data);
+				   }
+			   }, 
+			   error:function(data){
+				   alert("No connection available. You need to be online to download these quizzes.");
+			   }
+			});
+	});
+	
 }
 
 function loadQuiz(id){
@@ -195,7 +250,7 @@ function dataUpdate(){
 	var now = new Date();
 	var lastupdate = new Date(store.get('lastupdate'));
 	if(lastupdate > now.addMins(-DATA_CACHE_EXPIRY)){
-		//return;
+		return;
 	} 
 
 	// send any unsubmitted responses
@@ -229,9 +284,7 @@ function dataUpdate(){
 		   }, 
 		   error:function(data){
 		   }
-		});
-	
-	
+		});	
 }
 
 function setUpdated(){
