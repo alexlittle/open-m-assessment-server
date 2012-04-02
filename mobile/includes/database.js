@@ -27,4 +27,21 @@ function Store(){
 		localStorage.clear();
 	}
 	
+	this.clearKey = function(key){
+		this.set(key,null);
+	}
+	
+	this.addArrayItem = function(key,value){
+		//get current array
+		var c = this.get(key);
+		var count = 0;
+		if(!c){
+			c = [];
+		} else {
+			count = c.length;
+		}
+		c[count] = value;
+		this.set(key,c);
+	}
+	
 }

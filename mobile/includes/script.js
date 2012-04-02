@@ -195,9 +195,27 @@ function dataUpdate(){
 	var now = new Date();
 	var lastupdate = new Date(store.get('lastupdate'));
 	if(lastupdate > now.addMins(-DATA_CACHE_EXPIRY)){
-		return;
+		//return;
 	} 
 
+	// send any unsubmitted responses
+	var unsent = store.get('unsentresults');
+	
+	if(unsent){
+		$.ajax({
+			   data:{'method':'submit','username':store.get('username'),'password':store.get('password'),'content':JSON.stringify(unsent)}, 
+			   success:function(data){
+				   if(data && data.result){
+					   // all submitted ok so remove array
+					   store.clearKey('unsentresults');
+				   }
+			   }, 
+			   error:function(data){
+				   // do nothing - will send on next update
+			   }
+			});
+	}
+	
 	// Get the quiz list from remote server
 	$.ajax({
 		   data:{'method':'list','username':store.get('username'),'password':store.get('password')}, 
@@ -213,7 +231,7 @@ function dataUpdate(){
 		   }
 		});
 	
-	// TODO send any unsubmitted responses
+	
 }
 
 function setUpdated(){

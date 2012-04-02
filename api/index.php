@@ -233,55 +233,21 @@ if($method == 'getquiz'){
 if($method == 'submit'){
 	$content = optional_param("content","",PARAM_TEXT);
 	if($content == ""){
-		echo "failure - no content";
+		$response->result = false;
+		echo json_encode($response);
 		die;
 	}
-	try {
-		$json = json_decode(stripslashes($content));
-	
-		if (isset($json->quizid)){
-			$quiz = $API->getQuiz($json->quizid);
-			// check if currently downloadable
-			$submitable = true;
-			$props = $API->getQuizProps($quiz->quizid);
-			if(array_key_exists('submitable', $props)){
-				if($props['submitable'] == 'false'){
-					$submitable = false;
-				}
-			}
-			if(!$submitable){
-				echo "Results submissions currently disabled for this quiz";
-				die;
-			}
-		} else {
-			echo "failure";
-			die;
+	$json = json_decode(stripslashes($content));
+	if(is_array($json)){
+		foreach($json as $i){
+			saveResult($i,$username);
 		}
-	
-		$qa = new QuizAttempt();
-		$qa->quizref = $json->quizid;
-		$qa->username = $json->username;
-		$qa->maxscore = $json->maxscore;
-		$qa->userscore = $json->userscore;
-		$qa->quizdate = $json->quizdate;
-		$qa->submituser = $username;
-	
-		// insert to quizattempt
-		$newId = $API->insertQuizAttempt($qa);
-	
-		$responses = $json->responses;
-		foreach ($responses as $r){
-			$qar = new QuizAttemptResponse();
-			$qar->qaid = $newId;
-			$qar->userScore = $r->score;
-			$qar->questionRef = $r->qid;
-			$qar->text = $r->qrtext;
-			$API->insertQuizAttemptResponse($qar);
-		}
-		echo "success";
-	} catch (Exception $e){
-		echo "failure";
+	} else {
+		saveResult($json,$username);
 	}
+	
+	$response->result = true;
+	echo json_encode($response);
 	die;
 }
 
@@ -303,5 +269,52 @@ function endsWith($haystack, $needle){
 	$length = strlen($needle);
 	$start  = $length * -1; //negative
 	return (substr($haystack, $start) === $needle);
+}
+
+function saveResult($json,$username){
+	global $API;
+	try{
+		if (isset($json->quizid)){
+			$quiz = $API->getQuiz($json->quizid);
+			// check if currently downloadable
+			$submitable = true;
+			$props = $API->getQuizProps($quiz->quizid);
+			if(array_key_exists('submitable', $props)){
+				if($props['submitable'] == 'false'){
+					$submitable = false;
+				}
+			}
+			/*if(!$submitable){
+				return "Results submissions currently disabled for this quiz";
+				die;
+			}*/
+		} else {
+			return false;
+		}
+		
+		$qa = new QuizAttempt();
+		$qa->quizref = $json->quizid;
+		$qa->username = $json->username;
+		$qa->maxscore = $json->maxscore;
+		$qa->userscore = $json->userscore;
+		$qa->quizdate = $json->quizdate;
+		$qa->submituser = $username;
+		
+		// insert to quizattempt
+		$newId = $API->insertQuizAttempt($qa);
+		
+		$responses = $json->responses;
+		foreach ($responses as $r){
+			$qar = new QuizAttemptResponse();
+			$qar->qaid = $newId;
+			$qar->userScore = $r->score;
+			$qar->questionRef = $r->qid;
+			$qar->text = $r->qrtext;
+			$API->insertQuizAttemptResponse($qar);
+		}
+		return true;
+	} catch (Exception $e){
+		return false;
+	}
 }
 ?>

@@ -8,7 +8,6 @@ function Quiz(){
 	
 	this.init = function(q){
 		this.quiz = q;
-		console.log(this.quiz);
 	}
 	
 	this.setHeader = function(){
@@ -126,20 +125,19 @@ function Quiz(){
 		content.userscore = total;
 		content.quizdate = Date.now();
 		content.responses = this.responses;
-
+	
 		$.ajax({
-			   data:{'method':'submit','username':store.get('username'),'password':store.get('password'),'content':JSON.stringify(content)}, 
-			   success:function(data){
-				   //check for any error messages
-				   if(!data || !data.error){
-					   store.set('result_'+ content.quizdate, content);
-					   console.log('error sending');
-				   }
-			   }, 
-			   error:function(data){
-				   store.set('result_'+ content.quizdate, content);
+		   data:{'method':'submit','username':store.get('username'),'password':store.get('password'),'content':JSON.stringify(content)}, 
+		   success:function(data){
+			   //check for any error messages
+			   if(!data || data.error){
+				   store.addArrayItem('unsentresults',content);
 			   }
-			});
+		   }, 
+		   error:function(data){
+			   store.addArrayItem('unsentresults',content);
+		   }
+		});
 	}
 	
 	this.setNav = function(){
