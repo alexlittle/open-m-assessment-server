@@ -7,6 +7,8 @@ function Quiz(){
 	this.quiz = null;
 	this.currentQuestion = 0;
 	this.responses = [];
+	this.matchingstate = [];
+	this.matchingopt = [];
 	
 	this.init = function(q){
 		this.quiz = q;
@@ -83,8 +85,44 @@ function Quiz(){
 	this.loadMatching = function(resp){
 		$('#response').empty();
 		
+		this.matchingstate = [];
+		this.matchingopt = [];
+		
 		for(var r in resp){
+			var t = resp[r].text.split('-&gt;');
+			if(t[0].trim() != ''){
+				this.matchingstate[r] = t[0].trim();
+			}
+			if(t[1].trim() != ''){
+				this.matchingopt[r] = t[1].trim();
+			}
+		}
+		
+		var curresp = [];
+		if(this.responses[this.currentQuestion]){
+			curresp = this.responses[this.currentQuestion].qrtext.split('|');
+		}
+		
+		for(var s in this.matchingstate){
+			var d = $('<div>').attr({'class':'response'});
+			var st = $('<span>').attr({'class':'matchingstate','name':'matching','id':'matchingstate'+s}).text(this.matchingstate[s]);
+			d.append(st);
 			
+			var sel = $('<select>').attr({'class':'matchingopt','name':'matching','id':'matchingopt'+s}).append($('<option>'));
+			for(var o in this.matchingopt){
+				var ot = $('<option>').text(this.matchingopt[o]);
+				// find if a current response for this answer
+				for(var i in curresp){
+					var r = curresp[i].split('-&gt;');
+					if(r[0].trim() == this.matchingstate[s] && r[1].trim() == this.matchingopt[o]){
+						ot.attr({'selected':'selected'});
+					}
+				}
+				sel.append(ot);
+			}
+			d.append(sel);
+			$('#response').append(d);
+			$('#response').append('<div style="clear:both;"></div>');
 		}
 	}
 	
@@ -95,6 +133,8 @@ function Quiz(){
 			return this.saveMultichoice(nav);
 		} else if(q.type == 'shortanswer'){
 			return this.saveShortAnswer(nav);
+		} else if(q.type == 'matching'){
+			return this.saveMatching(nav);
 		} else {
 			console.log("question type not implemented:"+q.type);
 		}
@@ -169,6 +209,39 @@ function Quiz(){
 				return true;
 			}	
 		}
+	}
+	
+	this.saveMatching = function(nav){
+		//check an answer given for all options
+		for(var s in this.matchingstate){
+			if($('#matchingopt'+s+' :selected').text() == ''){
+				if(nav == 'next'){
+					return false;
+				} else {
+					return true;
+				}
+			}
+		}
+		//now mark and save the answers
+		var o = Object();
+		var q = this.quiz.q[this.currentQuestion];
+		o.qid = q.refid;
+		o.score = 0;
+		o.qrtext = '';
+		var feedback = null;
+		for(var s in this.matchingstate){
+			var resp = this.matchingstate[s] + " -&gt; " +  $('#matchingopt'+s+' :selected').text();
+			for(var r in q.r){
+				if(q.r[r].text == resp){
+					o.score += parseInt(q.r[r].score);
+				}
+			}
+			o.qrtext += resp + "|";
+			
+		}
+		o.score = Math.min(o.score,parseInt(q.props.maxscore));
+		this.responses[this.currentQuestion] = o;
+		return true;
 	}
 	
 	this.showResults = function(){
