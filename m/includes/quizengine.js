@@ -50,6 +50,8 @@ function Quiz(){
 			this.loadShortAnswer();
 		} else if (q.type == 'matching'){
 			this.loadMatching(q.r);
+		} else if (q.type == 'numerical'){
+			this.loadNumerical(q.r);
 		} else {
 			console.log("question type not implemented:"+q.type);
 		}
@@ -126,6 +128,14 @@ function Quiz(){
 		}
 	}
 	
+	this.loadNumerical = function(){
+		$('#response').empty();
+		var o = $('<input>').attr({'type':'text','name':'response','id':'numericalresponse','class':'formfield'});
+		if(this.responses[this.currentQuestion]){
+			o.attr({'value':this.responses[this.currentQuestion].qrtext});
+		}
+		$('#response').append(o);
+	}
 	
 	this.saveResponse = function(nav){
 		var q = this.quiz.q[this.currentQuestion];
@@ -135,6 +145,8 @@ function Quiz(){
 			return this.saveShortAnswer(nav);
 		} else if(q.type == 'matching'){
 			return this.saveMatching(nav);
+		} else if(q.type == 'numerical'){
+			return this.saveNumerical(nav);
 		} else {
 			console.log("question type not implemented:"+q.type);
 		}
@@ -242,6 +254,50 @@ function Quiz(){
 		o.score = Math.min(o.score,parseInt(q.props.maxscore));
 		this.responses[this.currentQuestion] = o;
 		return true;
+	}
+	
+
+	this.saveNumerical = function(nav){
+		var ans = $('#numericalresponse').val().trim();
+		if(ans != ''){
+			var o = Object();
+			var q = this.quiz.q[this.currentQuestion];
+			o.qid = q.refid;
+			o.score = 0;
+			o.qrtext = ans;
+			var feedback = null;
+			var bestans = -1;
+			// mark question and get text
+			for(var r in q.r){
+				if(parseFloat(q.r[r].text) - parseFloat(q.r[r].props.tolerance) <= ans && ans <= parseFloat(q.r[r].text) + parseFloat(q.r[r].props.tolerance) ){
+					if(parseInt(q.r[r].score) > parseInt(o.score)){
+						o.score = q.r[r].score;
+						bestans = r;
+					}
+				}
+			}
+			if(bestans != -1){
+				o.score = q.r[bestans].score;
+				if (q.r[bestans].props.feedback && q.r[bestans].props.feedback != ''){
+					feedback = q.r[bestans].props.feedback;
+				}
+			}
+			
+			o.score = Math.min(o.score,parseInt(q.props.maxscore));
+			this.responses[this.currentQuestion] = o;
+			
+			// show feedback (if any)
+			if(feedback){
+				alert("Feedback: "+feedback);
+			}
+			return true;
+		} else {
+			if(nav == 'next'){
+				return false;
+			} else {
+				return true;
+			}	
+		}
 	}
 	
 	this.showResults = function(){
