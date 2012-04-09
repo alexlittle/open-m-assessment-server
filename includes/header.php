@@ -26,7 +26,6 @@ if ($lang != ""){
 	<script type="text/javascript" src="<?php echo $CONFIG->homeAddress; ?>/includes/jquery-1.7.min.js"></script>
 	<script type="text/javascript" src="<?php echo $CONFIG->homeAddress; ?>/includes/quiz.php"></script>
 	<link rel="StyleSheet" href="<?php echo $CONFIG->homeAddress; ?>/includes/style.css" type="text/css" media="screen">
-	<link rel="StyleSheet" href="<?php echo $CONFIG->homeAddress; ?>/includes/printstyle.css" type="text/css" media="print">
 	<link rel="shortcut icon" href="<?php echo $CONFIG->homeAddress; ?>/images/favicon.ico" />
 	<?php 
     	echo $HEADER;

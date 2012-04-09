@@ -147,6 +147,20 @@ if($method == 'list'){
 	die;
 }
 
+if($method == 'search'){
+	/*
+	 * SELECT * FROM language l
+inner join quiz q ON l.langref = q.quiztitleref
+WHERE langtext like '%capit%'
+
+
+	 */
+}
+
+if($method == 'suggest'){
+	
+}
+
 if($method == 'getquiz'){
 	$ref = optional_param('ref','',PARAM_TEXT);
 	$quiz = $API->getQuiz($ref);

@@ -10,6 +10,7 @@ function Quiz(){
 	
 	this.init = function(q){
 		this.quiz = q;
+		console.log(q);
 		inQuiz = true;
 	}
 	
@@ -55,10 +56,8 @@ function Quiz(){
 			var l = $('<label>').attr({'for':resp[r].refid});
 			var o = $('<input>').attr({'type':'radio','value':resp[r].refid,'name':'response','id':resp[r].refid,});
 			// find if this question has already been responded to and set response
-			if(this.responses[this.currentQuestion]){
-				if(this.responses[this.currentQuestion].text == resp[r].text){
-					o.attr({'checked':'checked'});
-				}
+			if(this.responses[this.currentQuestion] && this.responses[this.currentQuestion].qrtext == resp[r].text){
+				o.attr({'checked':'checked'});
 			}
 			l.append(o);
 			l.append(resp[r].text);
@@ -85,15 +84,24 @@ function Quiz(){
 			o.qid = q.refid;
 			o.score = 0;
 			o.qrtext = "";
+			var feedback = null;
 			// mark question and get text
 			for(var r in q.r){
 				if(q.r[r].refid == opt){
 					o.score = q.r[r].score;
 					o.qrtext = q.r[r].text;
+					if (q.r[r].props.feedback && q.r[r].props.feedback != ''){
+						feedback = q.r[r].props.feedback;
+					}
 				}
 			}
 			o.score = Math.min(o.score,parseInt(q.props.maxscore));
 			this.responses[this.currentQuestion] = o;
+			
+			// show feedback (if any)
+			if(feedback){
+				alert("Feedback: "+feedback);
+			}
 			return true;
 		} else {
 			if(nav == 'next'){
@@ -121,7 +129,7 @@ function Quiz(){
 		var percent = total*100/this.quiz.maxscore;
 		$('#content').append("<div id='quiz_results'>"+ percent.toFixed(0) +"%</div>");
 		
-		var takeQuizBtn = $('<div>').attr({'class': 'homeBtn'}).append($("<input>").attr({'type':'button','name':'takeQuiz','value':'Take another Quiz','onclick':'showSelectQuiz()'}));
+		var takeQuizBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','name':'takeQuiz','value':'Take another Quiz','onclick':'showSelectQuiz()'}));
 		$('#content').append(takeQuizBtn);
 		
 		//save for submission to server

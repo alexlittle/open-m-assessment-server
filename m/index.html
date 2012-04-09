@@ -13,19 +13,23 @@
     
     <script type="text/javascript">
     	function init(){
-    		showPage('home');
+    		if($(location).attr('hash')){
+    			showPage($(location).attr('hash'));
+    		} else {
+    			showPage('#home');
+    		}
     		showUsername();
     		changeInterfaceLang();
     	}
     </script>
 </head>
-<body onload="init()">
+<body onload="init()" onhashchange="init()">
 <div id="page">
 	<div id="header">
-		<div id="header-logo" onclick="showPage('home')" class="clickable">
+		<div id="header-logo" onclick="confirmExitQuiz('#home')" class="clickable">
 			<img style="vertical-align:middle" src="images/dclogo.png"/>
 		</div>
-		<div id="header-title" onclick="showPage('home')" class="clickable">
+		<div id="header-title" onclick="confirmExitQuiz('#home')" class="clickable">
 			<h1 id="mobile_app_title" name="lang"></h1>
 		</div>
 		<div id="header-right">
