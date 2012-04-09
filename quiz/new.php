@@ -46,6 +46,20 @@ if ($submit != ""){
 			array_push($MSG, "You must enter a question for Q".$q);
 			$savequiz = false;
 		}
+		
+		// check a score has been entered for each question
+		if($questiontitle != ""){
+			$tempscore = 0;
+			for ($r=1;$r<5;$r++){
+				$mref = "q".($q)."m".($r);
+				$score= optional_param($mref,0,PARAM_INT);
+				$tempscore += $score;
+			}
+			if($tempscore == 0){
+				array_push($MSG, "You need to allow a non-zero score for Q".$q);
+				$savequiz = false;
+			}
+		}
 	}
 	
 	if($noquest == 0){
