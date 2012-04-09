@@ -52,7 +52,10 @@ function Quiz(){
 			this.loadMatching(q.r);
 		} else if (q.type == 'numerical'){
 			this.loadNumerical(q.r);
+		} else if (q.type == 'essay'){
+			this.loadEssay();
 		} else {
+			$('#response').empty();
 			console.log("question type not implemented:"+q.type);
 		}
 	}
@@ -77,7 +80,7 @@ function Quiz(){
 	
 	this.loadShortAnswer = function(){
 		$('#response').empty();
-		var o = $('<input>').attr({'type':'text','name':'response','id':'shortanswerresponse','class':'formfield'});
+		var o = $('<input>').attr({'type':'text','name':'response','id':'shortanswerresponse','class':'responsefield'});
 		if(this.responses[this.currentQuestion]){
 			o.attr({'value':this.responses[this.currentQuestion].qrtext});
 		}
@@ -130,9 +133,18 @@ function Quiz(){
 	
 	this.loadNumerical = function(){
 		$('#response').empty();
-		var o = $('<input>').attr({'type':'text','name':'response','id':'numericalresponse','class':'formfield'});
+		var o = $('<input>').attr({'type':'text','name':'response','id':'numericalresponse','class':'responsefield'});
 		if(this.responses[this.currentQuestion]){
 			o.attr({'value':this.responses[this.currentQuestion].qrtext});
+		}
+		$('#response').append(o);
+	}
+	
+	this.loadEssay = function(){
+		$('#response').empty();
+		var o = $('<textarea>').attr({'type':'text','name':'response','id':'essayresponse','class':'responsefield'});
+		if(this.responses[this.currentQuestion]){
+			o.text(this.responses[this.currentQuestion].qrtext);
 		}
 		$('#response').append(o);
 	}
@@ -147,6 +159,8 @@ function Quiz(){
 			return this.saveMatching(nav);
 		} else if(q.type == 'numerical'){
 			return this.saveNumerical(nav);
+		} else if(q.type == 'essay'){
+			return this.saveEssay(nav);
 		} else {
 			console.log("question type not implemented:"+q.type);
 		}
@@ -283,6 +297,41 @@ function Quiz(){
 				}
 			}
 			
+			o.score = Math.min(o.score,parseInt(q.props.maxscore));
+			this.responses[this.currentQuestion] = o;
+			
+			// show feedback (if any)
+			if(feedback){
+				alert("Feedback: "+feedback);
+			}
+			return true;
+		} else {
+			if(nav == 'next'){
+				return false;
+			} else {
+				return true;
+			}	
+		}
+	}
+	
+	this.saveEssay = function(nav){
+		var ans = $('#essayresponse').val().trim();
+		if(ans != ''){
+			var o = Object();
+			var q = this.quiz.q[this.currentQuestion];
+			o.qid = q.refid;
+			o.score = 0;
+			o.qrtext = ans;
+			var feedback = null;
+			// mark question and get text
+			for(var r in q.r){
+				if(q.r[r].text == ans){
+					o.score = q.r[r].score;
+					if (q.r[r].props.feedback && q.r[r].props.feedback != ''){
+						feedback = q.r[r].props.feedback;
+					}
+				}
+			}
 			o.score = Math.min(o.score,parseInt(q.props.maxscore));
 			this.responses[this.currentQuestion] = o;
 			
