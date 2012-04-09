@@ -68,7 +68,7 @@ function showSelectQuiz(){
 		showLoading('quiz list');
 	}
 	for(var q in quizzes){
-		var quiz = $('<div>').attr({'class': 'quizlist clickable','onclick':'loadQuiz("'+quizzes[q].id+'")'});
+		var quiz = $('<div>').attr({'class': 'quizlist clickable','onclick':'document.location = "#'+quizzes[q].id+'"'});
 		quiz.html(quizzes[q].name);
 		if(store.get(quizzes[q].id)){
 			quiz.append(" <small>(Saved for offline use)</small>");
