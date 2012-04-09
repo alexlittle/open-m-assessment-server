@@ -909,6 +909,6 @@ class API {
 	
 	function createUUID($prefix){
 		global $USER;
-		return $prefix.strtolower($USER->firstname).uniqid();
+		return $prefix.strtolower($USER->userid).uniqid();
 	}
 }
