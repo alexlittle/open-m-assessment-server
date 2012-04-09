@@ -14,7 +14,7 @@ body {
 }
 
 a:hover, a:visited, a {
-    color: #444;
+    color: #77a240;
     text-decoration:underline;
     cursor:pointer;
 }
@@ -28,6 +28,7 @@ a:hover, a:visited, a {
 	text-align:center;
 	padding:5px;
 	background:	#9aca3c;
+	margin-top:20px;
 }
 
 .checkbox {
@@ -39,7 +40,6 @@ li {
 }
 
 #header {
-	background: #fff;
   	padding:5px 5px;
 	text-align: center;
 	margin-bottom: 5px;
@@ -47,19 +47,17 @@ li {
 
 #header-title {
 	float:left;	
-	height: 50px;
 }
+
 #header-title h1 {
-	font-size:110%;
+	font-size:130%;
 	display:inline;
-	height: 50px;
 	vertical-align:middle;
+	color: #77a240;
 }
 
 #header-logo {
 	float:left;
-	width:50px;
-	height: 50px;
 }
 
 #header-right {
@@ -68,7 +66,7 @@ li {
 }
 
 #content {
-	font-size:100%;
+	font-size:120%;
 }
 
 #content h2 {
@@ -91,14 +89,20 @@ li {
 	width:100%;
 }
 
-div.button {
+div.ctrl {
 	text-align: center;
-	width:100%;
+	margin:10px;
 }
 .button {
 	padding: 10px;
 	width: 80%;
-	font-size:130%;
+	font-size:110%;
+}
+
+.navbutton {
+	padding: 10px;
+	width: 100%;
+	font-size:110%;
 }
 
 .quizlist {
@@ -162,4 +166,13 @@ div.quiznavnext {
 .responsefield {
 	font-size:130%;
 	width:100%;
+}
+
+.highlight {
+	background: yellow;
+}
+
+label.error{
+	color:red;
+	font-size:60%;
 }

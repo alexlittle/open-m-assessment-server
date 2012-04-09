@@ -434,7 +434,7 @@ function Quiz(){
 		var percent = total*100/this.quiz.maxscore;
 		$('#content').append("<div id='quiz_results'>"+ percent.toFixed(0) +"%</div>");
 		
-		var takeQuizBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','class':'button','name':'takeQuiz','value':'Take another Quiz','onclick':'showSelectQuiz()'}));
+		var takeQuizBtn = $('<div>').attr({'class': 'ctrl'}).append($("<input>").attr({'type':'button','class':'button','name':'takeQuiz','value':'Take another Quiz','onclick':'showSelectQuiz()'}));
 		$('#content').append(takeQuizBtn);
 		
 		//save for submission to server

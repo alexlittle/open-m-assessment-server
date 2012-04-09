@@ -11,7 +11,7 @@ $.ajaxSetup({
 });
 
 function showPage(hash){
-	if(!loggedIn()){
+	if(!loggedIn() && hash != '#register'){
 		showLogin();
 		return;
 	}
@@ -23,8 +23,8 @@ function showPage(hash){
 		showSelectQuiz();
 	} else if (hash == '#download'){
 		downloadQuizzesSelect();
-	} else if (hash == '#results'){
-		
+	} else if (hash == '#register'){
+		showRegister();
 	} else if (hash == '#login'){
 		showLogin();
 	} else {
@@ -47,9 +47,10 @@ function confirmExitQuiz(page){
 function showHome(){
 	document.location = "#home";
 	PAGE = '#home';
-	var takeQuizBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','class':'button','name':'takeQuiz','value':'Take a Quiz','onclick':'showSelectQuiz()'}));
+	$('#content').empty();
+	var takeQuizBtn = $('<div>').attr({'class': 'ctrl'}).append($("<input>").attr({'type':'button','class':'button','name':'takeQuiz','value':'Take a Quiz','onclick':'showSelectQuiz()'}));
 	$('#content').append(takeQuizBtn);
-	var getForOfflineBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','class':'button','name':'getForOffline','value':'Download Quizzes (for use when offline)','onclick':'downloadQuizzesSelect()'}));
+	var getForOfflineBtn = $('<div>').attr({'class': 'ctrl'}).append($("<input>").attr({'type':'button','class':'button','name':'getForOffline','value':'Download Quizzes','onclick':'downloadQuizzesSelect()'}));
 	$('#content').append(getForOfflineBtn);
 	/*var viewResultsBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','name':'viewResults','value':'View Results','onclick':'showResults()'}));
 	$('#content').append(viewResultsBtn);*/
@@ -94,7 +95,7 @@ function downloadQuizzesSelect(){
 			$('#content').append(quiz);
 		}
 	}
-	var downloadBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','class':'button','name':'downloadBtn','value':'Download selected','onclick':'downloadQuizzes()'}));
+	var downloadBtn = $('<div>').attr({'class': 'ctrl'}).append($("<input>").attr({'type':'button','class':'button','name':'downloadBtn','value':'Download selected','onclick':'downloadQuizzes()'}));
 	$('#content').append(downloadBtn);
 }
 
@@ -185,7 +186,7 @@ function showQuiz(id){
 function showLogin(){
 	document.location = "#login";
 	$('#content').empty();
-	$('#content').append("<h2 name='lang' id='page_title_login'>"+getString('page_title_login')+"</h2>");
+	$('#content').append("<h2>Login (or <a href='#register'>Register</a>)</h2>");
 	var form =  $('<div>');
 	form.append("<div class='formblock'>" +
 		"<div class='formlabel' name='lang' id='login_username'>"+getString('login_username')+"</div>" +
@@ -197,16 +198,71 @@ function showLogin(){
 		"<div class='formfield'><input type='password' name='password' id='password'></input></div>" +
 		"</div>");
 	
-	form.append("<div class='formblock'>" +
-			"<div class='formfield'><input type='button' name='submit' value='Login' onclick='login()' class='button'></input></div>" +
-			"</div>");
+	form.append("<div class='ctrl'><input type='button' name='submit' value='Login' onclick='login()' class='button'></input></div>");
 	$('#content').append(form);
+}
+
+function showRegister(){
+	document.location = '#register';
+	$('#content').empty();
+	$('#content').append("<h2>Register</h2>");
+	var l = $('<div>').attr({'id':'loading'}).html("Registering...");
+	$('#content').append(l);
+	l.hide();
+	var form =  $('<form>').attr({'id':'register'});
+	form.append("<div class='formblock'>" +
+		"<div class='formlabel'>Email address:</div>" +
+		"<div class='formfield'><input type='text' name='email' id='email'></input></div>" +
+		"</div>");
+	form.append("<div class='formblock'>" +
+			"<div class='formlabel'>Password:</div>" +
+			"<div class='formfield'><input type='password' name='password' id='password'></input></div>" +
+			"</div>");
+	form.append("<div class='formblock'>" +
+			"<div class='formlabel'>Password (confirm):</div>" +
+			"<div class='formfield'><input type='password' name='password_confirm' id='password_confirm'></input></div>" +
+			"</div>");
+	form.append("<div class='formblock'>" +
+			"<div class='formlabel'>First name:</div>" +
+			"<div class='formfield'><input type='text' name='firstname' id='firstname'></input></div>" +
+			"</div>");
+	form.append("<div class='formblock'>" +
+			"<div class='formlabel'>Surname:</div>" +
+			"<div class='formfield'><input type='text' name='surname' id='surname'></input></div>" +
+			"</div>");
+	form.append("<div class='ctrl'><input type='button' name='submit' value='Register' onclick='register()' class='button'></input></div>");
+	$('#content').append(form);
+	//data validation
+	$('#register').validate({
+		rules: {
+			email: {
+				required: true,
+				email:true
+			},
+			password: {
+				required: true,
+				minlength: 6
+			},
+			password_confirm: {
+				required: true,
+				minlength: 6
+			},
+			firstname: {
+				required: true
+			},
+			surname: {
+				required: true
+			}
+		}
+		
+	});
 }
 
 function showLoading(msg){
 	var l = $('<div>').attr({'id':'loading'}).html("Loading "+msg+"...");
 	$('#content').append(l);
 }
+
 function loggedIn(){
 	if(store.get('username') == null){
 		return false;
@@ -243,7 +299,7 @@ function login(){
 				   showUsername();
 				   showPage('#home');
 			   } else {
-				   alert("Login failed");
+				   alert('Login failed');
 			   }
 		   }, 
 		   error:function(data){
@@ -251,6 +307,58 @@ function login(){
 		   }
 		});
 	return false;
+}
+
+function register(){
+	
+	var username = $('#email').val();
+	var password = $('#password').val();
+	var passwordAgain = $('#password_confirm').val();
+	var firstname = $('#firstname').val();
+	var lastname = $('#surname').val();
+	
+	//check passwords match
+	if(password != passwordAgain){
+		alert('Please check the passwords match');
+		return;
+	}
+	
+	if(!$('#register').valid()){
+		alert('Please check you have fully completed the form');
+		return;
+	}
+	
+	$('#register').hide();
+	
+	$.ajax({
+		   data:{'method':'register','username':username,'password':password,'passwordagain':passwordAgain,'firstname':firstname,'lastname':lastname}, 
+		   success:function(data){
+			   //check for any error messages
+			   if(data.login){
+				// save username and password
+				   store.set('username',$('#email').val());
+				   store.set('password',$('#password').val());
+				   store.set('lastlogin',Date());
+				   showUsername();
+				   showPage('#home');
+			   } else if(data.error) {
+				   $('#loading').hide();
+				   $('#register').show();
+				   alert(data.error);
+			   } else {
+				   alert('An error occurred, please try again.');
+				   $('#loading').hide();
+				   $('#register').show();
+			   }
+		   }, 
+		   error:function(data){
+			   alert("No connection available. You need to be online to register.");
+			   $('#loading').hide();
+			   $('#register').show();
+		   }
+		});
+	
+	
 }
 
 function logout(force){

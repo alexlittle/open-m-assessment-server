@@ -1,6 +1,13 @@
 <?php 
 header('Content-Type:text/html; charset=UTF-8');
 
+//first detect if using mobile device and redirect accordingly
+$uagent_obj = new uagent_info();
+if($uagent_obj->DetectIphone() || $uagent_obj->DetectAndroidPhone()){
+	header('Location: '.$CONFIG->homeAddress.'m/');
+	die;
+}
+
 global $PAGE,$CONFIG,$MSG,$API,$HEADER;
 
 $nologinpages = array ("login","index","register","faqs","terms","about","developer","phoneapps");

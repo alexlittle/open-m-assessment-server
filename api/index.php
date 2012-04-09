@@ -21,7 +21,7 @@ $response = new stdClass();
  */
 
 if($method == 'register'){
-	$email = optional_param("email","",PARAM_TEXT);
+	$email = optional_param("email",$username,PARAM_TEXT);
 	$passwordAgain = optional_param("passwordagain","",PARAM_TEXT);
 	$firstname = optional_param("firstname","",PARAM_TEXT);
 	$lastname = optional_param("lastname","",PARAM_TEXT);
@@ -56,14 +56,26 @@ if($method == 'register'){
 	$u = new User($email);
 	$user = $API->getUser($u);
 	if($user->userid != ""){
-		echo "Email already registered";
+		if($format == 'json'){
+			$response->error = "Email already registered";
+			echo json_encode($response);
+		} else {
+			echo "Email already registered";
+		}
 		die;
 	}
 	
 	$API->addUser($email, $password, $firstname, $lastname, $email);
 	$m = new Mailer();
 	$m->sendSignUpNotification($firstname." ".$lastname);
-	echo "success";
+	
+	if($format == 'json'){
+		$login = userLogin($username,$password,false);
+		$response->login = $login;
+		echo json_encode($response);
+	} else {
+		echo "success";
+	}
 	die;
 }
 
