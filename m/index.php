@@ -13,7 +13,15 @@
     <script type="text/javascript" src="includes/quizengine.js"></script>
     
     <script type="text/javascript">
+    	
     	function init(){
+    		<?php 
+    	    	include_once('../config.php');
+    	    	if(isLoggedIn()){
+    	    		printf("store.set('username','%s');",$USER->username);
+    	    		printf("store.set('password','%s');",$USER->password);
+    	    	}
+    	    ?>
     		if($(location).attr('hash')){
     			showPage($(location).attr('hash'));
     		} else {

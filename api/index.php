@@ -72,6 +72,7 @@ if($method == 'register'){
 	if($format == 'json'){
 		$login = userLogin($username,$password,false);
 		$response->login = $login;
+		$response->hash = md5($password);
 		echo json_encode($response);
 	} else {
 		echo "success";
@@ -83,6 +84,7 @@ if($method == 'register'){
 if($method == 'login'){
 	$login = userLogin($username,$password,false);
 	$response->login = $login;
+	$response->hash = md5($password);
 	echo json_encode($response);
 	die;
 }

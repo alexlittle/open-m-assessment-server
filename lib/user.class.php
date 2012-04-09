@@ -10,6 +10,7 @@ class User {
     public $firstname;
     public $lastname;
     public $username;
+    public $passhash;
     public $email;
     public $props = array();
     

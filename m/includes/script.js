@@ -1,7 +1,8 @@
 
 var DATA_CACHE_EXPIRY = 360; // no of mins before the data should be updated from server;
-var LOGIN_EXPIRY = 7; // no days before the user needs to log in again
 var PAGE = '';
+var SOURCE = '';
+
 $.ajaxSetup({
 	url: "../api/?format=json",
 	type: "POST",
@@ -44,6 +45,7 @@ function confirmExitQuiz(page){
 	}
 	showPage('#home');
 }
+
 function showHome(){
 	document.location = "#home";
 	PAGE = '#home';
@@ -265,18 +267,10 @@ function showLoading(msg){
 
 function loggedIn(){
 	if(store.get('username') == null){
+		showLogin();
 		return false;
 	} 
-	// check when last login made
-	var now = new Date();
-	var lastlogin = new Date(store.get('lastlogin'));
-	
-	if(lastlogin.addDays(LOGIN_EXPIRY) < now){
-		logout(true);
-		return false;
-	} else {
-		return true;
-	}
+	return true;
 }
 
 function login(){
@@ -294,7 +288,7 @@ function login(){
 			   if(data.login){
 				// save username and password
 				   store.set('username',$('#username').val());
-				   store.set('password',$('#password').val());
+				   store.set('password',data.hash);
 				   store.set('lastlogin',Date());
 				   showUsername();
 				   showPage('#home');
@@ -337,7 +331,7 @@ function register(){
 			   if(data.login){
 				// save username and password
 				   store.set('username',$('#email').val());
-				   store.set('password',$('#password').val());
+				   store.set('password',data.hash);
 				   store.set('lastlogin',Date());
 				   showUsername();
 				   showPage('#home');
@@ -370,6 +364,7 @@ function logout(force){
 	} else {
 		var lo = confirm('Are you sure you want to log out?\n\nYou will need an active connection to log in again.');
 		if(lo){
+			inQuiz = false;
 			store.clear();
 			store.init();
 			showLogin();

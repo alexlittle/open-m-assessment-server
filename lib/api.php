@@ -43,6 +43,7 @@ class API {
 			$user->firstname = $row['firstname'];
 			$user->lastname =  $row['lastname'];
 			$user->email =  $row['email'];
+			$user->password =  $row['password'];
 		}
 		return $user;
 	}
@@ -152,7 +153,7 @@ class API {
 	function userValidatePassword($username,$password){
 		global $USER;
 		$username = strtolower($username);
-		$sql = sprintf("SELECT userid FROM user WHERE username='%s' AND password=md5('%s')",$username,$password);
+		$sql = sprintf("SELECT userid FROM user WHERE username='%s' AND (password=md5('%s') OR password='%s')",$username,$password,$password);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			writeToLog('error','database',$sql);

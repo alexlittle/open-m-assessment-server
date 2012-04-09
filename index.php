@@ -31,9 +31,12 @@ $leaderboard = $API->getLeaderboard();
 <?php 	
 	foreach ($top10popular as $t){
 		echo "<li>";
-		printf("<a href='./quiz/view.php?ref=%s'>%s</a>",$t->ref,$t->title);
-		printf(" <a href='./my/download.php?quizref=%s' title='Add to my downloads'>[+]</a>",$t->ref);
-		echo "<br/><small>(".$t->noattempts." attempts)</small>";
+		printf("<a href='./m/#%s'>%s</a>",$t->ref,$t->title);
+		//printf("<a href='./quiz/view.php?ref=%s'>%s</a>",$t->ref,$t->title);
+		//printf(" <a href='./my/download.php?quizref=%s' title='Add to my downloads'>[+]</a>",$t->ref);
+		echo "<br/><small>(".$t->noattempts." attempts";
+		printf(" - <a href='./quiz/view.php?ref=%s'>view</a>",$t->ref);
+		echo ")</small>";
 		echo "</li>";
 	}
 ?>
