@@ -47,9 +47,9 @@ function confirmExitQuiz(page){
 function showHome(){
 	document.location = "#home";
 	PAGE = '#home';
-	var takeQuizBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','name':'takeQuiz','value':'Take a Quiz','onclick':'showSelectQuiz()'}));
+	var takeQuizBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','class':'button','name':'takeQuiz','value':'Take a Quiz','onclick':'showSelectQuiz()'}));
 	$('#content').append(takeQuizBtn);
-	var getForOfflineBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','name':'getForOffline','value':'Download Quizzes (for use when offline)','onclick':'downloadQuizzesSelect()'}));
+	var getForOfflineBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','class':'button','name':'getForOffline','value':'Download Quizzes (for use when offline)','onclick':'downloadQuizzesSelect()'}));
 	$('#content').append(getForOfflineBtn);
 	/*var viewResultsBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','name':'viewResults','value':'View Results','onclick':'showResults()'}));
 	$('#content').append(viewResultsBtn);*/
@@ -94,7 +94,7 @@ function downloadQuizzesSelect(){
 			$('#content').append(quiz);
 		}
 	}
-	var downloadBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','name':'downloadBtn','value':'Download selected','onclick':'downloadQuizzes()'}));
+	var downloadBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','class':'button','name':'downloadBtn','value':'Download selected','onclick':'downloadQuizzes()'}));
 	$('#content').append(downloadBtn);
 }
 
@@ -171,9 +171,9 @@ function showQuiz(id){
 	$('#content').append(response);
 	
 	var quiznav = $('<div>').attr({'id':'quiznav'});
-	var quiznavprev = $('<div>').attr({'class':'quiznavprev'}).append($('<input>').attr({'id':'quiznavprevbtn','type':'button','value':'<< Prev','onclick':'Q.loadPrevQuestion()'}));
+	var quiznavprev = $('<div>').attr({'class':'quiznavprev'}).append($('<input>').attr({'id':'quiznavprevbtn','type':'button','class':'button','value':'<< Prev','onclick':'Q.loadPrevQuestion()'}));
 	quiznav.append(quiznavprev);
-	var quiznavnext = $('<div>').attr({'class':'quiznavnext'}).append($('<input>').attr({'id':'quiznavnextbtn','type':'button','value':'Next >>','onclick':'Q.loadNextQuestion()'}));
+	var quiznavnext = $('<div>').attr({'class':'quiznavnext'}).append($('<input>').attr({'id':'quiznavnextbtn','type':'button','class':'button','value':'Next >>','onclick':'Q.loadNextQuestion()'}));
 	quiznav.append(quiznavnext);
 	var clear = $('<div>').attr({'style':'clear:both'});
 	$('#content').append(quiznav);
@@ -198,7 +198,7 @@ function showLogin(){
 		"</div>");
 	
 	form.append("<div class='formblock'>" +
-			"<div class='formfield'><input type='button' name='submit' value='Login' onclick='login()'></input></div>" +
+			"<div class='formfield'><input type='button' name='submit' value='Login' onclick='login()' class='button'></input></div>" +
 			"</div>");
 	$('#content').append(form);
 }

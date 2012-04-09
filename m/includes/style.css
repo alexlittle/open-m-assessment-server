@@ -91,12 +91,12 @@ li {
 	width:100%;
 }
 
-.button {
-	text-align:center;
-	padding: 10px;
+div.button {
+	text-align: center;
+	width:100%;
 }
-.button input {
-	padding: 15px;
+.button {
+	padding: 10px;
 	width: 80%;
 	font-size:130%;
 }
@@ -126,21 +126,15 @@ li {
 }
 div.quiznavprev {
 	float:left;
-	width:45%;
+	width:50%;
 }
 
 div.quiznavnext {
 	float:right;
-	width:45%;
+	width:50%;
 	text-align:right;
 }
 
-#quiznavprevbtn {
-	width:90%;
-}
-#quiznavnextbtn {
-	width:90%;
-}
 
 #quiz_results {
 	font-size: 300%;
