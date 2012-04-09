@@ -44,6 +44,10 @@ function Quiz(){
 	this.loadResponses = function(q){
 		if(q.type == 'multichoice'){
 			this.loadMultichoice(q.r);
+		} else if (q.type == 'shortanswer'){
+			this.loadShortAnswer();
+		} else if (q.type == 'matching'){
+			this.loadMatching(q.r);
 		} else {
 			console.log("question type not implemented:"+q.type);
 		}
@@ -67,10 +71,30 @@ function Quiz(){
 		}
 	}
 	
+	this.loadShortAnswer = function(){
+		$('#response').empty();
+		var o = $('<input>').attr({'type':'text','name':'response','id':'shortanswerresponse','class':'formfield'});
+		if(this.responses[this.currentQuestion]){
+			o.attr({'value':this.responses[this.currentQuestion].qrtext});
+		}
+		$('#response').append(o);
+	}
+	
+	this.loadMatching = function(resp){
+		$('#response').empty();
+		
+		for(var r in resp){
+			
+		}
+	}
+	
+	
 	this.saveResponse = function(nav){
 		var q = this.quiz.q[this.currentQuestion];
 		if(q.type == 'multichoice'){
 			return this.saveMultichoice(nav);
+		} else if(q.type == 'shortanswer'){
+			return this.saveShortAnswer(nav);
 		} else {
 			console.log("question type not implemented:"+q.type);
 		}
@@ -90,6 +114,41 @@ function Quiz(){
 				if(q.r[r].refid == opt){
 					o.score = q.r[r].score;
 					o.qrtext = q.r[r].text;
+					if (q.r[r].props.feedback && q.r[r].props.feedback != ''){
+						feedback = q.r[r].props.feedback;
+					}
+				}
+			}
+			o.score = Math.min(o.score,parseInt(q.props.maxscore));
+			this.responses[this.currentQuestion] = o;
+			
+			// show feedback (if any)
+			if(feedback){
+				alert("Feedback: "+feedback);
+			}
+			return true;
+		} else {
+			if(nav == 'next'){
+				return false;
+			} else {
+				return true;
+			}	
+		}
+	}
+	
+	this.saveShortAnswer = function(nav){
+		var ans = $('#shortanswerresponse').val().trim();
+		if(ans != ''){
+			var o = Object();
+			var q = this.quiz.q[this.currentQuestion];
+			o.qid = q.refid;
+			o.score = 0;
+			o.qrtext = ans;
+			var feedback = null;
+			// mark question and get text
+			for(var r in q.r){
+				if(q.r[r].text == ans){
+					o.score = q.r[r].score;
 					if (q.r[r].props.feedback && q.r[r].props.feedback != ''){
 						feedback = q.r[r].props.feedback;
 					}
