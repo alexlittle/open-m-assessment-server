@@ -12,7 +12,6 @@ function Quiz(){
 	
 	this.init = function(q){
 		this.quiz = q;
-		console.log(q);
 		inQuiz = true;
 	}
 	
@@ -54,6 +53,8 @@ function Quiz(){
 			this.loadNumerical(q.r);
 		} else if (q.type == 'essay'){
 			this.loadEssay();
+		} else if (q.type == 'multiselect'){
+			this.loadMultiselect(q.r);
 		} else {
 			$('#response').empty();
 			console.log("question type not implemented:"+q.type);
@@ -69,6 +70,29 @@ function Quiz(){
 			// find if this question has already been responded to and set response
 			if(this.responses[this.currentQuestion] && this.responses[this.currentQuestion].qrtext == resp[r].text){
 				o.attr({'checked':'checked'});
+			}
+			l.append(o);
+			l.append(resp[r].text);
+			d.append(l);
+			
+			$('#response').append(d);
+		}
+	}
+	
+	this.loadMultiselect = function(resp){
+		$('#response').empty();
+		for(var r in resp){
+			var d = $('<div>').attr({'class':'response'});
+			var l = $('<label>').attr({'for':resp[r].refid});
+			var o = $('<input>').attr({'type':'checkbox','value':resp[r].refid,'name':'response','id':resp[r].refid,});
+			// find if this question has already been responded to and set response
+			if(this.responses[this.currentQuestion]){
+				var sel = this.responses[this.currentQuestion].qrtext.split('|');
+				for(var i in sel){
+					if(sel[i] == resp[r].text){
+						o.attr({'checked':'checked'});
+					}
+				}
 			}
 			l.append(o);
 			l.append(resp[r].text);
@@ -161,6 +185,8 @@ function Quiz(){
 			return this.saveNumerical(nav);
 		} else if(q.type == 'essay'){
 			return this.saveEssay(nav);
+		} else if(q.type == 'multiselect'){
+			return this.saveMultiselect(nav);
 		} else {
 			console.log("question type not implemented:"+q.type);
 		}
@@ -347,6 +373,48 @@ function Quiz(){
 				return true;
 			}	
 		}
+	}
+	
+	this.saveMultiselect = function(nav){
+		var q = this.quiz.q[this.currentQuestion];
+		var c = false;
+		for(var r in q.r){
+			if($('#'+q.r[r].refid).attr('checked')){
+				c = true;
+			}
+		}
+		if(!c){
+			if(nav == 'next'){
+				return false;
+			} else {
+				return true;
+			}
+		}
+		var o = Object();
+		o.qid = q.refid;
+		o.score = 0;
+		o.qrtext = "";
+		var feedback = null;
+		var countsel = 0;
+		// mark question and get text
+		for(var r in q.r){
+			if($('#'+q.r[r].refid).attr('checked')){
+				o.score += parseInt(q.r[r].score);
+				o.qrtext += q.r[r].text + "|";
+				countsel++;
+			}
+			// TODO add feedback
+		}
+		//set score back to 0 if any incorrect options selected
+		for(var r in q.r){
+			if($('#'+q.r[r].refid).attr('checked') && parseInt(q.r[r].score) == 0){
+				o.score = 0;
+			}
+		}
+		o.score = Math.min(o.score,parseInt(q.props.maxscore));
+		this.responses[this.currentQuestion] = o;
+		
+		return true;
 	}
 	
 	this.showResults = function(){
