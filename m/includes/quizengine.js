@@ -434,11 +434,18 @@ function Quiz(){
 		var percent = total*100/this.quiz.maxscore;
 		$('#content').append("<div id='quizresults'>"+ percent.toFixed(0) +"%</div>");
 		
-		var retake = $('<div>').attr({'class': 'quizlist clickable centre','onclick':'loadQuiz("'+this.quiz.refid+'")'}).append('Take this quiz again');
+		var retake = $('<div>').attr({'class': 'quizlist clickable centre'}).append('Take this quiz again');
 		$('#content').append(retake);
+		var refid = this.quiz.refid;
+		retake.click(function(){
+			loadQuiz(refid);
+		});
 		
-		var takeAnother = $('<div>').attr({'class': 'quizlist clickable centre','onclick':'document.location = "#home"'}).append('Take another quiz');
+		var takeAnother = $('<div>').attr({'class': 'quizlist clickable centre'}).append('Take another quiz');
 		$('#content').append(takeAnother);
+		takeAnother.click(function(){
+			document.location = "#home";
+		});
 		
 		//save for submission to server
 		var content = Object();
