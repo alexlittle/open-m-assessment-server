@@ -73,7 +73,7 @@ if ($lang != ""){
 					}
 				?>
 				
-				<li><form action="" method="post" name="langform" id="langform">
+				<!-- li><form action="" method="post" name="langform" id="langform">
 				<select name="lang" onchange="document.langform.submit();">
 					<?php 
 						foreach ($CONFIG->langs as $key => $value){
@@ -85,7 +85,7 @@ if ($lang != ""){
 						}
 					?>
 				</select>
-				</form></li>
+				</form></li -->
 			</ul>
 		</div>
 		<div style="clear:both"></div>

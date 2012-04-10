@@ -429,14 +429,17 @@ function loadSuggested(){
 }
 
 function cacheQuiz(id){
-	$.ajax({
-		   data:{'method':'getquiz','username':store.get('username'),'password':store.get('password'),'ref':id}, 
-		   success:function(data){
-			   if(data && !data.error){
-				   store.set(id, data);
-			   }
-		   }, 
-		});
+	// check is already cached
+	if(!store.get(id)){
+		$.ajax({
+			   data:{'method':'getquiz','username':store.get('username'),'password':store.get('password'),'ref':id}, 
+			   success:function(data){
+				   if(data && !data.error){
+					   store.set(id, data);
+				   }
+			   }, 
+			});
+	}
 }
 
 function setUpdated(){

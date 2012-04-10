@@ -8,14 +8,14 @@ $leaderboard = $API->getLeaderboard();
 ?>
 
 <div id="start1" class="homestart">
-<h3>1. Create a quiz</h3> 
+<h3>1. Create or import a quiz</h3> 
 
 <a href="quiz/new.php" title="Create your quiz now..."><img src="images/mquiz-create.png"/></a>
 
 </div>
 
 <div id="start2" class="homestart">
-<h3>2. Take quizzes on your smartphone</h3> 
+<h3>2. Take quizzes in your PC or smartphone browser</h3> 
 <iframe width="220" height="165" src="http://www.youtube.com/embed/kvOAo06CTcI" frameborder="0" allowfullscreen></iframe>
 </div>
 

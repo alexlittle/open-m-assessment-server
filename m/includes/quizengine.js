@@ -460,7 +460,7 @@ function Quiz(){
 		   error:function(data){
 			   store.addArrayItem('unsentresults',content);
 		   }
-		});
+		});		
 	}
 	
 	this.setNav = function(){
