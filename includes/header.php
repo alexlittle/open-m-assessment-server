@@ -10,7 +10,7 @@ if($uagent_obj->DetectIphone() || $uagent_obj->DetectAndroidPhone()){
 
 global $PAGE,$CONFIG,$MSG,$API,$HEADER;
 
-$nologinpages = array ("login","index","register","faqs","terms","about","developer","phoneapps");
+$nologinpages = array ("login","index","register","faqs","terms","about","phoneapps");
 
 if (!in_array($PAGE,$nologinpages)){
 	checkLogin();
@@ -44,15 +44,15 @@ if ($lang != ""){
 <div id="page">
 	<div id="header">
 		<div id="logo">
-		 	<a href="<?php echo $CONFIG->homeAddress; ?>index.php">mQuiz</a>
+			<a href="<?php echo $CONFIG->homeAddress; ?>index.php" class="logo">mQuiz</a>
 		</div>
 		<div id="menu">
 			<ul>
+				<li><a href="<?php echo $CONFIG->homeAddress; ?>info/about.php">About</a></li>
 				<li><a href="<?php echo $CONFIG->homeAddress; ?>my/quizzes.php">My Quizzes</a></li>
 				<li><a href="<?php echo $CONFIG->homeAddress; ?>my/results.php">My Results</a></li>
 				<li><a href="<?php echo $CONFIG->homeAddress; ?>quiz/new.php">Create New Quiz</a></li>
-				<li><a href="<?php echo $CONFIG->homeAddress; ?>info/phoneapps.php">Phone Apps</a></li>
-				<li><a href="<?php echo $CONFIG->homeAddress; ?>info/faqs.php">FAQs</a></li>
+				<li><a href="<?php echo $CONFIG->homeAddress; ?>m/">Mobile version</a></li>
 			</ul>
 		</div>
 		<div id="userlogin">

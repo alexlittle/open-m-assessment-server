@@ -20,6 +20,11 @@
     	    	if(isLoggedIn()){
     	    		printf("store.set('username','%s');",$USER->username);
     	    		printf("store.set('password','%s');",$USER->password);
+    	    		
+    	    	}
+    	    	$uagent_obj = new uagent_info();
+    	    	if(!$uagent_obj->DetectIphone() && !$uagent_obj->DetectAndroidPhone()){
+    	    		printf("SOURCE = '%s';",$CONFIG->homeAddress);
     	    	}
     	    ?>
     		if($(location).attr('hash')){

@@ -1,6 +1,5 @@
 
 var DATA_CACHE_EXPIRY = 360; // no of mins before the data should be updated from server;
-var PAGE = '';
 var SOURCE = '';
 
 $.ajaxSetup({
@@ -13,11 +12,15 @@ $.ajaxSetup({
 
 function showPage(hash){
 	if(!loggedIn() && hash != '#register'){
-		showLogin();
+		if(!hash){
+			hash = '#home';
+		}
+		showLogin(hash);
 		return;
 	}
 	dataUpdate();
 	$('#content').empty();
+	
 	if(hash == '#home'){
 		showHome();
 	} else if (hash == '#select'){
@@ -43,24 +46,23 @@ function confirmExitQuiz(page){
 			return;
 		}
 	}
-	showPage('#home');
+	if(SOURCE != ""){
+		document.location = SOURCE;
+	} else {
+		showPage('#home');
+	}
 }
 
 function showHome(){
-	document.location = "#home";
-	PAGE = '#home';
 	$('#content').empty();
 	var takeQuizBtn = $('<div>').attr({'class': 'ctrl'}).append($("<input>").attr({'type':'button','class':'button','name':'takeQuiz','value':'Take a Quiz','onclick':'showSelectQuiz()'}));
 	$('#content').append(takeQuizBtn);
 	var getForOfflineBtn = $('<div>').attr({'class': 'ctrl'}).append($("<input>").attr({'type':'button','class':'button','name':'getForOffline','value':'Download Quizzes','onclick':'downloadQuizzesSelect()'}));
 	$('#content').append(getForOfflineBtn);
-	/*var viewResultsBtn = $('<div>').attr({'class': 'button'}).append($("<input>").attr({'type':'button','name':'viewResults','value':'View Results','onclick':'showResults()'}));
-	$('#content').append(viewResultsBtn);*/
 }
 
 function showSelectQuiz(){
 	document.location = "#select";
-	PAGE = '#select';
 	$('#content').empty();
 	$('#content').append("<h2 name='lang' id='page_title_selectquiz'>"+getString('page_title_selectquiz')+"</h2>");
 	var quizzes = store.get('quizlist');
@@ -79,7 +81,6 @@ function showSelectQuiz(){
 
 function downloadQuizzesSelect(){
 	document.location = "#download";
-	PAGE = '#download';
 	$('#content').empty();
 	$('#content').append("<h2 name='lang' id='page_title_selectquiz'>"+getString('page_title_download')+"</h2>");
 	var quizzes = store.get('quizlist');
@@ -127,7 +128,6 @@ function downloadQuizzes(){
 
 function loadQuiz(id){
 	document.location = "#"+id;
-	PAGE = 'quiz';
 	$('#content').empty();
 	showLoading('quiz');
 	// find if this quiz is already in the cache
@@ -185,8 +185,7 @@ function showQuiz(id){
 	
 }
 
-function showLogin(){
-	document.location = "#login";
+function showLogin(hash){
 	$('#content').empty();
 	$('#content').append("<h2>Login (or <a href='#register'>Register</a>)</h2>");
 	var form =  $('<div>');
@@ -200,7 +199,7 @@ function showLogin(){
 		"<div class='formfield'><input type='password' name='password' id='password'></input></div>" +
 		"</div>");
 	
-	form.append("<div class='ctrl'><input type='button' name='submit' value='Login' onclick='login()' class='button'></input></div>");
+	form.append("<div class='ctrl'><input type='button' name='submit' value='Login' onclick='login(\""+hash+"\")' class='button'></input></div>");
 	$('#content').append(form);
 }
 
@@ -273,7 +272,7 @@ function loggedIn(){
 	return true;
 }
 
-function login(){
+function login(hash){
 	var username = $('#username').val();
 	var password = $('#password').val();
 	if(username == '' || password == ''){
@@ -291,7 +290,7 @@ function login(){
 				   store.set('password',data.hash);
 				   store.set('lastlogin',Date());
 				   showUsername();
-				   showPage('#home');
+				   showPage(hash);
 			   } else {
 				   alert('Login failed');
 			   }
@@ -420,11 +419,11 @@ function dataUpdate(){
 				   store.set('quizlist',data);
 				   store.set('lastupdate',Date());
 				   setUpdated();
-				   if(PAGE == '#select'){
-					   showSelectQuiz();
-				   } else if (PAGE == '#download'){
-					   downloadQuizzesSelect();
-				   }
+				   //if(PAGE == '#select'){
+				//	   showSelectQuiz();
+				  // } else if (PAGE == '#download'){
+				//	   downloadQuizzesSelect();
+				  // }
 			   }
 		   }, 
 		   error:function(data){

@@ -5,11 +5,11 @@ include_once("../includes/header.php");
 ?>
 <h1>About mQuiz</h1>
 
-<p>mQuiz allows you to create multiple choice quizzes which your friends can answer on their smartphones.</p>
+<p>mQuiz allows you to create online quizzes which your friends can answer on their mobile device.</p>
 
-<p>You can create and edit your quiz online (importing from other quiz tools/formats coming soon) with our easy to use tool.</p>
+<p>You can create and edit your quiz online (or import from Moodle Gift format) with our easy to use tool.</p>
 
-<p>Your friends can download the quizzes to their Android smartphones (apps for other devices coming soon!) and take the quizzes even when offline.</p>
+<p>Your friends can download the quizzes to their smartphones and take the quizzes even when offline.</p>
 
 <p>Quiz results can be uploaded to our website and compare your scores with your friends!</p>
 

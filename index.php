@@ -32,11 +32,7 @@ $leaderboard = $API->getLeaderboard();
 	foreach ($top10popular as $t){
 		echo "<li>";
 		printf("<a href='./m/#%s'>%s</a>",$t->ref,$t->title);
-		//printf("<a href='./quiz/view.php?ref=%s'>%s</a>",$t->ref,$t->title);
-		//printf(" <a href='./my/download.php?quizref=%s' title='Add to my downloads'>[+]</a>",$t->ref);
-		echo "<br/><small>(".$t->noattempts." attempts";
-		printf(" - <a href='./quiz/view.php?ref=%s'>view</a>",$t->ref);
-		echo ")</small>";
+		printf("<br/><small>(%d <a href='./quiz/view.php?ref=%s'>attempts</a>)</small>",$t->noattempts,$t->ref);
 		echo "</li>";
 	}
 ?>
@@ -60,7 +56,7 @@ $leaderboard = $API->getLeaderboard();
 <?php 
 	foreach ($top10recent as $t){
 		echo "<li>";
-		printf("<a href='./quiz/view.php?ref=%s'>%s</a>",$t->ref,$t->title);
+		printf("<a href='./m/#%s'>%s</a>",$t->ref,$t->title);
 		echo "<br/><small>(added on  ".date('d M Y',strtotime($t->createdon)).")</small>";
 		echo "</li>";
 	}

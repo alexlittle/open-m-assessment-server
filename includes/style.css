@@ -19,7 +19,7 @@ body {
 
 #page {
 	background:#fff;
-	margin: 30px 5% 5px 5%;
+	margin: 20px 5% 5px 5%;
   	min-height:500px;
 }
 
@@ -81,11 +81,9 @@ a:hover {
 	margin: 0 10px;
 }
 #logo {
-	float: left;
-}
-#menu {
-	float: left;
-	padding-left: 20px;
+	font-size:130%;
+	font-weight:bold;
+	margin-bottom:5px;
 }
 #userlogin {
 	float: right;
