@@ -28,6 +28,7 @@ function showPage(hash){
 	} else if(hash.substring(0,3) == '#qt'){
 		loadQuiz(hash.substring(1));
 	} else {
+		inQuiz = false;
 		showHome();
 	}
 	

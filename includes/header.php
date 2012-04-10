@@ -52,7 +52,7 @@ if ($lang != ""){
 				<li><a href="<?php echo $CONFIG->homeAddress; ?>my/quizzes.php">My Quizzes</a></li>
 				<li><a href="<?php echo $CONFIG->homeAddress; ?>my/results.php">My Results</a></li>
 				<li><a href="<?php echo $CONFIG->homeAddress; ?>quiz/new.php">Create New Quiz</a></li>
-				<li><a href="<?php echo $CONFIG->homeAddress; ?>m/">Mobile version</a></li>
+				<li><a href="<?php echo $CONFIG->homeAddress; ?>m/">Mobile</a></li>
 			</ul>
 		</div>
 		<div id="userlogin">
