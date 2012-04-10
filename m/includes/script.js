@@ -106,6 +106,10 @@ function doSearch(){
 						   $('#searchresults').append(quiz);
 					   }
 				   }
+			   },
+			   error:function(data){
+				   $('#searchresults').empty();
+				   alert("Connection timeout or no connection available. You need to be online to search.");
 			   }
 			});
 	}
