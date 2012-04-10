@@ -983,6 +983,15 @@ class API {
 		return $history;
 	}
 	
+	function isOwner($ref){
+		global $USER;
+		$sql = sprintf("SELECT * FROM quiz WHERE quiztitleref='%s' AND createdby = %d",$ref,$USER->userid);
+		$result = _mysql_query($sql,$this->DB);
+		while($o = mysql_fetch_object($result)){
+			return true;
+		}
+		return false;
+	}
 	
 	function createUUID($prefix){
 		global $USER;

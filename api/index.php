@@ -203,12 +203,17 @@ if($method == 'getquiz'){
 	$downloadable = true;
 	$props = $API->getQuizProps($quiz->quizid);
 	if(array_key_exists('downloadable', $props)){
-		if($props['downloadable'] == 'false'){
+		if($props['downloadable'] == 'false' && !$API->isOwner($ref)){
 			$downloadable = false;
 		}
 	}
 	if(!$downloadable){
-		echo "Quiz not available for download";
+		if($format == 'json'){
+			$response->error = "Quiz not available for download";
+			echo json_encode($response);
+		} else {
+			echo "Quiz not available for download";
+		}
 		die;
 	}
 	$questions = array();
