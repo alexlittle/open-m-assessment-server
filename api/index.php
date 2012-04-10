@@ -73,6 +73,7 @@ if($method == 'register'){
 		$login = userLogin($username,$password,false);
 		$response->login = $login;
 		$response->hash = md5($password);
+		$response->name = $USER->firstname + " "+ $USER->lastname;
 		echo json_encode($response);
 	} else {
 		echo "success";
@@ -85,7 +86,22 @@ if($method == 'login'){
 	$login = userLogin($username,$password,false);
 	$response->login = $login;
 	$response->hash = md5($password);
+	$response->name = $USER->firstname ." " .$USER->lastname;
 	echo json_encode($response);
+	die;
+}
+
+if($method == 'search'){
+	$t = optional_param("t","",PARAM_TEXT);
+	
+	if($t == ""){
+		$response->error = "No search terms provided";
+		echo json_encode($response);
+		die;
+	}
+	
+	$results = $API->searchQuizzes($t);
+	echo json_encode($results);
 	die;
 }
 
@@ -101,6 +117,9 @@ if (!userLogin($username,$password,false)){
 	}
 	die;
 } 
+
+
+
 
 /*
  * Methods with login required
@@ -161,18 +180,10 @@ if($method == 'list'){
 	die;
 }
 
-if($method == 'search'){
-	/*
-	 * SELECT * FROM language l
-inner join quiz q ON l.langref = q.quiztitleref
-WHERE langtext like '%capit%'
-
-
-	 */
-}
-
 if($method == 'suggest'){
-	
+	$quizzes = $API->suggestQuizzes();
+	echo json_encode($quizzes);
+	die;
 }
 
 if($method == 'getquiz'){
@@ -308,18 +319,6 @@ function saveResult($json,$username){
 	try{
 		if (isset($json->quizid)){
 			$quiz = $API->getQuiz($json->quizid);
-			// check if currently downloadable
-			$submitable = true;
-			$props = $API->getQuizProps($quiz->quizid);
-			if(array_key_exists('submitable', $props)){
-				if($props['submitable'] == 'false'){
-					$submitable = false;
-				}
-			}
-			/*if(!$submitable){
-				return "Results submissions currently disabled for this quiz";
-				die;
-			}*/
 		} else {
 			return false;
 		}

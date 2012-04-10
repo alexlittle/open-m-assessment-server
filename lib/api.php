@@ -888,6 +888,74 @@ class API {
 		return $queue;
 	}
 	
+	function searchQuizzes($terms){
+		$sql = sprintf("SELECT * FROM (SELECT quiztitleref as quizref, langtext as quiztitle FROM language l
+					inner join quiz q ON l.langref = q.quiztitleref
+					WHERE langtext like '%%%s%%'
+					UNION
+					SELECT q.quiztitleref as quizref, ll.langtext as quiztitle FROM language l
+					INNER JOIN question qq ON l.langref = qq.questiontitleref
+					INNER JOIN quizquestion qqq ON qqq.questionid = qq.questionid
+					INNER JOIN quiz q ON q.quizid = qqq.quizid
+					INNER JOIN language ll ON ll.langref = q.quiztitleref
+					WHERE l.langtext like '%%%s%%')
+					a LIMIT 0,5",$terms,$terms);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return false;
+		}
+		$results = array();
+		while($o = mysql_fetch_object($result)){
+			array_push($results,$o);
+		}
+		return $results;
+	}
+	
+	function suggestQuizzes(){
+		global $USER;
+		$sql = "SELECT DISTINCT a.quizid, quizref, quiztitle FROM (";
+		// TODO get featured
+		
+		// TODO get those from friends who have taken quizzes
+		
+		// get top 5 popular which haven't been attempted by this user
+		$sql .= "SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, l.langtext as quiztitle FROM quiz q
+							INNER JOIN language l ON l.langref = q.quiztitleref
+							ORDER BY createdon DESC
+							LIMIT 0,10) b";
+		
+		// get most recent 5
+		$sql .= " UNION 
+					SELECT * FROM 
+					(SELECT q.quizid, qa.quizref, l.langtext as quiztitle FROM quizattempt qa
+					INNER JOIN language l ON l.langref = qa.quizref
+					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
+					INNER JOIN user u ON u.username = qa.submituser
+					WHERE u.userid != q.createdby
+					GROUP BY qa.quizref
+					ORDER BY Count(qa.id) DESC
+					LIMIT 0,10) c";
+		
+		$sql .= sprintf(") a
+				INNER JOIN quizprop qp ON a.quizid = qp.quizid
+				WHERE a.quizref NOT IN (SELECT quizref FROM quizattempt WHERE qauser ='%s')
+				AND qp.quizpropname = 'downloadable'
+				AND qp.quizpropvalue = 'true'
+				LIMIT 0,10",$USER->username);
+		
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return false;
+		}
+		$results = array();
+		while($o = mysql_fetch_object($result)){
+			array_push($results,$o);
+		}
+		return $results;
+	}
+	
 	function getUserDownloadHistory($userid){
 		$sql = sprintf("SELECT q.quiztitleref as quizref, l.langtext as quiztitle, dldate as historydate FROM download d
 						INNER JOIN quiz q ON q.quizid = d.quizid

@@ -176,3 +176,8 @@ label.error{
 	color:red;
 	font-size:60%;
 }
+
+#searchresults, #suggestresults {
+	width:80%;
+	margin:auto;
+}
