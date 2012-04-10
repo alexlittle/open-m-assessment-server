@@ -7,10 +7,11 @@ class Mailer{
 		global $CONFIG;
 		$subject = 'mQuiz: Quiz created' ;
 		$url_edit = $CONFIG->homeAddress."quiz/edit.php?ref=".$quizrefid;
-		$url_download = $CONFIG->homeAddress."my/download.php?ref=".$quizrefid;
+		$url_take = $CONFIG->homeAddress."m/#".$quizrefid;
 		$message = "
 			<p>Hi ".$name.",</p>
 			<p>Your new mQuiz '".$quiztitle."' has been created.</p>
+			<p>Share your quiz with this link: <a href='".$url_take."'>".$url_take."</a>, you can also try it out yourself with this link.</p>
 			<p>To edit your quiz visit: <a href='".$url_edit."'>".$url_edit."</a>.</p>
 			<p>We hope you enjoy using mQuiz!</p>
 			<p>Alex: alex@mquiz.org</p>

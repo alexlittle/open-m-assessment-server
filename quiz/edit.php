@@ -28,7 +28,7 @@ if ($submit != ""){
 		$API->updateLang($ref,$title);
 		
 		//update quiz props
-		$quizprops = array('downloadable','submitable');
+		$quizprops = array('downloadable');
 		foreach($quizprops as $qp){
 			if(is_array($props) && in_array($qp,$props)){
 				$API->setProp('quiz',$q->quizid,$qp,'true');
@@ -78,7 +78,7 @@ if ($submit != ""){
 		// set the maxscore for quiz
 		$API->setProp('quiz', $quizid, 'maxscore', $quizmaxscore);
 		$API->setProp('quiz',$quizid,'generatedby','mquiz');
-		printf("<div class='info'>%s</div>", getstring("quiz.edit.saved"));
+		printf("<div class='info'>%s<p>Why not <a href='%s'>try your quiz</a> out now?</p></div>", getstring("quiz.edit.saved"),$CONFIG->homeAddress."m/#".$ref);
 	}
 	//reload quiz (to get updated title)
 	$q = $API->getQuizForUser($ref,$USER->userid);
@@ -98,8 +98,6 @@ if ($API->quizHasAttempts($ref)){
 		<div class="formlabel"><?php echo getstring('quiz.edit.quiztitle'); ?></div>
 		<div class="formfield">
 			<input type="text" name="title" value="<?php echo $q->title; ?>" size="60"/><br/>
-			<!-- <span id="optionsshow" onclick="toggleOptionShow();" class="link">Show quiz options</span>
-				<span id="optionshide" onclick="toggleOptionHide();" class="link">Hide quiz options</span> -->
 		</div>
 	</div>
 	<div id="options" class="formblock">

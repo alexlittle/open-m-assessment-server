@@ -424,7 +424,7 @@ function Quiz(){
 		} 
 		inQuiz = false;
 		$('#content').empty();
-		$('#content').append("<h2 name='lang' id='page_title_results'>Your results for '"+ this.quiz.title +"' quiz:</h2>");
+		$('#content').append("<h2 name='lang' id='page_title_results'>Your results for:<br/> '"+ this.quiz.title +"':</h2>");
 		// calculate score
 		var total = 0;
 		for(var r in this.responses){
@@ -432,10 +432,13 @@ function Quiz(){
 		}
 		total = Math.min(total,this.quiz.maxscore);
 		var percent = total*100/this.quiz.maxscore;
-		$('#content').append("<div id='quiz_results'>"+ percent.toFixed(0) +"%</div>");
+		$('#content').append("<div id='quizresults'>"+ percent.toFixed(0) +"%</div>");
 		
-		var takeQuizBtn = $('<div>').attr({'class': 'ctrl'}).append($("<input>").attr({'type':'button','class':'button','name':'takeQuiz','value':'Take another Quiz','onclick':'showSelectQuiz()'}));
-		$('#content').append(takeQuizBtn);
+		var retake = $('<div>').attr({'class': 'quizlist clickable centre','onclick':'loadQuiz("'+this.quiz.refid+'")'}).append('Take this quiz again');
+		$('#content').append(retake);
+		
+		var takeAnother = $('<div>').attr({'class': 'quizlist clickable centre','onclick':'document.location = "#home"'}).append('Take another quiz');
+		$('#content').append(takeAnother);
 		
 		//save for submission to server
 		var content = Object();

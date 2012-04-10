@@ -4,7 +4,7 @@ $PAGE = "newquiz";
 include_once("../includes/header.php");
 
 $submit = optional_param("submit","",PARAM_TEXT);
-$quizprops = array('downloadable','submitable');
+$quizprops = array('downloadable');
 
 $title = optional_param("title","",PARAM_TEXT);
 $props = optional_param('props',"",PARAM_TEXT);
@@ -116,8 +116,7 @@ if ($submit != ""){
 		$API->setProp('quiz', $quizid, 'maxscore', $quizmaxscore);
 		
 		$q = $API->getQuizById($quizid);
-		
-		printf("<div class='info'>%s</div>", getstring("quiz.new.saved"));
+		printf("<div class='info'>%s<p>Why not <a href='%s'>try your quiz</a> out now?</p></div>", getstring("quiz.new.saved"),$CONFIG->homeAddress."m/#".$q->ref);
 		// send mail to owner
 		$m = new Mailer();
 		$m->sendQuizCreated($USER->email,$USER->firstname, $title, $q->ref);

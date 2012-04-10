@@ -140,10 +140,11 @@ div.quiznavnext {
 }
 
 
-#quiz_results {
+#quizresults {
 	font-size: 300%;
 	text-align: center;
-	border: 50px;
+	margin: 20px;
+	font-weight:bold;
 }
 
 #footer {
@@ -180,4 +181,8 @@ label.error{
 #searchresults, #suggestresults {
 	width:80%;
 	margin:auto;
+}
+
+.centre {
+	text-align: center;
 }
