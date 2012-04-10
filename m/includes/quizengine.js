@@ -63,43 +63,81 @@ function Quiz(){
 	
 	this.loadMultichoice = function(resp){
 		$('#response').empty();
-		for(var r in resp){
-			var d = $('<div>').attr({'class':'response'});
-			var l = $('<label>').attr({'for':resp[r].refid});
-			var o = $('<input>').attr({'type':'radio','value':resp[r].refid,'name':'response','id':resp[r].refid,});
-			// find if this question has already been responded to and set response
-			if(this.responses[this.currentQuestion] && this.responses[this.currentQuestion].qrtext == resp[r].text){
-				o.attr({'checked':'checked'});
+		
+		$(function(){
+			for(var i=0; i< resp.length; i++){
+				(function(r){
+					var d = $('<div>').attr({'class':'mcresponse','id':'div'+r.refid}).click(function(event){
+						$('#'+r.refid).attr({'checked':'checked'});
+						//remove class from all other responses
+						var t = Q.quiz.q[Q.currentQuestion].r;
+						for(var j in t){
+							$('#div'+t[j].refid).removeClass('selected');
+						}
+						$(this).addClass('selected');
+					});
+					var l = $('<label>').attr({'for':r.refid});
+					var o = $('<input>').attr({'type':'radio','value':r.refid,'name':'response','id':r.refid});
+					if(Q.responses[Q.currentQuestion] && Q.responses[Q.currentQuestion].qrtext == r.text){
+						o.attr({'checked':'checked'});
+						d.addClass('selected');
+					}
+					l.append(o);
+					l.append(r.text);
+					d.append(l);
+					
+					$('#response').append(d);
+				})(resp[i]);
 			}
-			l.append(o);
-			l.append(resp[r].text);
-			d.append(l);
-			
-			$('#response').append(d);
-		}
+		});
 	}
 	
 	this.loadMultiselect = function(resp){
 		$('#response').empty();
-		for(var r in resp){
-			var d = $('<div>').attr({'class':'response'});
-			var l = $('<label>').attr({'for':resp[r].refid});
-			var o = $('<input>').attr({'type':'checkbox','value':resp[r].refid,'name':'response','id':resp[r].refid,});
-			// find if this question has already been responded to and set response
-			if(this.responses[this.currentQuestion]){
-				var sel = this.responses[this.currentQuestion].qrtext.split('|');
-				for(var i in sel){
-					if(sel[i] == resp[r].text){
-						o.attr({'checked':'checked'});
-					}
-				}
+		
+		$(function(){
+			for(var i=0; i< resp.length; i++){
+				(function(r){
+					
+					var od = $('<div>').attr({'class':'od','id':'div'+r.refid});
+					var mss = $('<div>').attr({'class':'mss'});
+					var o = $('<input>').attr({'type':'checkbox','value':r.refid,'name':'mcresponse','id':r.refid});
+					o.click(function(event){
+						if ($('#'+r.refid).is(':checked')) {
+							$('#div'+r.refid).addClass('selected');
+					    } else {
+					    	$('#div'+r.refid).removeClass('selected');
+					    }
+					});
+					mss.append(o);
+					od.append(mss);
+					
+					var mst = $('<div>').attr({'class':'mst'}).text(r.text);
+					mst.click(function(event){
+						if ($('#'+r.refid).is(':checked')) {
+							$('#'+r.refid).removeAttr('checked');
+							$('#div'+r.refid).removeClass('selected');
+					    } else {
+					    	$('#'+r.refid).attr({'checked':'checked'});
+					    	$('#div'+r.refid).addClass('selected');
+					    }
+					});
+					od.append(mst);
+					od.append("<div style='clear:both'></div>");
+					
+					if(Q.responses[Q.currentQuestion]){
+						var sel = Q.responses[Q.currentQuestion].qrtext.split('|');
+						for(var i in sel){
+							if(sel[i] == r.text){
+								o.attr({'checked':'checked'});
+								od.addClass('selected');
+							}
+						}
+					}					
+					$('#response').append(od);
+				})(resp[i]);
 			}
-			l.append(o);
-			l.append(resp[r].text);
-			d.append(l);
-			
-			$('#response').append(d);
-		}
+		});
 	}
 	
 	this.loadShortAnswer = function(){

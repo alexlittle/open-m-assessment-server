@@ -124,11 +124,32 @@ div.ctrl {
 }
 
 #response{
-	padding: 10px;
+	padding: 10px 0;
 }
 .response {
-	padding: 5px 0;
+	padding: 5px 10px;
 }
+.mcresponse {
+	padding: 5px 10px;
+}
+.mcresponse:hover {
+	background: yellow;
+}
+
+.od {
+	padding: 5px 10px;
+}
+.mss {
+	float:left;
+	width: 15px;
+}
+.mst {
+	margin-left:20px;
+}
+.od:hover {
+	background: yellow;
+}
+
 div.quiznavprev {
 	float:left;
 	width:50%;
@@ -167,11 +188,11 @@ div.quiznavnext {
 
 .responsefield {
 	font-size:130%;
-	width:100%;
+	width:98%;
 }
 
-.highlight {
-	background: yellow;
+.selected{
+	font-weight:bold;
 }
 
 label.error{
