@@ -743,6 +743,7 @@ class API {
 					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 					INNER JOIN user u ON u.username = qa.submituser
 					WHERE u.userid != q.createdby
+					AND q.quizdraft = 0
 					GROUP BY qa.quizref
 					ORDER BY Count(qa.id) DESC
 					LIMIT 0,10";
@@ -765,6 +766,7 @@ class API {
 	function get10MostRecentQuizzes(){
 		$sql = "SELECT q.quiztitleref,createdon, l.langtext FROM quiz q
 					INNER JOIN language l ON l.langref = q.quiztitleref
+					WHERE quizdraft = 0
 					ORDER BY createdon DESC
 					LIMIT 0,10";
 		$result = _mysql_query($sql,$this->DB);
@@ -788,6 +790,7 @@ class API {
 					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 					INNER JOIN user u ON u.username = qa.submituser
 					WHERE u.userid != q.createdby
+					AND q.quizdraft = 0
 					GROUP BY u.firstname, u.lastname
 					HAVING COUNT(DISTINCT quizref) > 2
 					ORDER BY AVG(qascore*100/maxscore) DESC
