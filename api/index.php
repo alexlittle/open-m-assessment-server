@@ -162,14 +162,7 @@ if($method == 'list'){
 	
 	$json = array();
 	foreach($quizzes as $q){
-		$downloadable = true;
-		$props = $API->getQuizProps($q->quizid);
-		if(array_key_exists('downloadable', $props)){
-			if($props['downloadable'] == 'false'){
-				$downloadable = false;
-			}
-		}
-		if($downloadable){
+		if(!$q->quizdraft){
 			$o = array(	'id'=>$q->ref,
 							'name'=>$q->title,
 							'url'=>$url_prefix."?method=getquiz&ref=".$q->ref);
@@ -189,7 +182,6 @@ if($method == 'suggest'){
 if($method == 'getquiz'){
 	$ref = optional_param('ref','',PARAM_TEXT);
 	$quiz = $API->getQuiz($ref);
-	
 	if($quiz == null){
 		if($format == 'json'){
 			$response->error = "Quiz not found";
@@ -199,15 +191,8 @@ if($method == 'getquiz'){
 		}
 		die;
 	}
-	// check if currently downloadable
-	$downloadable = true;
-	$props = $API->getQuizProps($quiz->quizid);
-	if(array_key_exists('downloadable', $props)){
-		if($props['downloadable'] == 'false' && !$API->isOwner($ref)){
-			$downloadable = false;
-		}
-	}
-	if(!$downloadable){
+
+	if($quiz->quizdraft == 1 && !$API->isOwner($ref)){
 		if($format == 'json'){
 			$response->error = "Quiz not available for download";
 			echo json_encode($response);

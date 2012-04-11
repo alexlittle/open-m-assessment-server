@@ -5,7 +5,7 @@ include_once("../../includes/header.php");
 global $IMPORT_INFO;
 $IMPORT_INFO = array();
 
-echo "<h1>".getstring("import.title")."</h1>";
+echo "<h1>Create quiz from Gift format</h1>";
 
 $submit = optional_param("submit","",PARAM_TEXT);
 $title = optional_param("title","",PARAM_TEXT);
@@ -54,8 +54,6 @@ if ($submit != ""){
 		if($format == 'gift'){
 			// setup quiz with default props
 			$quizid = $API->addQuiz($title);
-			$API->setProp('quiz',$quizid,'downloadable','true');
-			$API->setProp('quiz',$quizid,'submitable','true');
 			$API->setProp('quiz',$quizid,'generatedby','import');
 			$API->setProp('quiz',$quizid,'content',$content);
 			$importer = new GIFTImporter();

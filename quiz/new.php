@@ -4,14 +4,14 @@ $PAGE = "newquiz";
 include_once("../includes/header.php");
 
 $submit = optional_param("submit","",PARAM_TEXT);
-$quizprops = array('downloadable');
 
 $title = optional_param("title","",PARAM_TEXT);
-$props = optional_param('props',"",PARAM_TEXT);
-$noquestions = optional_param("noquestions",2,PARAM_INT);
+$quizdraft = optional_param('quizdraft',0,PARAM_INT);
+$description = optional_param("description","",PARAM_TEXT);
+$tags = optional_param("tags","",PARAM_TEXT);
+$noquestions = optional_param("noquestions",3,PARAM_INT);
 
 if ($submit != ""){
-	
 	
 	$savequiz = true;
 	// checks on content, title, quizzes and responses
@@ -70,18 +70,9 @@ if ($submit != ""){
 	
 	if ($savequiz){
 		// create the quiz object
-		$quizid = $API->addQuiz($title);
+		$quizid = $API->addQuiz($title,$quizdraft);
 		
 		$API->setProp('quiz',$quizid,'generatedby','mquiz');
-		
-		//set the properties
-		foreach($quizprops as $qp){
-			if(in_array($qp,$props)){
-				$API->setProp('quiz',$quizid,$qp,'true');
-			} else {
-				$API->setProp('quiz',$quizid,$qp,'false');
-			}
-		}
 
 		$quizmaxscore = 0;
 		// create each question
@@ -151,9 +142,22 @@ if(!empty($MSG)){
 		<div id="options" class="formblock">
 			<div class='formlabel'>&nbsp;</div>
 			<div class='formfield'>
-				<?php include_once('options.php')?>
+				<input type="checkbox" name="quizdraft" value="1"
+				<?php 
+					if($quizdraft == 1){
+						echo "checked='checked'";
+					}
+				?>
+				/> Save as draft only
 			</div>
 		</div>
+		<!-- div class="formblock">
+			<div class='formlabel'>Description<br/><small>(optional)</small></div>
+			<div class='formfield'>
+				<textarea name="description" cols="80" rows="3"><?php echo $description; ?></textarea><br/>
+				<small>Max 300 characters</small>
+			</div>
+		</div -->
 		<div class="formblock">
 			<h2><?php echo getstring("quiz.new.questions"); ?></h2>
 		</div>

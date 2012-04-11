@@ -20,24 +20,14 @@ if($q == null){
 $submit = optional_param("submit","",PARAM_TEXT);
 if ($submit != ""){
 	$title = optional_param("title","",PARAM_TEXT);
-	$props = optional_param('props',"",PARAM_TEXT);
+	$quizdraft = optional_param("quizdraft",0,PARAM_INT);
 	
 	if ($title != ""){
 		
 		//update quiz title
 		$API->updateLang($ref,$title);
-		
-		//update quiz props
-		$quizprops = array('downloadable');
-		foreach($quizprops as $qp){
-			if(is_array($props) && in_array($qp,$props)){
-				$API->setProp('quiz',$q->quizid,$qp,'true');
-			} else {
-				$API->setProp('quiz',$q->quizid,$qp,'false');
-			}
-		}
-		
-		
+		$API->updateQuiz($ref,$title,$quizdraft);
+				
 		// remove quiz questions and responses
 		// easier for now to just remove and recreate :-(
 		$API->removeQuiz($q->quizid);
@@ -100,12 +90,18 @@ if ($API->quizHasAttempts($ref)){
 			<input type="text" name="title" value="<?php echo $q->title; ?>" size="60"/><br/>
 		</div>
 	</div>
-	<div id="options" class="formblock">
-			<div class='formlabel'>&nbsp;</div>
-			<div class='formfield'>
-				<?php include_once('options.php')?>
-			</div>
+	<div class="formblock">
+		<div class="formlabel">&nbsp;</div>
+		<div class='formfield'>
+			<input type="checkbox" name="quizdraft" value="1"
+			<?php 
+				if($q->draft == 1){
+					echo "checked='checked'";
+				}
+			?>
+			/> Save as draft only
 		</div>
+	</div>
 	<div class="formblock">
 		<h2><?php echo getstring("quiz.edit.questions"); ?></h2>
 	</div>

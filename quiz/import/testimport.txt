@@ -6,7 +6,7 @@
 {=yellow # correct! ~red ~blue # wrong, it's yellow}
 
 // multiselect answer
-::Q2:: What's the rights answer
+::Q2:: What's the right answer
 {=yellow # correct! =red # correct too ~blue # wrong, it's yellow}
 
 // fill-in-the-blank

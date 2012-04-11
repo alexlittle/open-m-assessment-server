@@ -220,7 +220,7 @@ class API {
 	}
 	
 	function getQuizzes(){
-		$sql = "SELECT q.quizid, l.langtext as title, q.quiztitleref as ref FROM quiz q 
+		$sql = "SELECT q.quizid, l.langtext as title, q.quiztitleref as ref, q.quizdraft FROM quiz q 
 				INNER JOIN language l ON q.quiztitleref = l.langref";
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
@@ -439,7 +439,7 @@ class API {
 	}
 	
 	function getQuiz($ref){
-		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
+		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref, q.quizdraft FROM quiz q
 						INNER JOIN language l ON q.quiztitleref = l.langref
 						WHERE q.quiztitleref = '%s'",$ref);
 		$result = _mysql_query($sql,$this->DB);
@@ -452,6 +452,7 @@ class API {
 			$q->quizid = $r->quizid;
 			$q->ref = $r->quiztitleref;
 			$q->title = $r->langtext;
+			$q->quizdraft = $r->quizdraft;
 			$q->props = $this->getQuizProps($r->quizid);
 			return $q;
 		}
@@ -477,13 +478,12 @@ class API {
 	}
 	
 	function getQuizForUser($ref,$userid){
-		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
+		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref, q.quizdraft FROM quiz q
 						INNER JOIN language l ON q.quiztitleref = l.langref
 						WHERE q.quiztitleref = '%s' AND createdby=%d
 						ORDER BY l.langtext ASC",$ref,$userid);
 
 		$result = _mysql_query($sql,$this->DB);
-		
 		if (!$result){
 			writeToLog('error','database',$sql);
 			return;
@@ -493,6 +493,7 @@ class API {
 			$q->quizid = $r->quizid;
 			$q->ref = $r->quiztitleref;
 			$q->title = $r->langtext;
+			$q->draft = $r->quizdraft;
 			$q->props = $this->getQuizProps($r->quizid);
 			return $q;
 		}
@@ -566,13 +567,12 @@ class API {
 		return $responses;
 	}
 	
-	function addQuiz($title){
+	function addQuiz($title, $draft=0){
 		global $USER, $CONFIG;
 		$quiztitleref = $this->createUUID("qt");
 		$this->addLang($quiztitleref, $title,$CONFIG->defaultlang);
-		
-		$str = "INSERT INTO quiz (quiztitleref,createdby) VALUES ('%s',%d)";
-		$sql = sprintf($str,$quiztitleref,$USER->userid);
+		$str = "INSERT INTO quiz (quiztitleref,createdby,quizdraft) VALUES ('%s',%d,%d)";
+		$sql = sprintf($str,$quiztitleref,$USER->userid,$draft);
 		mysql_query($sql,$this->DB);
 		$result = mysql_insert_id();
 		if (!$result){
@@ -712,6 +712,15 @@ class API {
 	
 	function removeQuestion($ref){
 		$sql = sprintf("DELETE FROM question WHERE questiontitleref='%s'",$ref);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			writeToLog('error','database',$sql);
+			return ;
+		}
+	}
+	
+	function updateQuiz($ref,$title,$quizdraft){
+		$sql = sprintf("UPDATE quiz SET quizdraft=%d WHERE quiztitleref='%s'",$quizdraft,$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			writeToLog('error','database',$sql);
@@ -916,7 +925,7 @@ class API {
 		global $USER;
 		$sql = "SELECT DISTINCT a.quizid, quizref, quiztitle FROM (";
 		// get featured
-		$sql .= "SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, l.langtext as quiztitle, 10 AS weight FROM quiz q
+		$sql .= "SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, l.langtext as quiztitle, 10 AS weight, q.quizdraft FROM quiz q
 							INNER JOIN language l ON l.langref = q.quiztitleref
 							INNER JOIN quizprop qp ON q.quizid = qp.quizid
 							WHERE qp.quizpropname = 'featured'
@@ -927,7 +936,7 @@ class API {
 		
 		// get top 5 popular which haven't been attempted by this user
 		$sql .= " UNION
-					SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, l.langtext as quiztitle,5 AS weight FROM quiz q
+					SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, l.langtext as quiztitle,5 AS weight, q.quizdraft FROM quiz q
 							INNER JOIN language l ON l.langref = q.quiztitleref
 							ORDER BY createdon DESC
 							LIMIT 0,10) b";
@@ -935,7 +944,7 @@ class API {
 		// get most recent 5
 		$sql .= " UNION 
 					SELECT * FROM 
-					(SELECT q.quizid, qa.quizref, l.langtext as quiztitle, 4 AS weight FROM quizattempt qa
+					(SELECT q.quizid, qa.quizref, l.langtext as quiztitle, 4 AS weight, q.quizdraft FROM quizattempt qa
 					INNER JOIN language l ON l.langref = qa.quizref
 					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 					INNER JOIN user u ON u.username = qa.submituser
@@ -945,10 +954,8 @@ class API {
 					LIMIT 0,10) c";
 		
 		$sql .= sprintf(") a
-				INNER JOIN quizprop qp ON a.quizid = qp.quizid
 				WHERE a.quizref NOT IN (SELECT quizref FROM quizattempt WHERE qauser ='%s')
-				AND qp.quizpropname = 'downloadable'
-				AND qp.quizpropvalue = 'true'
+				AND a.quizdraft = 0
 				ORDER BY weight DESC
 				LIMIT 0,10",$USER->username);
 		
