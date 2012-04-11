@@ -916,7 +916,7 @@ class API {
 		global $USER;
 		$sql = "SELECT DISTINCT a.quizid, quizref, quiztitle FROM (";
 		// get featured
-		$sql .= "SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, l.langtext as quiztitle, 5 AS weight FROM quiz q
+		$sql .= "SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, l.langtext as quiztitle, 10 AS weight FROM quiz q
 							INNER JOIN language l ON l.langref = q.quiztitleref
 							INNER JOIN quizprop qp ON q.quizid = qp.quizid
 							WHERE qp.quizpropname = 'featured'
@@ -935,7 +935,7 @@ class API {
 		// get most recent 5
 		$sql .= " UNION 
 					SELECT * FROM 
-					(SELECT q.quizid, qa.quizref, l.langtext as quiztitle, 10 AS weight FROM quizattempt qa
+					(SELECT q.quizid, qa.quizref, l.langtext as quiztitle, 4 AS weight FROM quizattempt qa
 					INNER JOIN language l ON l.langref = qa.quizref
 					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 					INNER JOIN user u ON u.username = qa.submituser
