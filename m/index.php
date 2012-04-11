@@ -19,6 +19,7 @@
     	    	include_once('../config.php');
     	    	if(isLoggedIn()){
     	    		printf("store.set('username','%s');",$USER->username);
+    	    		printf("store.set('displayname','%s');",$USER->firstname." ".$USER->lastname);
     	    		printf("store.set('password','%s');",$USER->password);
     	    		
     	    	}
