@@ -28,7 +28,6 @@ if ($submit != ""){
 		$API->updateQuiz($ref,$title,$quizdraft);
 				
 		// remove quiz questions and responses
-		// easier for now to just remove and recreate :-(
 		$API->removeQuiz($q->quizid);
 		
 		// create the quiz object

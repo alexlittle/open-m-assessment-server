@@ -369,6 +369,7 @@ class API {
 						INNER JOIN user u ON qa.submituser = u.username
 						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						WHERE u.userid = %d
+						AND q.quizdeleted = 0
 						ORDER BY submitdate DESC) a
 						GROUP BY quiztitle, quiztitleref", $USER->userid);
 		$result = _mysql_query($sql,$this->DB);
@@ -385,9 +386,10 @@ class API {
 	function getRanking($ref,$userid){
 		$sql = sprintf("SELECT * FROM
 						(SELECT MAX((qascore*100)/ maxscore) as score,  u.userid, quiztitleref FROM quizattempt qa
-						LEFT OUTER JOIN user u ON qa.submituser = u.username
+						INNER JOIN user u ON qa.submituser = u.username
 						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						WHERE qa.quizref = '%s'
+						AND q.quizdeleted = 0
 						GROUP BY u.userid, quiztitleref) a
 						ORDER BY score DESC",$ref);
 		$result = _mysql_query($sql,$this->DB);
@@ -414,7 +416,8 @@ class API {
 	
 	function getQuiz($ref){
 		$sql = sprintf("SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref, q.quizdraft FROM quiz q
-						WHERE q.quiztitleref = '%s'",$ref);
+						WHERE q.quiztitleref = '%s'
+						AND q.quizdeleted = 0",$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			return;
@@ -427,7 +430,8 @@ class API {
 	
 	function getQuizById($quizid){
 		$sql = sprintf("SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref, q.quizdraft FROM quiz q
-							WHERE q.quizid = %d",$quizid);
+							WHERE q.quizid = %d
+							AND q.quizdeleted = 0",$quizid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			return;
@@ -439,21 +443,18 @@ class API {
 	}
 	
 	function getQuizForUser($ref,$userid){
-		$sql = sprintf("SELECT q.quizid, q.quiztitle, q.quiztitleref, q.quizdraft FROM quiz q
-						WHERE q.quiztitleref = '%s' AND createdby=%d
+		$sql = sprintf("SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref, q.quizdraft as draft FROM quiz q
+						WHERE q.quiztitleref = '%s' 
+						AND createdby=%d
+						AND q.quizdeleted = 0
 						ORDER BY q.quiztitle ASC",$ref,$userid);
 
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			return;
 		}
-		while($r = mysql_fetch_object($result)){
-			$q = new stdClass;
-			$q->quizid = $r->quizid;
-			$q->ref = $r->quiztitleref;
-			$q->title = $r->quiztitle;
-			$q->draft = $r->quizdraft;
-			$q->props = $this->getQuizProps($r->quizid);
+		while($q = mysql_fetch_object($result)){
+			$q->props = $this->getQuizProps($q->quizid);
 			return $q;
 		}
 	}
@@ -607,8 +608,7 @@ class API {
 	function deleteQuiz($ref){
 		//remove questions/responses first
 		$q = $this->getQuiz($ref);
-		$this->removeQuiz($q->quizid);
-		$sql = sprintf("DELETE FROM quiz WHERE quiztitleref='%s'",$ref);
+		$sql = sprintf("UPDATE quiz SET quizdeleted = 1 WHERE quiztitleref='%s'",$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			return ;
@@ -691,6 +691,7 @@ class API {
 					INNER JOIN user u ON u.username = qa.submituser
 					WHERE u.userid != q.createdby
 					AND q.quizdraft = 0
+					AND q.quizdeleted = 0
 					GROUP BY u.firstname, u.lastname
 					HAVING COUNT(DISTINCT quizref) > 2
 					ORDER BY AVG(qascore*100/maxscore) DESC
@@ -706,84 +707,18 @@ class API {
 		return $leaders;
 	}
 	
-	function addQuizToDownloadQueue($userid,$quizid){
-		// find out if already in download queue
-		$sql = sprintf("SELECT dlid FROM download
-								WHERE userid = %d 
-								AND quizid = %d 
-								AND queued = true",$userid, $quizid);
-		$result = _mysql_query($sql,$this->DB);
-		if (!$result){
-			return false;
-		}
-		if (mysql_num_rows($result) == 0){
-			$isql = sprintf("INSERT INTO download (userid,quizid,queued) VALUES (%d,%d,true)",$userid,$quizid);
-			$iresult = _mysql_query($isql,$this->DB);
-			if (!$result){
-				writeToLog('error','database',$isql);
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	function getQuizDownloadQueue($userid){
-		$sql = sprintf("SELECT DISTINCT q.quiztitleref as quizref FROM download d
-						INNER JOIN quiz q ON q.quizid = d.quizid
-						WHERE userid = %d 
-						AND queued = true",$userid);
-		$result = _mysql_query($sql,$this->DB);
-		if (!$result){
-			return false;
-		}
-		$queue = array();
-		while($o = mysql_fetch_object($result)){
-			array_push($queue, array('quizref'=> $o->quizref));
-		}
-		return $queue;
-	}
-	
-	function setQuizDownloaded($userid,$quizid){
-		// find out if already in queue (so only need to update)
-		$sql = sprintf("SELECT dlid FROM download 
-						WHERE userid = %d 
-						AND quizid = %d 
-						AND queued = true",$userid, $quizid);
-		$result = _mysql_query($sql,$this->DB);
-		if (!$result){
-			return false;
-		}
-		
-		// if queued then just update, otherwise add a record
-		if (mysql_num_rows($result) > 0){
-			while($o = mysql_fetch_object($result)){
-				$usql = sprintf("UPDATE download 
-									SET queued = false,
-									dldate = now()
-								WHERE dlid = %d",$o->dlid);
-				$uresult = _mysql_query($usql,$this->DB);
-				if (!$uresult){
-					return false;
-				}
-			}
-		} else {
-			$isql = sprintf("INSERT INTO download (userid,quizid,queued) VALUES (%d,%d,false)",$userid,$quizid);
-			$iresult = _mysql_query($isql,$this->DB);
-			if (!$iresult){
-				return false;
-			}
-		}
-		return true;
-	}
-	
 	function searchQuizzes($terms){
 		$sql = sprintf("SELECT * FROM (SELECT quiztitleref as quizref, quiztitle FROM quiz 
 					WHERE quiztitle like '%%%s%%'
+					AND quizdraft = 0
+					AND quizdeleted = 0
 					UNION
 					SELECT q.quiztitleref as quizref, quiztitle FROM quiz q
 					INNER JOIN quizquestion qqq ON q.quizid = qqq.quizid
 					INNER JOIN question qq ON qqq.questionid - qq.questionid
-					WHERE qq.questiontext like '%%%s%%')
+					WHERE qq.questiontext like '%%%s%%'
+					AND q.quizdraft = 0
+					AND q.quizdeleted = 0)
 					a LIMIT 0,5",$terms,$terms);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
@@ -833,7 +768,6 @@ class API {
 		
 		$sql .= sprintf(") a
 				WHERE a.quizref NOT IN (SELECT quizref FROM quizattempt WHERE qauser ='%s')
-				AND a.quizdraft = 0
 				ORDER BY weight DESC
 				LIMIT 0,10",$USER->username);
 		

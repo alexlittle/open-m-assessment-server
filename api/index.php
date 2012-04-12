@@ -124,32 +124,6 @@ if (!userLogin($username,$password,false)){
 /*
  * Methods with login required
  */
-if($method == 'downloaded'){
-	$quizref = optional_param("quizref","",PARAM_TEXT);
-	// login user
-	
-	// get quiz
-	$q = $API->getQuiz($quizref);
-	if($q != null){
-	//mark as downloaded
-		$result = $API->setQuizDownloaded($USER->userid, $q->quizid);
-		if($result){
-			echo "success";
-		} else {
-			echo "failure";
-		}
-	} else {
-		echo "Quiz not found";
-	}
-	die;
-}
-
-if($method == 'downloadqueue'){
-	$queue = $API->getQuizDownloadQueue($USER->userid);
-	echo json_encode($queue);
-	die;
-}
-
 if($method == 'list'){
 	$quizzes = $API->getQuizzes();
 	
