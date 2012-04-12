@@ -1,19 +1,17 @@
 <?php 
 
 $attempts = $API->getQuizAttemptsSummary($ref,array('days'=>$days));
-
 $summary = array();
 $date = mktime(0,0,0,date('m'),date('d'),date('Y'));
 $date = $date - ($days*86400);
 for($c = 0; $c <$days+1; $c++){
-	$tempc =  date('j-n-Y',$date);
+	$tempc =  date('j-M-Y',$date);
 	$summary[$tempc] = 0;
 	$date = $date + 86400;
 }
 
 foreach ($attempts as $a){
-	$tempd = $a->day."-".$a->month."-".$a->year;
-	$summary[$tempd] = $a->no;
+	$summary[$a->displaydate] = $a->no;
 }
 ?>
 <script type="text/javascript">
@@ -42,8 +40,8 @@ google.load('visualization', '1.0', {
         var chart = new google.visualization.LineChart(document.getElementById('attempts_chart_div'));
         chart.draw(data, {	width: 800, 
                 			height: 400,
-                			hAxis: {title: 'Date'},
                 			vAxis: {title: 'No attempts'},
+                			pointSize:5,
                 			chartArea:{left:50,top:50,width:"80%",height:"75%"}
 							});
       }

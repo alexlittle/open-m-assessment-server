@@ -44,7 +44,6 @@ class API {
 			$user->email =  $row['email'];
 			$user->password =  $row['password'];
 		}
-		//return $user;
 	}
 	
 	function checkUserNameNotInUse($username){
@@ -109,23 +108,16 @@ class API {
 		$sql = sprintf("SELECT * FROM userprops WHERE userid= %d AND propname='%s'",$userid,$name);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
 		while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
 			$updateSql = sprintf("UPDATE userprops SET propvalue='%s' WHERE userid= %d AND propname='%s'",$value,$userid,$name);
 			$result = _mysql_query($updateSql,$this->DB);
-			if (!$result){
-				writeToLog('error','database',$sql);
-			}
 			return;
 		}
 	
 		$insertSql = sprintf("INSERT INTO userprops (propvalue, userid,propname) VALUES ('%s',%d,'%s')",$value,$userid,$name);
 		$result = _mysql_query($insertSql,$this->DB);
-		if (!$result){
-			writeToLog('error','database',$sql);
-		}
 	}
 	
 	function userValidatePassword($username,$password){
@@ -134,7 +126,6 @@ class API {
 		$sql = sprintf("SELECT userid FROM user WHERE username='%s' AND (password=md5('%s') OR password='%s')",$username,$password,$password);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return false;
 		}
 		while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
@@ -191,9 +182,6 @@ class API {
 					$qar->userScore,
 					$qar->text);
 		$result = mysql_query($sql,$this->DB);
-		if (!$result){
-			return;
-		}
 	}
 	
 	function getQuizzes(){
@@ -264,11 +252,11 @@ class API {
 		} else {
 			$days = DEFAULT_DAYS;
 		}
-		
 		$sql = sprintf("SELECT COUNT(*) as no, 
 								DAY(submitdate) as day, 
 								MONTH(submitdate) as month, 
-								YEAR(submitdate) as year 
+								YEAR(submitdate) as year,
+								DATE_FORMAT(submitdate,'%%e-%%b-%%Y') AS displaydate
 						FROM quizattempt qa
 						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						WHERE quizref='%s' 
@@ -276,14 +264,7 @@ class API {
 						AND q.quizdeleted = 0
 						GROUP BY DAY(submitdate), MONTH(submitdate), YEAR(submitdate)",$ref,$days);
 		$result = _mysql_query($sql,$this->DB);
-		$summary = array();
-		if (!$result){
-			return $summary;
-		}
-		while($o = mysql_fetch_object($result)){
-			array_push($summary,$o);
-		}
-		return $summary;
+		return $this->resultToArray($result);
 	}
 	
 	function getQuizNoAttempts($quizref){
