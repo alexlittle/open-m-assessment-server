@@ -6,6 +6,7 @@ $results = $API->getMyQuizScores();
 
 ?>
 <h1><?php echo getstring("myresults.title");?></h1>
+
 <?php 
 
 if(count($results) == 0){
@@ -38,5 +39,8 @@ if(count($results) == 0){
 		echo "</div>";
 	}
 }
+?>
+<small>Note: Results are only shown for quizzes that you did not create<small>
+<?php 
 include_once("../includes/footer.php");
 ?>
