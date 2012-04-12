@@ -9,6 +9,9 @@ echo "<h1>Create quiz in GIFT format</h1>";
 
 $submit = optional_param("submit","",PARAM_TEXT);
 $title = optional_param("title","",PARAM_TEXT);
+$quizdraft = optional_param('quizdraft',0,PARAM_INT);
+$description = optional_param("description","",PARAM_TEXT);
+$tags = optional_param("tags","",PARAM_TEXT);
 $content = optional_param("content","",PARAM_TEXT);
 $format = optional_param("format","",PARAM_TEXT);
 
@@ -31,10 +34,6 @@ if ($submit != ""){
 		$questions = $import->readquestions($lines);
 			
 		foreach($questions as $q){
-			/*echo "<h2>".$q->questiontext.":".$q->qtype."</h2>";
-			echo "<pre>";
-			//print_r($q);
-			echo "</pre>";*/
 			if (in_array($q->qtype, $supported_qtypes)){
 				array_push($questions_to_import,$q);
 			} else {
@@ -53,7 +52,7 @@ if ($submit != ""){
 		// now do the actual import
 		if($format == 'gift'){
 			// setup quiz with default props
-			$quizid = $API->addQuiz($title);
+			$quizid = $API->addQuiz($title,$quizdraft);
 			$API->setProp('quiz',$quizid,'generatedby','import');
 			$API->setProp('quiz',$quizid,'content',$content);
 			$importer = new GIFTImporter();
@@ -94,6 +93,18 @@ if(!empty($MSG)){
 		<div class="formlabel"><?php echo getstring('import.quiz.title'); ?></div>
 		<div class="formfield"><input type="text" name="title" size="60" value="<?php echo $title; ?>"></input></div>
 	</div>
+	<div id="options" class="formblock">
+			<div class='formlabel'>&nbsp;</div>
+			<div class='formfield'>
+				<input type="checkbox" name="quizdraft" value="1"
+				<?php 
+					if($quizdraft == 1){
+						echo "checked='checked'";
+					}
+				?>
+				/> Save as draft only
+			</div>
+		</div>
 	<div class="formblock">
 		<div class="formlabel"><?php echo getstring("import.quiz.content"); ?></div>
 		<div class="formfield"><textarea name="content" cols="100" rows="20"><?php echo $content; ?></textarea></div>

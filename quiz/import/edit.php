@@ -16,7 +16,7 @@ if($q == null){
 if ($API->quizHasAttempts($ref)){
 	printf("<div class='info'>Sorry, you cannot edit this quiz as attempts have already been made on it.</div>");
 
-	include_once("../includes/footer.php");
+	include_once("../../includes/footer.php");
 	die;
 }
 
@@ -61,8 +61,10 @@ if ($submit != ""){
 	if(count($MSG) == 0){
 		// now do the actual import
 		if($format == 'gift'){
-			// update title
-			$API->updateQuiz($ref,$title,0);
+			$quizdraft = optional_param("quizdraft",0,PARAM_INT);
+			// update title and content
+			$API->updateQuiz($ref,$title,$quizdraft);
+			$API->setProp('quiz',$q->quizid,'content',$content);
 			// remove current questions/responses (will add them again below)
 			$API->removeQuiz($q->quizid);
 			
@@ -106,6 +108,18 @@ if(!empty($MSG)){
 	<div class="formblock">
 		<div class="formlabel"><?php echo getstring('import.quiz.title'); ?></div>
 		<div class="formfield"><input type="text" name="title" size="60" value="<?php echo $title; ?>"></input></div>
+	</div>
+	<div class="formblock">
+		<div class="formlabel">&nbsp;</div>
+		<div class='formfield'>
+			<input type="checkbox" name="quizdraft" value="1"
+			<?php 
+				if($q->draft == 1){
+					echo "checked='checked'";
+				}
+			?>
+			/> Save as draft only
+		</div>
 	</div>
 	<div class="formblock">
 		<div class="formlabel"><?php echo getstring("import.quiz.content"); ?></div>
