@@ -53,7 +53,7 @@ if ($submit != ""){
 			echo "</div>";
 			include_once("./includes/footer.php");
 			$m = new Mailer();
-			$m->sendSignUpNotification($firstname." ".$lastname);
+			$m->sendSignUpNotification($firstname." ".$surname);
 			die;
 		} else {
 			array_push($MSG,"Sorry, registration failure, please try again later");
