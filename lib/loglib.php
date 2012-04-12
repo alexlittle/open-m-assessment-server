@@ -20,7 +20,7 @@ function _mysql_query($query,$db) {
     $start = microtime(true);
     $result = mysql_query($query,$db);
     if (!$result){
-    	writeToLog('error','database',$sql);
+    	writeToLog('error','database',$query);
     }
     $CONFIG->mysql_queries_time += microtime(true) - $start;
     $CONFIG->mysql_queries_count++;

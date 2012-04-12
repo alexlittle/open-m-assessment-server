@@ -349,16 +349,14 @@ function logout(force){
 	if(force){
 		store.clear();
 		store.init();
-		showLogin();
-		showUsername();
+		document.location="#home";
 	} else {
 		var lo = confirm('Are you sure you want to log out?\n\nYou will need an active connection to log in again.');
 		if(lo){
 			inQuiz = false;
 			store.clear();
 			store.init();
-			showLogin();
-			showUsername();
+			document.location="#home";
 		}
 	}
 	

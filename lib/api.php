@@ -349,34 +349,34 @@ class API {
 	}
 	
 	function getQuizAvgResponseScores($quizref){
-		$sql = sprintf("SELECT AVG(qarscore) as avgscore, langtext FROM quizattemptresponse qar
+		$sql = sprintf("SELECT AVG(qarscore) as avgscore, qq.questiontext FROM quizattemptresponse qar
 						INNER JOIN quizattempt qa ON qa.id = qar.qaid
 						INNER JOIN user u ON qa.submituser = u.username
 						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
-						INNER JOIN language l ON l.langref = qar.questionrefid
+						INNER JOIN question qq ON qq.questiontitleref = qar.questionrefid
 						WHERE quizref = '%s'
 						AND u.userid != q.createdby
-						GROUP BY langtext",$quizref);
+						GROUP BY qq.questiontext",$quizref);
 		$result = _mysql_query($sql,$this->DB);
 		$resp = array();
 		if (!$result){
 			return $resp;
 		}
 		while($r = mysql_fetch_object($result)){
-			$resp[$r->langtext] = $r->avgscore;
+			$resp[$r->questiontext] = $r->avgscore;
 		}
 		return $resp;
 	}
 	
 	function getMyQuizScores(){
 		global $USER;
-		$sql = sprintf("SELECT AVG(score) as avgscore, count(*) as noattempts, max(score) as maxscore, min(score) as minscore, langtext as title, langref as ref  FROM 
-						(SELECT ((qascore*100)/ maxscore) as score,  firstname, lastname, submitdate, l.langtext, l.langref FROM quizattempt qa
+		$sql = sprintf("SELECT AVG(score) as avgscore, count(*) as noattempts, max(score) as maxscore, min(score) as minscore, quiztitle as title, quiztitleref as ref  FROM 
+						(SELECT ((qascore*100)/ maxscore) as score,  firstname, lastname, submitdate, quiztitle, quiztitleref FROM quizattempt qa
 						INNER JOIN user u ON qa.submituser = u.username
-						INNER JOIN language l ON l.langref = qa.quizref
+						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						WHERE u.userid = %d
 						ORDER BY submitdate DESC) a
-						GROUP BY langtext, langref", $USER->userid);
+						GROUP BY quiztitle, quiztitleref", $USER->userid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			return;
@@ -390,11 +390,11 @@ class API {
 	
 	function getRanking($ref,$userid){
 		$sql = sprintf("SELECT * FROM
-						(SELECT MAX((qascore*100)/ maxscore) as score,  u.userid, l.langref FROM quizattempt qa
+						(SELECT MAX((qascore*100)/ maxscore) as score,  u.userid, quiztitleref FROM quizattempt qa
 						LEFT OUTER JOIN user u ON qa.submituser = u.username
-						INNER JOIN language l ON l.langref = qa.quizref
+						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						WHERE qa.quizref = '%s'
-						GROUP BY u.userid, l.langref) a
+						GROUP BY u.userid, quiztitleref) a
 						ORDER BY score DESC",$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
@@ -475,9 +475,8 @@ class API {
 	}
 	
 	function getQuizQuestions($quizid){
-		$sql = sprintf("SELECT q.questionid, q.questiontitleref, qq.orderno, l.langtext FROM question q 
+		$sql = sprintf("SELECT q.questionid, q.questiontitleref, qq.orderno, q.questiontext FROM question q 
 						INNER JOIN quizquestion qq ON qq.questionid = q.questionid
-						INNER JOIN language l ON l.langref = q.questiontitleref
 						WHERE qq.quizid = %d
 						ORDER BY orderno ASC",$quizid);
 		$result = _mysql_query($sql,$this->DB);
@@ -489,7 +488,7 @@ class API {
 			$q = new stdClass;
 			$q->id = $r->questionid;
 			$q->refid = $r->questiontitleref;
-			$q->text = $r->langtext;
+			$q->text = $r->questiontext;
 			$q->orderno =$r->orderno;
 			$q->props = array();
 			$psql = sprintf("SELECT * FROM questionprop WHERE questionid = %d",$r->questionid);
@@ -503,9 +502,8 @@ class API {
 	}
 	
 	function getQuestionResponses($questionid){
-		$sql = sprintf("SELECT r.responseid, r.responsetitleref, qr.orderno, l.langtext, r.score FROM response r 
+		$sql = sprintf("SELECT r.responseid, r.responsetitleref, qr.orderno, r.responsetext, r.score FROM response r 
 						INNER JOIN questionresponse qr ON qr.responseid = r.responseid
-						INNER JOIN language l ON l.langref = r.responsetitleref
 						WHERE qr.questionid = %d
 						ORDER BY orderno ASC",$questionid);
 		$result = _mysql_query($sql,$this->DB);
@@ -516,7 +514,7 @@ class API {
 		while($o = mysql_fetch_object($result)){
 			$r = new stdClass;
 			$r->refid = $o->responsetitleref;
-			$r->text = $o->langtext;
+			$r->text = $o->responsetext;
 			$r->orderno =$o->orderno;
 			$r->score = $o->score;
 			$r->props = array();
@@ -546,10 +544,9 @@ class API {
 	function addQuestion($title){
 		global $USER, $CONFIG;
 		$questiontitleref = $this->createUUID("qqt");
-		$this->addLang($questiontitleref, $title,$CONFIG->defaultlang);
 	
-		$str = "INSERT INTO question (questiontitleref,createdby) VALUES ('%s',%d)";
-		$sql = sprintf($str,$questiontitleref,$USER->userid);
+		$str = "INSERT INTO question (questiontitleref,createdby,questiontext) VALUES ('%s',%d,'%s')";
+		$sql = sprintf($str,$questiontitleref,$USER->userid,$title);
 		mysql_query($sql,$this->DB);
 		$result = mysql_insert_id();
 		if (!$result){
@@ -561,10 +558,9 @@ class API {
 	function addResponse($title,$score){
 		global $USER,$CONFIG;
 		$responsetitleref = $this->createUUID("qqrt");
-		$this->addLang($responsetitleref, $title,$CONFIG->defaultlang);
 	
-		$str = "INSERT INTO response (responsetitleref,createdby,score) VALUES ('%s',%d,%f)";
-		$sql = sprintf($str,$responsetitleref,$USER->userid,$score);
+		$str = "INSERT INTO response (responsetitleref,createdby,score,responsetext) VALUES ('%s',%d,%f,'%s')";
+		$sql = sprintf($str,$responsetitleref,$USER->userid,$score,$title);
 
 		mysql_query($sql,$this->DB);
 		$result = mysql_insert_id();
@@ -592,15 +588,6 @@ class API {
 			return ;
 		}
 		return $result;
-	}
-	
-	function addLang($ref,$text,$langcode){
-		$str = "INSERT INTO language (langref,langtext,langcode) VALUES ('%s','%s','%s')";
-		$sql = sprintf($str,$ref,$text,$langcode);
-		$result = _mysql_query($sql,$this->DB);
-		if (!$result){
-			return ;
-		}
 	}
 	
 	function setProp($obj,$id,$name,$value){
@@ -645,14 +632,6 @@ class API {
 		}
 	}
 	
-	function removeLang($ref){
-		$sql = sprintf("DELETE FROM language WHERE langref='%s'",$ref);
-		$result = _mysql_query($sql,$this->DB);
-		if (!$result){
-			return ;
-		}
-	}
-	
 	function removeResponse($ref){
 		$sql = sprintf("DELETE FROM response WHERE responsetitleref='%s'",$ref);
 		$result = _mysql_query($sql,$this->DB);
@@ -686,34 +665,27 @@ class API {
 	}
 	
 	function get10PopularQuizzes(){
-		$sql = "SELECT Count(qa.id) as noattempts, qa.quizref, l.langtext FROM quizattempt qa
-					INNER JOIN language l ON l.langref = qa.quizref
+		$sql = "SELECT Count(qa.id) as noattempts, qa.quizref as ref, quiztitle as title FROM quizattempt qa
 					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 					INNER JOIN user u ON u.username = qa.submituser
 					WHERE u.userid != q.createdby
 					AND q.quizdraft = 0
+					AND q.quizdeleted = 0
 					GROUP BY qa.quizref
 					ORDER BY Count(qa.id) DESC
 					LIMIT 0,10";
 		$result = _mysql_query($sql,$this->DB);
-		if (!$result){
-			return ;
-		}
 		$top10 = array();
 		while($o = mysql_fetch_object($result)){
-			$r = new stdClass();
-			$r->ref = $o->quizref;
-			$r->title = $o->langtext;
-			$r->noattempts = $o->noattempts;
-			array_push($top10,$r);
+			array_push($top10,$o);
 		}
 		return $top10;
 	}
 	
 	function get10MostRecentQuizzes(){
-		$sql = "SELECT q.quiztitleref,createdon, l.langtext FROM quiz q
-					INNER JOIN language l ON l.langref = q.quiztitleref
+		$sql = "SELECT q.quiztitleref as ref ,createdon, quiztitle as title FROM quiz q
 					WHERE quizdraft = 0
+					AND quizdeleted = 0
 					ORDER BY createdon DESC
 					LIMIT 0,10";
 		$result = _mysql_query($sql,$this->DB);
@@ -722,11 +694,7 @@ class API {
 		}
 		$top10 = array();
 		while($o = mysql_fetch_object($result)){
-			$r = new stdClass();
-			$r->ref = $o->quiztitleref;
-			$r->title = $o->langtext;
-			$r->createdon = $o->createdon;
-			array_push($top10,$r);
+			array_push($top10,$o);
 		}
 		return $top10;
 	}
@@ -822,33 +790,14 @@ class API {
 		return true;
 	}
 	
-	function getUserDownloadQueue($userid){
-		$sql = sprintf("SELECT DISTINCT q.quiztitleref as quizref, l.langtext as quiztitle, dldate as queuedate FROM download d
-								INNER JOIN quiz q ON q.quizid = d.quizid
-								INNER JOIN language l ON q.quiztitleref = l.langref
-								WHERE userid = %d 
-								AND queued = true",$userid);
-		$result = _mysql_query($sql,$this->DB);
-		if (!$result){
-			return false;
-		}
-		$queue = array();
-		while($o = mysql_fetch_object($result)){
-			array_push($queue,$o);
-		}
-		return $queue;
-	}
-	
 	function searchQuizzes($terms){
 		$sql = sprintf("SELECT * FROM (SELECT quiztitleref as quizref, quiztitle FROM quiz 
 					WHERE quiztitle like '%%%s%%'
 					UNION
-					SELECT q.quiztitleref as quizref, ll.langtext as quiztitle FROM language l
-					INNER JOIN question qq ON l.langref = qq.questiontitleref
-					INNER JOIN quizquestion qqq ON qqq.questionid = qq.questionid
-					INNER JOIN quiz q ON q.quizid = qqq.quizid
-					INNER JOIN language ll ON ll.langref = q.quiztitleref
-					WHERE l.langtext like '%%%s%%')
+					SELECT q.quiztitleref as quizref, quiztitle FROM quiz q
+					INNER JOIN quizquestion qqq ON q.quizid = qqq.quizid
+					INNER JOIN question qq ON qqq.questionid - qq.questionid
+					WHERE qq.questiontext like '%%%s%%')
 					a LIMIT 0,5",$terms,$terms);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
