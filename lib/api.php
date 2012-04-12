@@ -245,18 +245,12 @@ class API {
 	}
 	
 	function getQuizAttempts($ref, $opts = array()){
-		if(array_key_exists('days',$opts)){
-			$days = max(0,$opts['days']);
-		} else {
-			$days = DEFAULT_DAYS;
-		}
 		$sql = sprintf("SELECT ((qascore*100)/ maxscore) as score, firstname, lastname, submitdate FROM quizattempt qa
 						INNER JOIN user u ON qa.submituser = u.username
 						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						WHERE quizref = '%s'
-						AND submitdate > DATE_ADD(NOW(), INTERVAL -%d DAY) 
 						AND u.userid != q.createdby
-						ORDER BY submitdate DESC",$ref,$days);
+						ORDER BY submitdate DESC",$ref);
 		$summary = array();
 		$result = _mysql_query($sql,$this->DB);
 		while($o = mysql_fetch_object($result)){
