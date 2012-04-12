@@ -22,6 +22,12 @@ if($quiz == null){
 
 printf("<h1>mQuiz: %s</h1>",$quiz->title);
 
+if(!$API->quizHasAttempts($ref)){
+	printf("No attempts have been made on this quiz yet.");
+	include_once("../includes/footer.php");
+	die;
+}
+
 echo "<p>View: ";
 $i = 0;
 foreach($views as $k=>$v){
