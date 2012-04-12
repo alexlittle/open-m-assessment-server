@@ -1,13 +1,9 @@
-<?php
-	include_once '../config.php';
-?>
-
 function addQuestion(){
 	
 	var qno = $('#questions > div').size()+1;
 	
 	var fb = $("<div class='formblock'></div>");
-	var fl = $("<div class='formlabel'></div>").text("<?php echo getstring('quiz.new.question'); ?> " +qno);
+	var fl = $("<div class='formlabel'></div>").text("Question " +qno);
 	fb.append(fl);
 	var ff = $("<div class='formfield'></div>");
 	ff.append("<input type='text' name='q"+qno+"' value='' size='60'></input>");
@@ -24,16 +20,4 @@ function addQuestion(){
 	$('#noquestions').val(qno);
 }	
 
-
-function toggleOptionShow(){
-	$('#options').toggle();
-	$('#optionsshow').hide();
-	$('#optionshide').show();
-}
-
-function toggleOptionHide(){
-	$('#options').toggle();
-	$('#optionsshow').show();
-	$('#optionshide').hide();
-}
 
