@@ -840,9 +840,8 @@ class API {
 	}
 	
 	function searchQuizzes($terms){
-		$sql = sprintf("SELECT * FROM (SELECT quiztitleref as quizref, langtext as quiztitle FROM language l
-					inner join quiz q ON l.langref = q.quiztitleref
-					WHERE langtext like '%%%s%%'
+		$sql = sprintf("SELECT * FROM (SELECT quiztitleref as quizref, quiztitle FROM quiz 
+					WHERE quiztitle like '%%%s%%'
 					UNION
 					SELECT q.quiztitleref as quizref, ll.langtext as quiztitle FROM language l
 					INNER JOIN question qq ON l.langref = qq.questiontitleref
