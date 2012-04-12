@@ -70,14 +70,15 @@ function showHome(){
 	$('#content').append(suggestresults);
 	if(store.get('suggest')){
 		var data = store.get('suggest');
-		for(var q in data){
-		   var quiz = $('<div>').attr({'class':'quizlist clickable','onclick':'document.location="#'+data[q].ref +'"'});
+		for(var q in data){		   
+		   var ql= $('<div>').attr({'class':'quizlist clickable','onclick':'document.location="#'+data[q].ref +'"'});
+		   var quiz = $('<span>').attr({'class':'quiztitle'});
 		   quiz.append(data[q].title);
-		   $('#suggestresults').append(quiz);
+		   $('#suggestresults').append(ql.append(quiz));
 		   if(data[q].description != null && data[q].description != ""){
-			   var desc = $("<div>").attr({'class':'description'});
-			   desc.text(data[q].description);
-			   $('#suggestresults').append(desc);
+			   var desc = $("<span>").attr({'class':'quizdesc'});
+			   desc.text(" - " + data[q].description);
+			   ql.append(desc);
 		   }
 	   }
 	} else {
@@ -105,10 +106,15 @@ function doSearch(){
 						   $('#searchresults').append('No results found.');
 					   } 
 					   for(var q in data){
-						   var quiz = $('<div>').attr({'class':'quizlist clickable','onclick':'document.location="#'+data[q].quizref +'"'});
-						   cacheQuiz(data[q].quizref);
-						   quiz.append(data[q].quiztitle);
-						   $('#searchresults').append(quiz);
+						   var ql= $('<div>').attr({'class':'quizlist clickable','onclick':'document.location="#'+data[q].ref +'"'});
+						   var quiz = $('<span>').attr({'class':'quiztitle'});
+						   quiz.append(data[q].title);
+						   $('#searchresults').append(ql.append(quiz));
+						   if(data[q].description != null && data[q].description != ""){
+							   var desc = $("<span>").attr({'class':'quizdesc'});
+							   desc.text(" - " + data[q].description);
+							   ql.append(desc);
+						   }
 					   }
 				   }
 			   },

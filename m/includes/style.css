@@ -107,8 +107,18 @@ div.ctrl {
 }
 
 .quizlist {
-	margin: 10px;
+	padding: 5px;
+}
+.quizlist:hover {
+	background: yellow;
+}
+.quiztitle {
 	color:#77a240;
+}
+
+.quizdesc {
+	font-style:italic;
+	font-size:80%;
 }
 
 #quizheader {

@@ -726,7 +726,7 @@ class API {
 	}
 	
 	function searchQuizzes($terms){
-		$sql = sprintf("SELECT * FROM (SELECT quiztitleref as quizref, quiztitle, quizdescription as description FROM quiz 
+		$sql = sprintf("SELECT * FROM (SELECT quiztitleref as ref, quiztitle as title, quizdescription as description FROM quiz 
 					WHERE (quiztitle LIKE '%%%s%%' OR quizdescription LIKE '%%%s%%')
 					AND quizdraft = 0
 					AND quizdeleted = 0
