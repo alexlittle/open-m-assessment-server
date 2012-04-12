@@ -40,7 +40,7 @@ if(count($results) == 0){
 	}
 }
 ?>
-<small>Note: Results are only shown for quizzes that you did not create<small>
+<small>Note: Results are only shown for quizzes that you did not create</small>
 <?php 
 include_once("../includes/footer.php");
 ?>

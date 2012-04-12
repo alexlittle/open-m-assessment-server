@@ -20,7 +20,7 @@ if($quiz == null){
 	die;
 }
 
-printf("<h1>mQuiz: %s</h1>",$quiz->title);
+printf("<h1>%s</h1>",$quiz->title);
 
 if($quiz->description != ""){
 	printf("<p class='desc'>%s</p>",$quiz->description);

@@ -1,6 +1,5 @@
 <?php 
 	$avgscores = $API->getQuizAvgResponseScores($ref);
-	
 ?>
 <script type="text/javascript">
 google.load("visualization", "1", {
@@ -15,8 +14,8 @@ google.load("visualization", "1", {
 		<?php
 			$c = 0;
 			foreach ($avgscores as $k=>$v){
-				printf("data.setValue(%d, 0, '%s');", $c,addslashes($k));
-				printf('data.setValue(%d, 1, %f);', $c,$v);
+				printf("data.setValue(%d, 0, '%s');", $c,addslashes($v->questiontext));
+				printf('data.setValue(%d, 1, %f);', $c,$v->avgscore);
 				$c++;
 			}
 		?>

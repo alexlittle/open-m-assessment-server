@@ -30,7 +30,7 @@ class API {
 		$this->DB = false;
 	}
 	
-	function getUser($user){
+	function getUser(&$user){
 		$sql = "SELECT * FROM user WHERE username ='".$user->username."' LIMIT 0,1";
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
@@ -44,7 +44,7 @@ class API {
 			$user->email =  $row['email'];
 			$user->password =  $row['password'];
 		}
-		return $user;
+		//return $user;
 	}
 	
 	function checkUserNameNotInUse($username){
@@ -91,21 +91,6 @@ class API {
 			return false;
 		}
 		return true;
-	}
-	
-	function getUsers(){
-		$sql = "SELECT * FROM user u
-					INNER JOIN healthpoint hp ON hp.hpid = u.hpid
-					ORDER BY u.firstname";
-		$result = _mysql_query($sql,$this->DB);
-		if (!$result){
-			return;
-		}
-		$users = array();
-		while($row = mysql_fetch_object($result)){
-			array_push($users,$row);
-		}
-		return $users;
 	}
 	
 	function getUserProperties(&$user){
@@ -348,18 +333,13 @@ class API {
 						INNER JOIN quizattempt qa ON qa.id = qar.qaid
 						INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 						INNER JOIN question qq ON qq.questiontitleref = qar.questionrefid
+						INNER JOIN quizquestion qqu ON qqu.questionid = qq.questionid
 						WHERE quizref = '%s'
 						AND q.quizdeleted = 0
-						GROUP BY qq.questiontext",$quizref);
+						GROUP BY qq.questiontext
+						ORDER BY qqu.orderno ASC",$quizref);
 		$result = _mysql_query($sql,$this->DB);
-		$resp = array();
-		if (!$result){
-			return $resp;
-		}
-		while($r = mysql_fetch_object($result)){
-			$resp[$r->questiontext] = $r->avgscore;
-		}
-		return $resp;
+		return $this->resultToArray($result);
 	}
 	
 	function getMyQuizScores(){
@@ -811,8 +791,16 @@ class API {
 		return false;
 	}
 	
-	function createUUID($prefix){
+	private function createUUID($prefix){
 		global $USER;
 		return $prefix.strtolower($USER->userid).uniqid();
+	}
+	
+	private function resultToArray($r){
+		$temp = array();
+		while($o = mysql_fetch_object($r)){
+			array_push($temp, $o);
+		}
+		return $temp;
 	}
 }
