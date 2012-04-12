@@ -656,14 +656,6 @@ class API {
 		}
 	}
 	
-	function updateLang($ref,$text){
-		$sql = sprintf("UPDATE language SET langtext='%s' WHERE langref='%s'",$text,$ref);
-		$result = _mysql_query($sql,$this->DB);
-		if (!$result){
-			return ;
-		}
-	}
-	
 	function get10PopularQuizzes(){
 		$sql = "SELECT Count(qa.id) as noattempts, qa.quizref as ref, quiztitle as title FROM quizattempt qa
 					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
@@ -814,30 +806,33 @@ class API {
 		global $USER;
 		$sql = "SELECT DISTINCT a.quizid, quizref, quiztitle FROM (";
 		// get featured
-		$sql .= "SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, l.langtext as quiztitle, 10 AS weight, q.quizdraft FROM quiz q
-							INNER JOIN language l ON l.langref = q.quiztitleref
+		$sql .= "SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, q.quiztitle, 10 AS weight, q.quizdraft FROM quiz q
 							INNER JOIN quizprop qp ON q.quizid = qp.quizid
 							WHERE qp.quizpropname = 'featured'
 							AND qp.quizpropvalue = 'true'
+							AND q.quizdraft = 0
+							AND q.quizdeleted = 0
 							LIMIT 0,10) f";
 		
 		// TODO get those from friends who have taken quizzes
 		
-		// get top 5 popular which haven't been attempted by this user
+		// get most recent 5
 		$sql .= " UNION
-					SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, l.langtext as quiztitle,5 AS weight, q.quizdraft FROM quiz q
-							INNER JOIN language l ON l.langref = q.quiztitleref
+					SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, q.quiztitle,5 AS weight, q.quizdraft FROM quiz q
+							WHERE q.quizdraft = 0
+							AND q.quizdeleted = 0
 							ORDER BY createdon DESC
 							LIMIT 0,10) b";
 		
-		// get most recent 5
+		// get top 5 popular which haven't been attempted by this user
 		$sql .= " UNION 
 					SELECT * FROM 
-					(SELECT q.quizid, qa.quizref, l.langtext as quiztitle, 4 AS weight, q.quizdraft FROM quizattempt qa
-					INNER JOIN language l ON l.langref = qa.quizref
+					(SELECT q.quizid, qa.quizref, q.quiztitle, 4 AS weight, q.quizdraft FROM quizattempt qa
 					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 					INNER JOIN user u ON u.username = qa.submituser
 					WHERE u.userid != q.createdby
+					AND q.quizdraft = 0
+					AND q.quizdeleted = 0
 					GROUP BY qa.quizref
 					ORDER BY Count(qa.id) DESC
 					LIMIT 0,10) c";
@@ -857,24 +852,6 @@ class API {
 			array_push($results,$o);
 		}
 		return $results;
-	}
-	
-	function getUserDownloadHistory($userid){
-		$sql = sprintf("SELECT q.quiztitleref as quizref, l.langtext as quiztitle, dldate as historydate FROM download d
-						INNER JOIN quiz q ON q.quizid = d.quizid
-						INNER JOIN language l ON q.quiztitleref = l.langref
-						WHERE userid = %d 
-						AND queued = false
-						ORDER BY dldate DESC",$userid);
-		$result = _mysql_query($sql,$this->DB);
-		if (!$result){
-			return false;
-		}
-		$history = array();
-		while($o = mysql_fetch_object($result)){
-			array_push($history,$o);
-		}
-		return $history;
 	}
 	
 	function isOwner($ref){
