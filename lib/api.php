@@ -226,7 +226,7 @@ class API {
 	}
 	
 	function getQuizzesForUser($userid){
-		$sql = sprintf("SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref FROM quiz q
+		$sql = sprintf("SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref, q.quizdraft FROM quiz q
 						WHERE q.createdby = %d
 						ORDER BY q.quiztitle ASC",$userid);
 		$result = _mysql_query($sql,$this->DB);
@@ -260,12 +260,13 @@ class API {
 	}
 	
 	function quizHasAttempts($ref){
-		$sql = sprintf("SELECT * FROM quizattempt WHERE quizref='%s'",$ref);
+		$sql = sprintf("SELECT id FROM quizattempt WHERE quizref='%s'",$ref);
 		$result = _mysql_query($sql,$this->DB);
-		while($o = mysql_fetch_object($result)){
+		if(mysql_num_rows($result) > 0){
 			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 	
 	

@@ -77,7 +77,10 @@ if ($submit != ""){
 $qq = $API->getQuizQuestions($q->quizid);
 
 if ($API->quizHasAttempts($ref)){
-	printf("<div class='warning'>%s</div>", getstring("warning.quiz.hasattempts"));
+	printf("<div class='info'>Sorry, you cannot edit this quiz as attempts have already been made on it.</div>");
+	
+	include_once("../includes/footer.php");
+	die;
 }
 
 ?>

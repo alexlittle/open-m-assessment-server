@@ -15,11 +15,15 @@ if (count($quizzes) == 0){
 
 foreach ($quizzes as $q){
 	echo "<div id='".$q->ref."' class='quizlist'>";
-	echo "<div class='quiztitle'><a href='".$CONFIG->homeAddress."quiz/view.php?ref=".$q->ref."'>".$q->title."</a></div>";
+	echo "<div class='quiztitle'><a href='".$CONFIG->homeAddress."quiz/view.php?ref=".$q->ref."'>".$q->title."</a>";
+	if($q->quizdraft == 1){
+		echo " (draft)";
+	}
+	echo "</div>";
 	echo "<div class='quizattempts'>Attempts: ".$q->noattempts."</div>";
 	echo "<div class='quizavg'>Average Score: ".sprintf('%3d',$q->avgscore)."%</div>";
 	echo "<div class='quizopts'><small>";
-	if(isset($q->props['generatedby']) && $q->props['generatedby'] != 'import'){
+	if($q->noattempts == 0 && isset($q->props['generatedby']) && $q->props['generatedby'] != 'import'){
 		echo "<a href='".$CONFIG->homeAddress."quiz/edit.php?ref=".$q->ref."'>[Edit]</a>";
 	}
 	echo "<a href='".$CONFIG->homeAddress."quiz/delete.php?ref=".$q->ref."'>[Delete]</a>";
