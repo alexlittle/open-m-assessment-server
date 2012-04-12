@@ -23,7 +23,7 @@ foreach ($quizzes as $q){
 	echo "<div class='quizattempts'>Attempts: ".$q->noattempts."</div>";
 	echo "<div class='quizavg'>Average Score: ".sprintf('%3d',$q->avgscore)."%</div>";
 	echo "<div class='quizopts'><small>";
-	if($q->noattempts == 0 && isset($q->props['generatedby']) && $q->props['generatedby'] != 'import'){
+	if($q->noattempts == 0){
 		echo "<a href='".$CONFIG->homeAddress."quiz/edit.php?ref=".$q->ref."'>[Edit]</a>";
 	}
 	echo "<a href='".$CONFIG->homeAddress."quiz/delete.php?ref=".$q->ref."'>[Delete]</a>";

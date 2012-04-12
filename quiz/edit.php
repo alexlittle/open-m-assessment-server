@@ -2,21 +2,25 @@
 include_once("../config.php");
 $PAGE = "editquiz";
 include_once("../includes/header.php");
+
+$ref = optional_param('ref',"",PARAM_TEXT);
+$q = $API->getQuizForUser($ref,$USER->userid);
+
+if(isset($q->props['generatedby']) && $q->props['generatedby'] == 'import'){
+	header('Location: '.$CONFIG->homeAddress.'quiz/import/edit.php?ref='.$ref);
+	die;	
+}
+
 ?>
 <h1><?php echo getstring("quiz.edit.title"); ?></h1>
 <?php
-$ref = optional_param('ref',"",PARAM_TEXT);
-$q = $API->getQuizForUser($ref,$USER->userid);
+
 
 if($q == null){
 	echo "Quiz not found";
 	include_once("../includes/footer.php");
 	die;
-} else if(isset($q->props['generatedby']) && $q->props['generatedby'] != 'mquiz'){
-	echo "Sorry this was an imported quiz, you cannot edit it with the online tool here, please import again with the changes already made.";
-	include_once("../includes/footer.php");
-	die;
-}
+} 
 $submit = optional_param("submit","",PARAM_TEXT);
 if ($submit != ""){
 	$title = optional_param("title","",PARAM_TEXT);
