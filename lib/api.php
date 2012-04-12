@@ -34,7 +34,6 @@ class API {
 		$sql = "SELECT * FROM user WHERE username ='".$user->username."' LIMIT 0,1";
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
 		while($user = mysql_fetch_object($result)){
@@ -47,7 +46,6 @@ class API {
 		$sql = sprintf("SELECT * FROM user WHERE username='%s' AND userid != %d",$username,$USER->userid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
 		while($row = mysql_fetch_array($result)){
@@ -62,7 +60,6 @@ class API {
 		$sql = sprintf("UPDATE user SET username = '%s', email = '%s', firstname = '%s', lastname = '%s' WHERE userid = %d",$username,$username,$firstname,$lastname,$USER->userid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return false;
 		}
 		return true;
@@ -73,7 +70,6 @@ class API {
 		$sql = sprintf("UPDATE user SET password = md5('%s') WHERE userid = %d",$password,$USER->userid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return false;
 		}
 		return true;
@@ -86,7 +82,6 @@ class API {
 		$sql = sprintf($str,$username,$password,$firstname,$surname,$email);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return false;
 		}
 		return true;
@@ -98,7 +93,6 @@ class API {
 					ORDER BY u.firstname";
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
 		$users = array();
@@ -112,7 +106,6 @@ class API {
 		$sql = "SELECT * FROM userprops WHERE userid=".$user->userid;
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
 		while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
@@ -166,7 +159,6 @@ class API {
 		if($result){
 			return true;
 		} else {
-			writeToLog('error','database',$sql);
 			return false;
 		}
 	}
@@ -175,7 +167,9 @@ class API {
 	 *
 	*/
 	function writeLog($loglevel,$userid,$logtype,$logmsg,$ip,$logpagephptime,$logpagemysqltime,$logpagequeries,$logagent){
-		$sql = sprintf("INSERT INTO log (loglevel,userid,logtype,logmsg,logip,logpagephptime,logpagemysqltime,logpagequeries,logagent) VALUES ('%s',%d,'%s','%s','%s',%f,%f,%d,'%s')", $loglevel,$userid,$logtype,mysql_real_escape_string($logmsg),$ip,$logpagephptime,$logpagemysqltime,$logpagequeries,$logagent);
+		$sql = sprintf("INSERT INTO log (loglevel,userid,logtype,logmsg,logip,logpagephptime,logpagemysqltime,logpagequeries,logagent) 
+						VALUES ('%s',%d,'%s','%s','%s',%f,%f,%d,'%s')", 
+						$loglevel,$userid,$logtype,mysql_real_escape_string($logmsg),$ip,$logpagephptime,$logpagemysqltime,$logpagequeries,$logagent);
 		mysql_query($sql,$this->DB);
 	}
 	
@@ -193,7 +187,6 @@ class API {
 		mysql_query($sql,$this->DB);
 		$result = mysql_insert_id();
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
 		return $result;
@@ -208,7 +201,6 @@ class API {
 					$qar->text);
 		$result = mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
 	}
@@ -218,7 +210,6 @@ class API {
 				WHERE quizdraft = 0";
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
 		$quizzes = array();
@@ -229,23 +220,19 @@ class API {
 	}
 	
 	function getQuizzesForUser($userid){
-		$sql = sprintf("SELECT q.quizid, q.quiztitle, q.quiztitleref FROM quiz q
+		$sql = sprintf("SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref FROM quiz q
 						WHERE q.createdby = %d
 						ORDER BY q.quiztitle ASC",$userid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
 		$quizzes = array();
-		while($r = mysql_fetch_object($result)){
-			$attempts = $this->getQuizNoAttempts($r->quiztitleref);
-			$q = new stdClass;
-			$q->ref = $r->quiztitleref;
-			$q->title = $r->quiztitle;
+		while($q = mysql_fetch_object($result)){
+			$attempts = $this->getQuizNoAttempts($q->ref);
 			$q->noattempts = $attempts->noattempts;
 			$q->avgscore = $attempts->avgscore;
-			$q->props = $this->getQuizProps($r->quizid);
+			$q->props = $this->getQuizProps($q->quizid);
 			array_push($quizzes,$q);
 		}
 		return $quizzes;
@@ -303,7 +290,6 @@ class API {
 		$result = _mysql_query($sql,$this->DB);
 		$summary = array();
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return $summary;
 		}
 		while($o = mysql_fetch_object($result)){
@@ -324,7 +310,6 @@ class API {
 		$a->noattempts = 0;
 		$a->avgscore = 0;
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return $a;
 		}
 		while($r = mysql_fetch_object($result)){
@@ -349,7 +334,6 @@ class API {
 		$result = _mysql_query($sql,$this->DB);
 		$resp = array();
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return $resp;
 		}
 		while($r = mysql_fetch_object($result)){
@@ -370,7 +354,6 @@ class API {
 		$result = _mysql_query($sql,$this->DB);
 		$resp = array();
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return $resp;
 		}
 		while($r = mysql_fetch_object($result)){
@@ -390,7 +373,6 @@ class API {
 						GROUP BY langtext, langref", $USER->userid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
 		$results = array();
@@ -410,7 +392,6 @@ class API {
 						ORDER BY score DESC",$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
 		$rank = 0;
@@ -432,39 +413,27 @@ class API {
 	}
 	
 	function getQuiz($ref){
-		$sql = sprintf("SELECT q.quizid, q.quiztitle, q.quiztitleref, q.quizdraft FROM quiz q
+		$sql = sprintf("SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref, q.quizdraft FROM quiz q
 						WHERE q.quiztitleref = '%s'",$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
-		while($r = mysql_fetch_object($result)){
-			$q = new stdClass;
-			$q->quizid = $r->quizid;
-			$q->ref = $r->quiztitleref;
-			$q->title = $r->quiztitle;
-			$q->quizdraft = $r->quizdraft;
-			$q->props = $this->getQuizProps($r->quizid);
+		while($q = mysql_fetch_object($result)){
+			$q->props = $this->getQuizProps($q->quizid);
 			return $q;
 		}
 	}
 	
 	function getQuizById($quizid){
-		$sql = sprintf("SELECT q.quizid, q.quiztitle, q.quiztitleref, q.quizdraft FROM quiz q
+		$sql = sprintf("SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref, q.quizdraft FROM quiz q
 							WHERE q.quizid = %d",$quizid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
-		while($r = mysql_fetch_object($result)){
-			$q = new stdClass;
-			$q->quizid = $r->quizid;
-			$q->ref = $r->quiztitleref;
-			$q->title = $r->quiztitle;
-			$q->quizdraft = $r->quizdraft;
-			$q->props = $this->getQuizProps($r->quizid);
+		while($q = mysql_fetch_object($result)){
+			$q->props = $this->getQuizProps($q->quizid);
 			return $q;
 		}
 	}
@@ -476,7 +445,6 @@ class API {
 
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return;
 		}
 		while($r = mysql_fetch_object($result)){
@@ -508,7 +476,6 @@ class API {
 						ORDER BY orderno ASC",$quizid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 		$questions = array();
@@ -537,7 +504,6 @@ class API {
 						ORDER BY orderno ASC",$questionid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 		$responses = array();
@@ -561,13 +527,11 @@ class API {
 	function addQuiz($title, $draft=0){
 		global $USER, $CONFIG;
 		$quiztitleref = $this->createUUID("qt");
-		//$this->addLang($quiztitleref, $title,$CONFIG->defaultlang);
 		$str = "INSERT INTO quiz (quiztitleref,createdby,quizdraft, quiztitle) VALUES ('%s',%d,%d,'%s')";
 		$sql = sprintf($str,$quiztitleref,$USER->userid,$draft,$title);
 		mysql_query($sql,$this->DB);
 		$result = mysql_insert_id();
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 		return $result;
@@ -583,7 +547,6 @@ class API {
 		mysql_query($sql,$this->DB);
 		$result = mysql_insert_id();
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 		return $result;
@@ -600,7 +563,6 @@ class API {
 		mysql_query($sql,$this->DB);
 		$result = mysql_insert_id();
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 		return $result;
@@ -611,7 +573,6 @@ class API {
 		$sql = sprintf($str,$quizid,$questionid,$orderno);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 		return $result;
@@ -622,7 +583,6 @@ class API {
 		$sql = sprintf($str,$questionid,$responseid,$orderno);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 		return $result;
@@ -633,7 +593,6 @@ class API {
 		$sql = sprintf($str,$ref,$text,$langcode);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 	}
@@ -643,7 +602,6 @@ class API {
 		$sql = sprintf("SELECT * FROM %sprop WHERE %sid= %d AND %spropname='%s'",$obj,$obj,$id,$obj,$name);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 		while($row = mysql_fetch_array($result, MYSQL_ASSOC)){
@@ -655,7 +613,6 @@ class API {
 		$insertSql = sprintf("INSERT INTO %sprop (%spropvalue, %sid,%spropname) VALUES ('%s',%d,'%s')",$obj,$obj,$obj,$obj,$value,$id,$name);
 		$result = _mysql_query($insertSql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 	}
@@ -667,7 +624,6 @@ class API {
 		$sql = sprintf("DELETE FROM quiz WHERE quiztitleref='%s'",$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 	}
@@ -687,7 +643,6 @@ class API {
 		$sql = sprintf("DELETE FROM language WHERE langref='%s'",$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 	}
@@ -696,7 +651,6 @@ class API {
 		$sql = sprintf("DELETE FROM response WHERE responsetitleref='%s'",$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 	}
@@ -705,7 +659,6 @@ class API {
 		$sql = sprintf("DELETE FROM question WHERE questiontitleref='%s'",$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 	}
@@ -714,7 +667,6 @@ class API {
 		$sql = sprintf("UPDATE quiz SET quizdraft=%d,quiztitle='%s' WHERE quiztitleref='%s'",$quizdraft,$title,$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 	}
@@ -723,7 +675,6 @@ class API {
 		$sql = sprintf("UPDATE language SET langtext='%s' WHERE langref='%s'",$text,$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 	}
@@ -740,7 +691,6 @@ class API {
 					LIMIT 0,10";
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 		$top10 = array();
@@ -762,7 +712,6 @@ class API {
 					LIMIT 0,10";
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 		$top10 = array();
@@ -788,7 +737,6 @@ class API {
 					LIMIT 0,10";
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return ;
 		}
 		$leaders = array();
@@ -806,7 +754,6 @@ class API {
 								AND queued = true",$userid, $quizid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return false;
 		}
 		if (mysql_num_rows($result) == 0){
@@ -827,7 +774,6 @@ class API {
 						AND queued = true",$userid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return false;
 		}
 		$queue = array();
@@ -845,7 +791,6 @@ class API {
 						AND queued = true",$userid, $quizid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return false;
 		}
 		
@@ -858,7 +803,6 @@ class API {
 								WHERE dlid = %d",$o->dlid);
 				$uresult = _mysql_query($usql,$this->DB);
 				if (!$uresult){
-					writeToLog('error','database',$usql);
 					return false;
 				}
 			}
@@ -866,7 +810,6 @@ class API {
 			$isql = sprintf("INSERT INTO download (userid,quizid,queued) VALUES (%d,%d,false)",$userid,$quizid);
 			$iresult = _mysql_query($isql,$this->DB);
 			if (!$iresult){
-				writeToLog('error','database',$isql);
 				return false;
 			}
 		}
@@ -881,7 +824,6 @@ class API {
 								AND queued = true",$userid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return false;
 		}
 		$queue = array();
@@ -905,7 +847,6 @@ class API {
 					a LIMIT 0,5",$terms,$terms);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return false;
 		}
 		$results = array();
@@ -955,7 +896,6 @@ class API {
 		
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return false;
 		}
 		$results = array();
@@ -974,7 +914,6 @@ class API {
 						ORDER BY dldate DESC",$userid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
-			writeToLog('error','database',$sql);
 			return false;
 		}
 		$history = array();
