@@ -13,7 +13,7 @@ $quizdraft = optional_param('quizdraft',0,PARAM_INT);
 $description = optional_param("description","",PARAM_TEXT);
 $tags = optional_param("tags","",PARAM_TEXT);
 $content = optional_param("content","",PARAM_TEXT);
-$format = optional_param("format","",PARAM_TEXT);
+$format = optional_param("format","gift",PARAM_TEXT);
 
 $supported_qtypes = array('truefalse','multichoice','essay','shortanswer','numerical');
 if ($submit != ""){
@@ -32,7 +32,6 @@ if ($submit != ""){
 			
 		$lines = explode("\n",$content);
 		$questions = $import->readquestions($lines);
-			
 		foreach($questions as $q){
 			if (in_array($q->qtype, $supported_qtypes)){
 				array_push($questions_to_import,$q);
@@ -52,7 +51,7 @@ if ($submit != ""){
 		// now do the actual import
 		if($format == 'gift'){
 			// setup quiz with default props
-			$quizid = $API->addQuiz($title,$quizdraft);
+			$quizid = $API->addQuiz($title,$quizdraft,$description);
 			$API->setProp('quiz',$quizid,'generatedby','import');
 			$API->setProp('quiz',$quizid,'content',$content);
 			$importer = new GIFTImporter();
@@ -63,7 +62,7 @@ if ($submit != ""){
 		}
 	
 		$q = $API->getQuizById($quizid);
-		printf("<div class='info'>%s</div>", getstring("quiz.new.saved"));
+		printf("<div class='info'>%s<p>Why not <a href='%s'>try your quiz</a> out now?</p></div>", getstring("quiz.new.saved"),$CONFIG->homeAddress."m/#".$q->ref);
 		if(!empty($IMPORT_INFO)){
 			echo "<div class='info'>Some of your questions were not imported:<ul>";
 			foreach ($IMPORT_INFO as $info){
@@ -94,24 +93,26 @@ if(!empty($MSG)){
 		<div class="formfield"><input type="text" name="title" size="60" value="<?php echo $title; ?>"></input></div>
 	</div>
 	<div id="options" class="formblock">
-			<div class='formlabel'>&nbsp;</div>
-			<div class='formfield'>
-				<input type="checkbox" name="quizdraft" value="1"
-				<?php 
-					if($quizdraft == 1){
-						echo "checked='checked'";
-					}
-				?>
-				/> Save as draft only
-			</div>
+		<div class='formlabel'>&nbsp;</div>
+		<div class='formfield'>
+			<input type="checkbox" name="quizdraft" value="1"
+			<?php 
+				if($quizdraft == 1){
+					echo "checked='checked'";
+				}
+			?>
+			/> Save as draft only
 		</div>
-	<div class="formblock">
-		<div class="formlabel"><?php echo getstring("import.quiz.content"); ?></div>
-		<div class="formfield"><textarea name="content" cols="100" rows="20"><?php echo $content; ?></textarea></div>
 	</div>
 	<div class="formblock">
-		<div class="formlabel"><?php echo getstring("import.quiz.format"); ?></div>
-		<div class="formfield"><input type="radio" name="format" value="gift" checked="checked"/><?php echo getstring("import.quiz.format.gift"); ?></div>
+		<div class='formlabel'>Description<br/><small>(optional, max 300 characters, no HTML)</small></div>
+		<div class='formfield'>
+			<textarea name="description" cols="80" rows="3" maxlength="300"><?php echo $description; ?></textarea>
+		</div>
+	</div>
+	<div class="formblock">
+		<div class="formlabel">Quiz Questions<br/><small>(enter in <a target='_blank' href='http://microformats.org/wiki/gift'>GIFT format</a>)</small></div>
+		<div class="formfield"><textarea name="content" cols="100" rows="20"><?php echo stripslashes($content); ?></textarea></div>
 	</div>
 	<div class="formblock">
 		<div class="formlabel">&nbsp;</div>

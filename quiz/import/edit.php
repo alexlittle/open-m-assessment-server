@@ -22,8 +22,9 @@ if ($API->quizHasAttempts($ref)){
 
 $submit = optional_param("submit","",PARAM_TEXT);
 $title = optional_param("title",$q->title,PARAM_TEXT);
+$description = optional_param("description",$q->description,PARAM_TEXT);
 $content = optional_param("content",$q->props['content'],PARAM_TEXT);
-$format = optional_param("format","",PARAM_TEXT);
+$format = optional_param("format","gift",PARAM_TEXT);
 
 $supported_qtypes = array('truefalse','multichoice','essay','shortanswer','numerical');
 if ($submit != ""){
@@ -63,7 +64,7 @@ if ($submit != ""){
 		if($format == 'gift'){
 			$quizdraft = optional_param("quizdraft",0,PARAM_INT);
 			// update title and content
-			$API->updateQuiz($ref,$title,$quizdraft);
+			$API->updateQuiz($ref,$title,$quizdraft,$description);
 			$API->setProp('quiz',$q->quizid,'content',$content);
 			// remove current questions/responses (will add them again below)
 			$API->removeQuiz($q->quizid);
@@ -122,12 +123,14 @@ if(!empty($MSG)){
 		</div>
 	</div>
 	<div class="formblock">
-		<div class="formlabel"><?php echo getstring("import.quiz.content"); ?></div>
-		<div class="formfield"><textarea name="content" cols="100" rows="20"><?php echo stripslashes($content); ?></textarea></div>
+		<div class='formlabel'>Description<br/><small>(optional, max 300 characters, no HTML)</small></div>
+		<div class='formfield'>
+			<textarea name="description" cols="80" rows="3" maxlength="300"><?php echo $description; ?></textarea>
+		</div>
 	</div>
 	<div class="formblock">
-		<div class="formlabel"><?php echo getstring("import.quiz.format"); ?></div>
-		<div class="formfield"><input type="radio" name="format" value="gift" checked="checked"/><?php echo getstring("import.quiz.format.gift"); ?></div>
+		<div class="formlabel">Quiz Questions<br/><small>(enter in <a target='_blank' href='http://microformats.org/wiki/gift'>GIFT format</a>)</small></div>
+		<div class="formfield"><textarea name="content" cols="100" rows="20"><?php echo stripslashes($content); ?></textarea></div>
 	</div>
 	<div class="formblock">
 		<div class="formlabel">&nbsp;</div>

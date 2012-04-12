@@ -70,7 +70,7 @@ if ($submit != ""){
 	
 	if ($savequiz){
 		// create the quiz object
-		$quizid = $API->addQuiz($title,$quizdraft);
+		$quizid = $API->addQuiz($title,$quizdraft,$description);
 		
 		$API->setProp('quiz',$quizid,'generatedby','mquiz');
 
@@ -135,8 +135,6 @@ if(!empty($MSG)){
 			<div class="formlabel"><?php echo getstring('quiz.new.quiztitle'); ?></div>
 			<div class="formfield">
 				<input type="text" name="title" value="<?php echo $title; ?>" size="60"/><br/>
-				<!-- <span id="optionsshow" onclick="toggleOptionShow();" class="link">Show quiz options</span>
-				<span id="optionshide" onclick="toggleOptionHide();" class="link">Hide quiz options</span> -->
 			</div>
 		</div>
 		<div id="options" class="formblock">
@@ -151,13 +149,13 @@ if(!empty($MSG)){
 				/> Save as draft only
 			</div>
 		</div>
-		<!-- div class="formblock">
+		<div class="formblock">
 			<div class='formlabel'>Description<br/><small>(optional)</small></div>
 			<div class='formfield'>
-				<textarea name="description" cols="80" rows="3"><?php echo $description; ?></textarea><br/>
-				<small>Max 300 characters</small>
+				<textarea name="description" cols="80" rows="3" maxlength="300"><?php echo $description; ?></textarea><br/>
+				<small>Max 300 characters, no HTML</small>
 			</div>
-		</div -->
+		</div>
 		<div class="formblock">
 			<h2><?php echo getstring("quiz.new.questions"); ?></h2>
 		</div>
@@ -209,10 +207,6 @@ if(!empty($MSG)){
 </div>
 <?php 
 	include_once('optionmenu.php');
-?>
-<script type="text/javascript">
-	//toggleOptionHide();
-</script>
-<?php 
-include_once("../includes/footer.php");
+
+	include_once("../includes/footer.php");
 ?>

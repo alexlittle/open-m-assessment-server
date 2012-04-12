@@ -24,12 +24,13 @@ if($q == null){
 $submit = optional_param("submit","",PARAM_TEXT);
 if ($submit != ""){
 	$title = optional_param("title","",PARAM_TEXT);
+	$description = optional_param("description","",PARAM_TEXT);
 	$quizdraft = optional_param("quizdraft",0,PARAM_INT);
 	
 	if ($title != ""){
 		
 		//update quiz title	
-		$API->updateQuiz($ref,$title,$quizdraft);
+		$API->updateQuiz($ref,$title,$quizdraft,$description);
 				
 		// remove quiz questions and responses
 		$API->removeQuiz($q->quizid);
@@ -71,6 +72,8 @@ if ($submit != ""){
 		$API->setProp('quiz', $quizid, 'maxscore', $quizmaxscore);
 		$API->setProp('quiz',$quizid,'generatedby','mquiz');
 		printf("<div class='info'>%s<p>Why not <a href='%s'>try your quiz</a> out now?</p></div>", getstring("quiz.edit.saved"),$CONFIG->homeAddress."m/#".$ref);
+		include_once("../includes/footer.php");
+		die;
 	}
 	//reload quiz (to get updated title)
 	$q = $API->getQuizForUser($ref,$USER->userid);
@@ -107,6 +110,13 @@ if ($API->quizHasAttempts($ref)){
 			/> Save as draft only
 		</div>
 	</div>
+	<div class="formblock">
+			<div class='formlabel'>Description<br/><small>(optional)</small></div>
+			<div class='formfield'>
+				<textarea name="description" cols="80" rows="3" maxlength="300"><?php echo $q->description; ?></textarea><br/>
+				<small>Max 300 characters, no HTML</small>
+			</div>
+		</div>
 	<div class="formblock">
 		<h2><?php echo getstring("quiz.edit.questions"); ?></h2>
 	</div>
@@ -156,12 +166,6 @@ if ($API->quizHasAttempts($ref)){
 	<input type="hidden" id="noquestions" name="noquestions" value="<?php echo count($qq); ?>">
 </form>
 </div>
-<?php 
-	include_once('optionmenu.php');
-?>
-<script type="text/javascript">
-//toggleOptionHide();
-</script>
 <?php 
 include_once("../includes/footer.php");
 ?>

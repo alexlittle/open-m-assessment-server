@@ -443,7 +443,7 @@ class API {
 	}
 	
 	function getQuizForUser($ref,$userid){
-		$sql = sprintf("SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref, q.quizdraft as draft FROM quiz q
+		$sql = sprintf("SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref, q.quizdraft as draft, q.quizdescription as description FROM quiz q
 						WHERE q.quiztitleref = '%s' 
 						AND createdby=%d
 						AND q.quizdeleted = 0
@@ -523,11 +523,12 @@ class API {
 		return $responses;
 	}
 	
-	function addQuiz($title, $draft=0){
+	function addQuiz($title, $draft=0,$description=""){
 		global $USER, $CONFIG;
 		$quiztitleref = $this->createUUID("qt");
-		$str = "INSERT INTO quiz (quiztitleref,createdby,quizdraft, quiztitle) VALUES ('%s',%d,%d,'%s')";
-		$sql = sprintf($str,$quiztitleref,$USER->userid,$draft,$title);
+		$description = substr($description,0,300);
+		$str = "INSERT INTO quiz (quiztitleref,createdby,quizdraft, quiztitle,quizdescription) VALUES ('%s',%d,%d,'%s','%s')";
+		$sql = sprintf($str,$quiztitleref,$USER->userid,$draft,$title,$description);
 		mysql_query($sql,$this->DB);
 		$result = mysql_insert_id();
 		if (!$result){
@@ -642,8 +643,13 @@ class API {
 		}
 	}
 	
-	function updateQuiz($ref,$title,$quizdraft){
-		$sql = sprintf("UPDATE quiz SET quizdraft=%d,quiztitle='%s' WHERE quiztitleref='%s'",$quizdraft,$title,$ref);
+	function updateQuiz($ref,$title,$quizdraft,$description=""){
+		$description = substr($description,0,300);
+		$sql = sprintf("UPDATE quiz 
+							SET quizdraft = %d,
+							quiztitle = '%s',
+							quizdescription = '%s' 
+						WHERE quiztitleref='%s'",$quizdraft,$title,$description, $ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			return ;
