@@ -36,9 +36,15 @@ class API {
 		if (!$result){
 			return;
 		}
-		while($user = mysql_fetch_object($result)){
-			return $user;
+		while($row = mysql_fetch_array($result)){
+			$user->userid = $row['userid'];
+			$user->username = $row['username'];
+			$user->firstname = $row['firstname'];
+			$user->lastname =  $row['lastname'];
+			$user->email =  $row['email'];
+			$user->password =  $row['password'];
 		}
+		return $user;
 	}
 	
 	function checkUserNameNotInUse($username){
