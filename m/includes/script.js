@@ -71,9 +71,14 @@ function showHome(){
 	if(store.get('suggest')){
 		var data = store.get('suggest');
 		for(var q in data){
-		   var quiz = $('<div>').attr({'class':'quizlist clickable','onclick':'document.location="#'+data[q].quizref +'"'});
-		   quiz.append(data[q].quiztitle);
+		   var quiz = $('<div>').attr({'class':'quizlist clickable','onclick':'document.location="#'+data[q].ref +'"'});
+		   quiz.append(data[q].title);
 		   $('#suggestresults').append(quiz);
+		   if(data[q].description != null && data[q].description != ""){
+			   var desc = $("<div>").attr({'class':'description'});
+			   desc.text(data[q].description);
+			   $('#suggestresults').append(desc);
+		   }
 	   }
 	} else {
 		$('#suggestresults').append("Loading suggestions...");

@@ -226,6 +226,7 @@ if($method == 'getquiz'){
 	
 	$json = array (	'refid'=>$quiz->ref,
 						'title'=>$quiz->title,
+						'description'=>$quiz->description,
 						'maxscore'=>$maxscore,
 						'q'=>$questions);
 	

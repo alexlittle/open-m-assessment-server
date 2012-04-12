@@ -22,6 +22,10 @@ if($quiz == null){
 
 printf("<h1>mQuiz: %s</h1>",$quiz->title);
 
+if($quiz->description != ""){
+	printf("<p class='desc'>%s</p>",$quiz->description);
+}
+
 if(!$API->quizHasAttempts($ref)){
 	printf("No attempts have been made on this quiz yet.");
 	include_once("../includes/footer.php");
