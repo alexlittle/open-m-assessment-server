@@ -269,10 +269,16 @@ if($method == 'submit'){
 	$json = json_decode(stripslashes($content));
 	if(is_array($json)){
 		foreach($json as $i){
-			saveResult($i,$username);
+			// only save results if not owner
+			if(!$API->isOwner($i->quizid)){
+				saveResult($i,$username);
+			}
 		}
 	} else {
-		saveResult($json,$username);
+		// only save results if not owner
+		if(!$API->isOwner($json->quizid)){
+			saveResult($json,$username);
+		}
 	}
 	
 	if($format == 'json'){
