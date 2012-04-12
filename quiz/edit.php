@@ -1,7 +1,6 @@
 <?php
 include_once("../config.php");
 $PAGE = "editquiz";
-include_once("../includes/header.php");
 
 $ref = optional_param('ref',"",PARAM_TEXT);
 $q = $API->getQuizForUser($ref,$USER->userid);
@@ -10,12 +9,11 @@ if(isset($q->props['generatedby']) && $q->props['generatedby'] == 'import'){
 	header('Location: '.$CONFIG->homeAddress.'quiz/import/edit.php?ref='.$ref);
 	die;	
 }
+include_once("../includes/header.php");
 
 ?>
 <h1><?php echo getstring("quiz.edit.title"); ?></h1>
 <?php
-
-
 if($q == null){
 	echo "Quiz not found";
 	include_once("../includes/footer.php");
