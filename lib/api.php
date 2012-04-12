@@ -686,6 +686,18 @@ class API {
 	}
 	
 	function getLeaderboard(){
+		// if want to use highest score per quiz, then average this...
+		/*$sql = "SELECT AVG(qa.maxscore) as avgscore, u.firstname, u.lastname FROM 
+				(SELECT MAX(qascore*100/maxscore) as maxscore, submituser, quizref  FROM quizattempt
+				GROUP BY submituser, quizref) qa
+				INNER JOIN quiz q ON q.quiztitleref = qa.quizref
+				INNER JOIN user u ON u.username = qa.submituser
+				WHERE q.quizdraft = 0
+				AND q.quizdeleted = 0
+				GROUP BY u.firstname, u.lastname
+				HAVING COUNT(qa.quizref)>2
+				ORDER BY AVG(qa.maxscore) DESC
+				LIMIT 0,10";*/
 		$sql = "SELECT AVG(qascore*100/maxscore) as avgscore, u.firstname, u.lastname FROM quizattempt qa
 					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 					INNER JOIN user u ON u.username = qa.submituser
