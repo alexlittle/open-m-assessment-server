@@ -179,6 +179,12 @@ div.quiznavnext {
 	font-weight:bold;
 }
 
+.resultopt {
+	margin: 10px;
+	color:#77a240;
+}
+
+
 #footer {
 	text-align:center;
 	margin-top:10px;
