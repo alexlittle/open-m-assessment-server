@@ -747,7 +747,7 @@ class API {
 		global $USER;
 		$sql = "SELECT DISTINCT a.quizid, quizref, quiztitle FROM (";
 		// get featured
-		$sql .= "SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, q.quiztitle, 10 AS weight, q.quizdraft FROM quiz q
+		$sql .= "SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, q.quiztitle, 10 AS weight FROM quiz q
 							INNER JOIN quizprop qp ON q.quizid = qp.quizid
 							WHERE qp.quizpropname = 'featured'
 							AND qp.quizpropvalue = 'true'
@@ -759,7 +759,7 @@ class API {
 		
 		// get most recent 5
 		$sql .= " UNION
-					SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, q.quiztitle,5 AS weight, q.quizdraft FROM quiz q
+					SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, q.quiztitle,5 AS weight FROM quiz q
 							WHERE q.quizdraft = 0
 							AND q.quizdeleted = 0
 							ORDER BY createdon DESC
@@ -768,7 +768,7 @@ class API {
 		// get top 5 popular which haven't been attempted by this user
 		$sql .= " UNION 
 					SELECT * FROM 
-					(SELECT q.quizid, qa.quizref, q.quiztitle, 4 AS weight, q.quizdraft FROM quizattempt qa
+					(SELECT q.quizid, qa.quizref, q.quiztitle, 4 AS weight FROM quizattempt qa
 					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 					INNER JOIN user u ON u.username = qa.submituser
 					WHERE u.userid != q.createdby
@@ -779,9 +779,10 @@ class API {
 					LIMIT 0,10) c";
 		
 		$sql .= sprintf(") a
-				WHERE a.quizref NOT IN (SELECT quizref FROM quizattempt WHERE qauser ='%s')
-				ORDER BY weight DESC
-				LIMIT 0,10",$USER->username);
+					WHERE a.quizref NOT IN (SELECT quizref FROM quizattempt WHERE qauser ='%s')
+					AND a.quizref NOT IN (SELECT quizref FROM quiz WHERE createdby =%d)
+					ORDER BY weight DESC
+					LIMIT 0,10",$USER->username,$USER->userid);
 		
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
