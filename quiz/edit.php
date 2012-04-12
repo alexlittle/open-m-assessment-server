@@ -24,8 +24,7 @@ if ($submit != ""){
 	
 	if ($title != ""){
 		
-		//update quiz title
-		$API->updateLang($ref,$title);
+		//update quiz title	
 		$API->updateQuiz($ref,$title,$quizdraft);
 				
 		// remove quiz questions and responses

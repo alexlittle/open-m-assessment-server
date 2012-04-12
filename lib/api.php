@@ -37,15 +37,9 @@ class API {
 			writeToLog('error','database',$sql);
 			return;
 		}
-		while($row = mysql_fetch_array($result)){
-			$user->userid = $row['userid'];
-			$user->username = $row['username'];
-			$user->firstname = $row['firstname'];
-			$user->lastname =  $row['lastname'];
-			$user->email =  $row['email'];
-			$user->password =  $row['password'];
+		while($user = mysql_fetch_object($result)){
+			return $user;
 		}
-		return $user;
 	}
 	
 	function checkUserNameNotInUse($username){
@@ -220,8 +214,8 @@ class API {
 	}
 	
 	function getQuizzes(){
-		$sql = "SELECT q.quizid, l.langtext as title, q.quiztitleref as ref, q.quizdraft FROM quiz q 
-				INNER JOIN language l ON q.quiztitleref = l.langref";
+		$sql = "SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref, q.quizdraft FROM quiz q 
+				WHERE quizdraft = 0";
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			writeToLog('error','database',$sql);
@@ -235,10 +229,9 @@ class API {
 	}
 	
 	function getQuizzesForUser($userid){
-		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
-					INNER JOIN language l ON q.quiztitleref = l.langref
-					WHERE q.createdby = %d
-					ORDER BY l.langtext ASC",$userid);
+		$sql = sprintf("SELECT q.quizid, q.quiztitle, q.quiztitleref FROM quiz q
+						WHERE q.createdby = %d
+						ORDER BY q.quiztitle ASC",$userid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			writeToLog('error','database',$sql);
@@ -249,7 +242,7 @@ class API {
 			$attempts = $this->getQuizNoAttempts($r->quiztitleref);
 			$q = new stdClass;
 			$q->ref = $r->quiztitleref;
-			$q->title = $r->langtext;
+			$q->title = $r->quiztitle;
 			$q->noattempts = $attempts->noattempts;
 			$q->avgscore = $attempts->avgscore;
 			$q->props = $this->getQuizProps($r->quizid);
@@ -439,8 +432,7 @@ class API {
 	}
 	
 	function getQuiz($ref){
-		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref, q.quizdraft FROM quiz q
-						INNER JOIN language l ON q.quiztitleref = l.langref
+		$sql = sprintf("SELECT q.quizid, q.quiztitle, q.quiztitleref, q.quizdraft FROM quiz q
 						WHERE q.quiztitleref = '%s'",$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
@@ -451,7 +443,7 @@ class API {
 			$q = new stdClass;
 			$q->quizid = $r->quizid;
 			$q->ref = $r->quiztitleref;
-			$q->title = $r->langtext;
+			$q->title = $r->quiztitle;
 			$q->quizdraft = $r->quizdraft;
 			$q->props = $this->getQuizProps($r->quizid);
 			return $q;
@@ -459,8 +451,7 @@ class API {
 	}
 	
 	function getQuizById($quizid){
-		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref FROM quiz q
-							INNER JOIN language l ON q.quiztitleref = l.langref
+		$sql = sprintf("SELECT q.quizid, q.quiztitle, q.quiztitleref, q.quizdraft FROM quiz q
 							WHERE q.quizid = %d",$quizid);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
@@ -471,17 +462,17 @@ class API {
 			$q = new stdClass;
 			$q->quizid = $r->quizid;
 			$q->ref = $r->quiztitleref;
-			$q->title = $r->langtext;
+			$q->title = $r->quiztitle;
+			$q->quizdraft = $r->quizdraft;
 			$q->props = $this->getQuizProps($r->quizid);
 			return $q;
 		}
 	}
 	
 	function getQuizForUser($ref,$userid){
-		$sql = sprintf("SELECT q.quizid, l.langtext, q.quiztitleref, q.quizdraft FROM quiz q
-						INNER JOIN language l ON q.quiztitleref = l.langref
+		$sql = sprintf("SELECT q.quizid, q.quiztitle, q.quiztitleref, q.quizdraft FROM quiz q
 						WHERE q.quiztitleref = '%s' AND createdby=%d
-						ORDER BY l.langtext ASC",$ref,$userid);
+						ORDER BY q.quiztitle ASC",$ref,$userid);
 
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
@@ -492,7 +483,7 @@ class API {
 			$q = new stdClass;
 			$q->quizid = $r->quizid;
 			$q->ref = $r->quiztitleref;
-			$q->title = $r->langtext;
+			$q->title = $r->quiztitle;
 			$q->draft = $r->quizdraft;
 			$q->props = $this->getQuizProps($r->quizid);
 			return $q;
@@ -570,9 +561,9 @@ class API {
 	function addQuiz($title, $draft=0){
 		global $USER, $CONFIG;
 		$quiztitleref = $this->createUUID("qt");
-		$this->addLang($quiztitleref, $title,$CONFIG->defaultlang);
-		$str = "INSERT INTO quiz (quiztitleref,createdby,quizdraft) VALUES ('%s',%d,%d)";
-		$sql = sprintf($str,$quiztitleref,$USER->userid,$draft);
+		//$this->addLang($quiztitleref, $title,$CONFIG->defaultlang);
+		$str = "INSERT INTO quiz (quiztitleref,createdby,quizdraft, quiztitle) VALUES ('%s',%d,%d,'%s')";
+		$sql = sprintf($str,$quiztitleref,$USER->userid,$draft,$title);
 		mysql_query($sql,$this->DB);
 		$result = mysql_insert_id();
 		if (!$result){
@@ -720,7 +711,7 @@ class API {
 	}
 	
 	function updateQuiz($ref,$title,$quizdraft){
-		$sql = sprintf("UPDATE quiz SET quizdraft=%d WHERE quiztitleref='%s'",$quizdraft,$ref);
+		$sql = sprintf("UPDATE quiz SET quizdraft=%d,quiztitle='%s' WHERE quiztitleref='%s'",$quizdraft,$title,$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			writeToLog('error','database',$sql);
