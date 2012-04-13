@@ -73,6 +73,7 @@ $LANG['reset.submit.button'] = 'Reset password';
 $LANG['user.anon'] = 'Anonymous';
 
 $LANG['warning.login.invalid'] = "Email or password not recognised";
+$LANG['warning.login.noemail'] = "Please enter your email address";
 $LANG['warning.login.nopassword'] = "Please enter your password";
 $LANG['warning.login.required'] = "Please login or <a href='%s'>register</a>";
 $LANG['warning.quiz.notfound'] = "Quiz not found";
