@@ -66,6 +66,10 @@ $LANG['register.surname'] = 'Surname';
 $LANG['register.title'] = 'Register for mQuiz';
 $LANG['register.username'] = 'Username';
 
+$LANG['reset.title'] = 'Reset password';
+$LANG['reset.text'] = 'Enter your email address below and we will send you a new password.';
+$LANG['reset.submit.button'] = 'Reset password';
+
 $LANG['user.anon'] = 'Anonymous';
 
 $LANG['warning.login.invalid'] = "Email or password not recognised";

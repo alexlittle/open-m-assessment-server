@@ -45,7 +45,10 @@ echo getstring("warning.login.required",array("register.php?ref=".$ref));
 	</div>
 	<div class="formblock">
 		<div class="formlabel">&nbsp;</div>
-		<div class="formfield"><input type="submit" name="submit" value="<?php echo getstring("login.submit.button"); ?>"></input></div>
+		<div class="formfield">
+			<input type="submit" name="submit" value="<?php echo getstring("login.submit.button"); ?>"></input>
+			<a href="reset.php">Forgotten password?</a>	
+		</div>
 	</div>
 	
 </form>

@@ -10,7 +10,7 @@ if($uagent_obj->DetectIphone() || $uagent_obj->DetectAndroidPhone()){
 
 global $PAGE,$CONFIG,$MSG,$API,$HEADER;
 
-$nologinpages = array ("login","index","register","faqs","terms","about","phoneapps");
+$nologinpages = array ("login","index","register","faqs","terms","about","phoneapps","reset");
 
 if (!in_array($PAGE,$nologinpages)){
 	checkLogin();
