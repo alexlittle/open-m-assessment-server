@@ -34,23 +34,20 @@ if($method == 'register'){
 	} else if (strlen($password) < 6){ // check password long enough
 		$response->error = "Your password must be 6 characters or more";
 	} else if ($password != $passwordAgain){ // check passwords match
-		$response->error = "Your password don't match";
+		$response->error = "Your passwords don't match";
 	} else if ($firstname == ""){
 		$response->error = "Enter your firstname";
 	} else if ($lastname == ""){
 		$response->error = "Enter your lastname";
 	} else {
-		// check username doesn't already exist
-		$u = new User($email);
-		$user = $API->getUser($u);
-		if($user->userid != ""){
+		if($API->checkUserExists($email)){
 			$response->error = "Email already registered";
 		} else {
 			$API->addUser($email, $password, $firstname, $lastname, $email);
 			$m = new Mailer();
 			$m->sendSignUpNotification($firstname." ".$lastname);
 	
-			$login = userLogin($username,$password,false);
+			$login = userLogin($username,$password);
 			$response->login = $login;
 			$response->hash = md5($password);
 			$response->name = $USER->firstname + " "+ $USER->lastname;
