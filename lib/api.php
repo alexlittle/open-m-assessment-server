@@ -798,6 +798,67 @@ class API {
 		return false;
 	}
 	
+	function getQuizObject($ref){
+		$quiz = $this->getQuiz($ref);
+		
+		$questions = array();
+		
+		$qq = $this->getQuizQuestions($quiz->quizid);
+		
+		foreach($qq as $q){
+		
+			$responses = array();
+			$resps = $this->getQuestionResponses($q->id);
+		
+			foreach($resps as $o){
+				$props = (object) $o->props;
+				$r = array(
+										'refid'=> $o->refid,
+										'orderno'=> $o->orderno,
+										'text'=>$o->text,
+										'score'=>$o->score,
+										'props'=>$props
+				);
+				array_push($responses,$r);
+			}
+		
+			if(array_key_exists('maxscore',$q->props)){
+				$score = $q->props['maxscore'];
+			} else {
+				$score = 0;
+			}
+			if(array_key_exists('type',$q->props)){
+				$type = $q->props['type'];
+			} else {
+				$type = "multichoice";
+			}
+			$props = (object) $q->props;
+			$newq = array(
+								'refid'=>$q->refid,
+								'orderno'=> $q->orderno,
+								'text'=>$q->text,
+								'type'=>$type,
+								'props'=>$props,
+								'r'=>$responses
+			);
+			array_push($questions,$newq);
+		}
+		
+		if(array_key_exists('maxscore',$quiz->props)){
+			$maxscore = $quiz->props['maxscore'];
+		} else {
+			$maxscore = 0;
+		}
+		
+		$q = array (	'refid'=>$quiz->ref,
+										'title'=>$quiz->title,
+										'description'=>$quiz->description,
+										'maxscore'=>$maxscore,
+										'q'=>$questions);
+		
+		return $q;	
+	}
+	
 	private function createUUID($prefix){
 		global $USER;
 		return $prefix.strtolower($USER->userid).uniqid();

@@ -425,14 +425,14 @@ function loadSuggested(){
 				   store.clearKey('suggest');
 				   for(var q in data){
 					   store.addArrayItem('suggest',data[q]);
-					   cacheQuiz(data[q].quizref);
+					   cacheQuiz(data[q].ref);
 				   }
 				   store.set('lastupdate',Date());
 				   if($('#suggestresults')){
 					   $('#suggestresults').empty();
 					   var data = store.get('suggest');
 					   for(var q in data){
-						   var quiz = $('<div>').attr({'class':'quizlist clickable','onclick':'document.location="#'+data[q].quizref +'"'});
+						   var quiz = $('<div>').attr({'class':'quizlist clickable','onclick':'document.location="#'+data[q].ref +'"'});
 						   quiz.append(data[q].quiztitle);
 						   $('#suggestresults').append(quiz);
 					   }
@@ -443,6 +443,7 @@ function loadSuggested(){
 }
 
 function cacheQuiz(id){
+	console.log(id);
 	// check is already cached
 	if(!store.get(id)){
 		$.ajax({
