@@ -57,10 +57,15 @@ if($method == 'register'){
 
 
 if($method == 'login'){
-	$login = userLogin($username,$password,false);
-	$response->login = $login;
-	$response->hash = md5($password);
-	$response->name = $USER->firstname ." " .$USER->lastname;
+	$login = userLogin($username,$password);
+	if($login){
+		$response->login = $login;
+		$response->hash = md5($password);
+		$response->name = $USER->firstname ." " .$USER->lastname;
+	} else {
+		$response->error = "Login failed";
+	}
+	
 }
 
 if($method == 'search'){
