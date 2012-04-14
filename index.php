@@ -39,7 +39,7 @@ $leaderboard = $API->getLeaderboard();
 </ol></div>
 
 <div id="scoreboard" class="homewidget">
-<h3>Leaderboard</h3> 
+<h3>Leaderboard - Top 10</h3> 
 <ol>
 <?php 	
 	foreach ($leaderboard as $u){
