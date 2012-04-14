@@ -2,6 +2,20 @@
 
 class Mailer{
 	
+	function resetPassword($user,$password){
+		global $CONFIG;
+		$subject = 'mQuiz: Password Reset' ;
+		$url_reset = $CONFIG->homeAddress."profile.php";
+		$message = "
+				<p>Hi ".$user->firstname.",</p>
+				<p>Your new mQuiz password is: ".$password."</p>
+				<p>You can change your password to something more memorable on <a href='".$url_reset."'>your profile page</a>.</p>
+				<p>We hope you enjoy using mQuiz!</p>
+				<p>Alex: alex@mquiz.org</p>
+			";
+		$this->sendMail($user->email,$subject,$message);
+		$this->sendMail($CONFIG->emailfrom,$subject,$message);
+	}
 	
 	function sendQuizCreated($to,$name, $quiztitle, $quizrefid){
 		global $CONFIG;

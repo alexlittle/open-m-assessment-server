@@ -145,6 +145,32 @@ class API {
 		}
 	}
 	
+	function checkUserExists($username){
+		$sql = sprintf("SELECT * FROM user WHERE username='%s'",$username);
+		$result = _mysql_query($sql,$this->DB);
+		if (!$result){
+			return false;
+		}
+		while($row = mysql_fetch_array($result)){
+			return true;
+		}
+		return false;
+	}
+	
+	function resetPassword($username){
+		if(!$this->checkUserExists($username)){
+			return false;
+		}
+		$newpass = substr($this->createUUID(""), 7,60);
+		$sql = sprintf("UPDATE user set password=md5('%s') WHERE username='%s'",$newpass,$username);
+		$result = _mysql_query($sql,$this->DB);
+		
+		$tempU = new User($username);
+		$this->getUser($tempU);
+		$m = new Mailer();
+		$m->resetPassword($tempU, $newpass);
+		return true;
+	}
 	/*
 	 *
 	*/
