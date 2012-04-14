@@ -78,6 +78,10 @@ if ($submit != ""){
 
 		$q = $API->getQuizById($q->quizid);
 		
+		// store JSON object for quiz (for caching)
+		$json = json_encode($API->getQuizObject($q->ref));
+		$API->setProp('quiz', $q->quizid, 'json', $json);
+		
 		printf("<div class='info'>%s<p>Why not <a href='%s'>try your quiz</a> out now?</p></div>", getstring("quiz.edit.saved"),$CONFIG->homeAddress."m/#".$ref);
 		
 		if(!empty($IMPORT_INFO)){

@@ -69,6 +69,11 @@ if ($submit != ""){
 		// set the maxscore for quiz
 		$API->setProp('quiz', $quizid, 'maxscore', $quizmaxscore);
 		$API->setProp('quiz',$quizid,'generatedby','mquiz');
+		
+		// store JSON object for quiz (for caching)
+		$json = json_encode($API->getQuizObject($ref));
+		$API->setProp('quiz', $quizid, 'json', $json);
+		
 		printf("<div class='info'>%s<p>Why not <a href='%s'>try your quiz</a> out now?</p></div>", getstring("quiz.edit.saved"),$CONFIG->homeAddress."m/#".$ref);
 		include_once("../includes/footer.php");
 		die;

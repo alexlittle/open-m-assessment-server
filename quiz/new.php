@@ -107,6 +107,11 @@ if ($submit != ""){
 		$API->setProp('quiz', $quizid, 'maxscore', $quizmaxscore);
 		
 		$q = $API->getQuizById($quizid);
+		
+		// store JSON object for quiz (for caching)
+		$json = json_encode($API->getQuizObject($q->ref));
+		$API->setProp('quiz', $quizid, 'json', $json);
+		
 		printf("<div class='info'>%s<p>Why not <a href='%s'>try your quiz</a> out now?</p></div>", getstring("quiz.new.saved"),$CONFIG->homeAddress."m/#".$q->ref);
 		// send mail to owner
 		$m = new Mailer();
