@@ -514,8 +514,9 @@ class API {
 		global $USER, $CONFIG;
 		$quiztitleref = $this->createUUID("qt");
 		$description = substr($description,0,300);
-		$str = "INSERT INTO quiz (quiztitleref,createdby,quizdraft, quiztitle,quizdescription) VALUES ('%s',%d,%d,'%s','%s')";
-		$sql = sprintf($str,$quiztitleref,$USER->userid,$draft,$title,$description);
+		$date = new DateTime();
+		$str = "INSERT INTO quiz (quiztitleref,createdby,quizdraft, quiztitle,quizdescription, lastupdate) VALUES ('%s',%d,%d,'%s','%s','%s')";
+		$sql = sprintf($str,$quiztitleref,$USER->userid,$draft,$title,$description,$date->format('Y-m-d H:i:s'));
 		mysql_query($sql,$this->DB);
 		$result = mysql_insert_id();
 		if (!$result){
@@ -633,11 +634,13 @@ class API {
 	
 	function updateQuiz($ref,$title,$quizdraft,$description=""){
 		$description = substr($description,0,300);
+		$date = new DateTime();
 		$sql = sprintf("UPDATE quiz 
 							SET quizdraft = %d,
 							quiztitle = '%s',
-							quizdescription = '%s' 
-						WHERE quiztitleref='%s'",$quizdraft,$title,$description, $ref);
+							quizdescription = '%s',
+							lastupdate = '%s'
+						WHERE quiztitleref='%s'",$quizdraft,$title,$description, $date->format('Y-m-d H:i:s'),$ref);
 		$result = _mysql_query($sql,$this->DB);
 		if (!$result){
 			return ;
@@ -746,8 +749,7 @@ class API {
 							WHERE qp.quizpropname = 'featured'
 							AND qp.quizpropvalue = 'true'
 							AND q.quizdraft = 0
-							AND q.quizdeleted = 0
-							LIMIT 0,10) f";
+							AND q.quizdeleted = 0) f";
 		
 		// TODO get those from friends who have taken quizzes
 		
@@ -756,8 +758,7 @@ class API {
 					SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, q.quiztitle,5 AS weight,q.quizdescription FROM quiz q
 							WHERE q.quizdraft = 0
 							AND q.quizdeleted = 0
-							ORDER BY createdon DESC
-							LIMIT 0,10) b";
+							ORDER BY createdon DESC) b";
 		
 		// get top 5 popular which haven't been attempted by this user
 		$sql .= " UNION 
@@ -769,15 +770,13 @@ class API {
 					AND q.quizdraft = 0
 					AND q.quizdeleted = 0
 					GROUP BY qa.quizref
-					ORDER BY Count(qa.id) DESC
-					LIMIT 0,10) c";
+					ORDER BY Count(qa.id) DESC) c";
 		
 		$sql .= sprintf(") a
 					WHERE a.quizref NOT IN (SELECT quizref FROM quizattempt WHERE qauser ='%s')
-					AND a.quizref NOT IN (SELECT quizref FROM quiz WHERE createdby =%d)
+					AND a.quizref NOT IN (SELECT quiztitleref FROM quiz WHERE createdby =%d)
 					ORDER BY weight DESC
 					LIMIT 0,10",$USER->username,$USER->userid);
-		
 		$result = _mysql_query($sql,$this->DB);
 		$results = array();
 		if (!$result){
