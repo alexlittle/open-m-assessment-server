@@ -402,7 +402,7 @@ class API {
 	}
 	
 	function getQuiz($ref){
-		$sql = sprintf("SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref, q.quizdraft, q.quizdescription as description FROM quiz q
+		$sql = sprintf("SELECT q.quizid, q.quiztitle as title, q.quiztitleref as ref, q.quizdraft, q.quizdescription as description, lastupdate FROM quiz q
 						WHERE q.quiztitleref = '%s'
 						AND q.quizdeleted = 0",$ref);
 		$result = _mysql_query($sql,$this->DB);
@@ -717,12 +717,12 @@ class API {
 	}
 	
 	function searchQuizzes($terms){
-		$sql = sprintf("SELECT * FROM (SELECT quiztitleref as ref, quiztitle as title, quizdescription as description FROM quiz 
+		$sql = sprintf("SELECT * FROM (SELECT quiztitleref as ref, quiztitle as title, quizdescription as description, lastupdate FROM quiz 
 					WHERE (quiztitle LIKE '%%%s%%' OR quizdescription LIKE '%%%s%%')
 					AND quizdraft = 0
 					AND quizdeleted = 0
 					UNION
-					SELECT q.quiztitleref as quizref, quiztitle, quizdescription as description FROM quiz q
+					SELECT q.quiztitleref as quizref, quiztitle, quizdescription as description, lastupdate FROM quiz q
 					INNER JOIN quizquestion qqq ON q.quizid = qqq.quizid
 					INNER JOIN question qq ON qqq.questionid - qq.questionid
 					WHERE qq.questiontext LIKE '%%%s%%'
@@ -742,9 +742,9 @@ class API {
 	
 	function suggestQuizzes(){
 		global $USER;
-		$sql = "SELECT DISTINCT quizref as ref, quiztitle as title, quizdescription as description FROM (";
+		$sql = "SELECT DISTINCT quizref as ref, quiztitle as title, quizdescription as description, lastupdate FROM (";
 		// get featured
-		$sql .= "SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, q.quiztitle, 10 AS weight,q.quizdescription FROM quiz q
+		$sql .= "SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, q.quiztitle, 10 AS weight,q.quizdescription, lastupdate FROM quiz q
 							INNER JOIN quizprop qp ON q.quizid = qp.quizid
 							WHERE qp.quizpropname = 'featured'
 							AND qp.quizpropvalue = 'true'
@@ -755,7 +755,7 @@ class API {
 		
 		// get most recent 5
 		$sql .= " UNION
-					SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, q.quiztitle,5 AS weight,q.quizdescription FROM quiz q
+					SELECT * FROM (SELECT q.quizid, q.quiztitleref as quizref, q.quiztitle,5 AS weight,q.quizdescription, lastupdate FROM quiz q
 							WHERE q.quizdraft = 0
 							AND q.quizdeleted = 0
 							ORDER BY createdon DESC) b";
@@ -763,7 +763,7 @@ class API {
 		// get top 5 popular which haven't been attempted by this user
 		$sql .= " UNION 
 					SELECT * FROM 
-					(SELECT q.quizid, qa.quizref, q.quiztitle, 4 AS weight,q.quizdescription FROM quizattempt qa
+					(SELECT q.quizid, qa.quizref, q.quiztitle, 4 AS weight,q.quizdescription, lastupdate FROM quizattempt qa
 					INNER JOIN quiz q ON q.quiztitleref = qa.quizref
 					INNER JOIN user u ON u.username = qa.submituser
 					WHERE u.userid != q.createdby
@@ -854,6 +854,7 @@ class API {
 										'title'=>$quiz->title,
 										'description'=>$quiz->description,
 										'maxscore'=>$maxscore,
+										'lastupdate'=>$quiz->lastupdate,
 										'q'=>$questions);
 		
 		return $q;	

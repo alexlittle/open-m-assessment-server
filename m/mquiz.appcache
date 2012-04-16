@@ -1,8 +1,8 @@
 CACHE MANIFEST
-# v3
+# v4
 
 CACHE:
-index.php
+index.html
 includes/style.css
 includes/script.js
 includes/database.js

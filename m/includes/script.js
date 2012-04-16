@@ -45,10 +45,10 @@ function confirmExitQuiz(page){
 			return;
 		}
 	}
-	if(store.get('source') != ""){
+	if(store.get('source') != "" && store.get('source') != null){
 		document.location = store.get('source') ;
 	} else {
-		showPage('#home');
+		document.location = '#home';
 	}
 }
 
@@ -138,6 +138,7 @@ function loadQuiz(id,force){
 			   }, 
 			   error:function(data){
 				   alert("No connection available. You need to be online to load this quiz.");
+				   document.location = "#select";
 			   }
 			});
 	} else {
@@ -167,8 +168,7 @@ function showQuiz(id){
 	var clear = $('<div>').attr({'style':'clear:both'});
 	$('#content').append(quiznav);
 	Q.loadQuestion();
-	
-	
+
 }
 
 function showLogin(hash){
@@ -355,7 +355,7 @@ function logout(force){
 			store.clear();
 			store.init();
 			showUsername();
-			if(store.get('source') != ""){
+			if(store.get('source') != "" && store.get('source') != null){
 				document.location = store.get('source') + "logout.php";
 			} else {
 				showPage("#login");
@@ -406,10 +406,6 @@ function dataUpdate(){
 	}
 	
 	// update suggestions
-	loadSuggested();
-}
-
-function loadSuggested(){
 	$.ajax({
 		   data:{'method':'suggest','username':store.get('username'),'password':store.get('password')}, 
 		   success:function(data){
