@@ -851,11 +851,12 @@ class API {
 		}
 		
 		$q = array (	'refid'=>$quiz->ref,
-										'title'=>$quiz->title,
-										'description'=>$quiz->description,
-										'maxscore'=>$maxscore,
-										'lastupdate'=>$quiz->lastupdate,
-										'q'=>$questions);
+						'ref'=>$quiz->ref,
+						'title'=>$quiz->title,
+						'description'=>$quiz->description,
+						'maxscore'=>$maxscore,
+						'lastupdate'=>$quiz->lastupdate,
+						'q'=>$questions);
 		
 		return $q;	
 	}

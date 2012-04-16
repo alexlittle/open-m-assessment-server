@@ -139,6 +139,8 @@ if ($method != "search" && $method != "register" && $method != "login"){
 					// only save results if not owner
 					if(!$API->isOwner($json->quizid)){
 						saveResult($json,$username);
+						$ranking = $API->getRanking($json->quizid, $USER->userid);
+						$response->rank = $ranking['myrank'];
 					}
 				}
 				$response->result = true;

@@ -57,7 +57,6 @@ function Quiz(){
 			this.loadMultiselect(q.r);
 		} else {
 			$('#response').empty();
-			console.log("question type not implemented:"+q.type);
 		}
 	}
 	
@@ -226,7 +225,7 @@ function Quiz(){
 		} else if(q.type == 'multiselect'){
 			return this.saveMultiselect(nav);
 		} else {
-			console.log("question type not implemented:"+q.type);
+			
 		}
 	}
 	
@@ -493,13 +492,18 @@ function Quiz(){
 		content.userscore = total;
 		content.quizdate = Date.now();
 		content.responses = this.responses;
+		content.title = this.quiz.title;
 	
 		$.ajax({
 		   data:{'method':'submit','username':store.get('username'),'password':store.get('password'),'content':JSON.stringify(content)}, 
 		   success:function(data){
+			   console.log(data);
 			   //check for any error messages
 			   if(!data || data.error){
 				   store.addArrayItem('unsentresults',content);
+			   } else {
+				   content.rank = data.rank;
+				   store.addArrayItem('results', content);
 			   }
 		   }, 
 		   error:function(data){

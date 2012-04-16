@@ -9,7 +9,7 @@ function Store(){
 			localStorage.setItem('username', null);
 			localStorage.setItem('password', null);
 			localStorage.setItem('lang', 'EN');
-			localStorage.setItem('quizlist', null);
+			localStorage.setItem('quizzes', null);
 			localStorage.setItem('results', null);
 		}
 	}
@@ -34,13 +34,17 @@ function Store(){
 	this.addArrayItem = function(key,value){
 		//get current array
 		var c = this.get(key);
-		var count = 0;
+		//var count = 0;
 		if(!c){
 			c = [];
-		} else {
+		} 
+		c.unshift(value);
+		
+		/*else {
 			count = c.length;
 		}
 		c[count] = value;
+		*/
 		this.set(key,c);
 	}
 	

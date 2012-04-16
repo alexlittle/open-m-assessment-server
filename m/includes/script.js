@@ -29,7 +29,11 @@ function showPage(hash){
 		} else {
 			loadQuiz(hash.substring(1),false);
 		}
-	} else {
+	} else if (hash == '#quizzes'){
+		showLocalQuizzes();
+	}else if (hash == '#results'){
+		showResults();
+	}  else {
 		inQuiz = false;
 		showHome();
 	}
@@ -54,6 +58,9 @@ function confirmExitQuiz(page){
 
 function showHome(){
 	$('#content').empty();
+	
+	showMenu();
+	
 	var searchform = $('<div>').attr({'id':'search','class':'formblock'});
 	searchform.append($('<div>').attr({'id':'searchtitle','class':'formlabel'}).text("Search quizzes:"));
 	var ff = $('<div>').attr({'class':'formfield'});
@@ -86,6 +93,48 @@ function showHome(){
 		});
 }
 
+function showMenu(){
+	var menu = $('<div>').attr({'id':'menu'});
+	menu.append($('<a>').attr({'href':'#select'}).text('Search'));
+	menu.append(' | ');
+	menu.append($('<a>').attr({'href':'#quizzes'}).text('Quizzes'));
+	menu.append(' | ');
+	menu.append($('<a>').attr({'href':'#results'}).text('Results'));
+	$('#content').append(menu);
+}
+
+function showLocalQuizzes(){
+	$('#content').empty();
+	
+	showMenu();
+	var localQuizzes = $('<div>').attr({'id':'localq','class':'formblock'}); 
+	$('#content').append(localQuizzes);
+	var qs = store.get('quizzes');
+	for (var q in qs){
+		addQuizListItem(qs[q],'#localq');
+	}
+}
+
+function showResults(){
+	$('#content').empty();
+	
+	showMenu();
+	var results = $('<div>').attr({'id':'results','class':'formblock'}); 
+	$('#content').append(results);
+	var qs = store.get('results');
+	for (var q in qs){
+		console.log(qs[q]);
+		//addQuizListItem(qs[q],'#localq');
+		var result = $('<div>').attr({'class':'result'});
+		result.append($('<div>').attr({'class':'rest'}).text(qs[q].title));
+		result.append($('<div>').attr({'class':'resd'}).text(qs[q].quizdate));
+		result.append($('<div>').attr({'class':'ress'}).text(qs[q].userscore*100/qs[q].maxscore));
+		result.append($('<div>').attr({'class':'resr'}).text(qs[q].rank));
+		$('#content').append(result);
+	}
+	
+}
+
 function doSearch(){
 	var t = $('#searchterms').val().trim();
 	if(t.length > 1){
@@ -112,16 +161,16 @@ function doSearch(){
 	}
 }
 
-function loadQuiz(id,force){
-	document.location = "#"+id;
+function loadQuiz(ref,force){
+	document.location = "#"+ref;
 	$('#content').empty();
 	showLoading('quiz');
 	// find if this quiz is already in the cache
-	var quiz = store.get(id);
+	var quiz = quizInCache(ref);
 	if(!quiz || force){
 		// load from server
 		$.ajax({
-			   data:{'method':'getquiz','username':store.get('username'),'password':store.get('password'),'ref':id}, 
+			   data:{'method':'getquiz','username':store.get('username'),'password':store.get('password'),'ref':ref}, 
 			   success:function(data){
 				   if(data.error){
 					   alert(data.error);
@@ -132,8 +181,8 @@ function loadQuiz(id,force){
 				   //check for any error messages
 				   if(data && !data.error){
 					   //save to local cache and then load
-					   store.set(id, data);
-					   showQuiz(id);
+					   store.addArrayItem('quizzes', data);
+					   showQuiz(ref);
 				   }
 			   }, 
 			   error:function(data){
@@ -142,14 +191,14 @@ function loadQuiz(id,force){
 			   }
 			});
 	} else {
-		showQuiz(id);
+		showQuiz(ref);
 	}
 }
 
-function showQuiz(id){
+function showQuiz(ref){
 	$('#content').empty();
 	Q = new Quiz();
-	Q.init(store.get(id));
+	Q.init(quizInCache(ref));
 	
 	var qhead = $('<div>').attr({'id':'quizheader'});
 	$('#content').append(qhead);
@@ -428,14 +477,14 @@ function dataUpdate(){
 		});
 }
 
-function cacheQuiz(id){
+function cacheQuiz(ref){
 	// check is already cached
-	if(!store.get(id)){
+	if(!quizInCache(ref)){
 		$.ajax({
-			   data:{'method':'getquiz','username':store.get('username'),'password':store.get('password'),'ref':id}, 
+			   data:{'method':'getquiz','username':store.get('username'),'password':store.get('password'),'ref':ref}, 
 			   success:function(data){
 				   if(data && !data.error){
-					   store.set(id, data);
+					   store.addArrayItem('quizzes', data);
 				   }
 			   }, 
 			});
@@ -452,6 +501,16 @@ function addQuizListItem(q,list){
 		desc.text(" - " + q.description);
 		ql.append(desc);
 	}
+}
+
+function quizInCache(ref){
+	var qs = store.get('quizzes');
+	for(var q in qs){
+		if (qs[q].ref == ref){
+			return qs[q];
+		}
+	}
+	return false;
 }
 
 function setUpdated(){
