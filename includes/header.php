@@ -23,23 +23,40 @@ if ($lang != ""){
 
 ?>
 <!DOCTYPE html>
-<html>
+<html manifest="m/mquiz.appcache">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<META name="description" content="mQuiz: mobile quiz application"/> 
 	<META name="keywords" content="mquiz,quiz,assessment,mobile,android"/> 
 	<title><?php echo getstring("app.title");?></title>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-	<script type="text/javascript" src="<?php echo $CONFIG->homeAddress; ?>/includes/jquery-1.7.min.js"></script>
-	<script type="text/javascript" src="<?php echo $CONFIG->homeAddress; ?>/includes/quiz.js"></script>
-	<link rel="StyleSheet" href="<?php echo $CONFIG->homeAddress; ?>/includes/style.css" type="text/css" media="screen">
-	<link rel="shortcut icon" href="<?php echo $CONFIG->homeAddress; ?>/images/favicon.ico" />
+	<script type="text/javascript" src="<?php echo $CONFIG->homeAddress; ?>includes/jquery-1.7.min.js"></script>
+	<script type="text/javascript" src="<?php echo $CONFIG->homeAddress; ?>includes/quiz.js"></script>
+	<script type="text/javascript" src="<?php echo $CONFIG->homeAddress; ?>/m/includes/database.js"></script>
+	<link rel="StyleSheet" href="<?php echo $CONFIG->homeAddress; ?>includes/style.css" type="text/css" media="screen">
+	<link rel="shortcut icon" href="<?php echo $CONFIG->homeAddress; ?>images/favicon.ico" />
 	<?php 
     	echo $HEADER;
     ?>
+    
+    <script type="text/javascript">
+    	function init(){
+    		<?php 
+    	    	if(isLoggedIn()){
+    	    		printf("store.set('username','%s');",$USER->username);
+    	    		printf("store.set('displayname','%s');",$USER->firstname." ".$USER->lastname);
+    	    		printf("store.set('password','%s');",$USER->password);
+    	    		
+    	    	} 
+    	    	if(!$uagent_obj->DetectIphone() && !$uagent_obj->DetectAndroidPhone()){
+    	    		printf("store.set('source','%s');",$CONFIG->homeAddress);
+    	    	}
+    	    ?>
+    	}
+    </script>
 </head>
 
-<body>
+<body onload="init()">
 
 <div id="page">
 	<div id="header">

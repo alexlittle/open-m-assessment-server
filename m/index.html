@@ -15,19 +15,7 @@
     <script type="text/javascript">
     	
     	function init(){
-    		<?php 
-    	    	include_once('../config.php');
-    	    	if(isLoggedIn()){
-    	    		printf("store.set('username','%s');",$USER->username);
-    	    		printf("store.set('displayname','%s');",$USER->firstname." ".$USER->lastname);
-    	    		printf("store.set('password','%s');",$USER->password);
-    	    		
-    	    	}
-    	    	$uagent_obj = new uagent_info();
-    	    	if(!$uagent_obj->DetectIphone() && !$uagent_obj->DetectAndroidPhone()){
-    	    		printf("SOURCE = '%s';",$CONFIG->homeAddress);
-    	    	}
-    	    ?>
+    	
     		if($(location).attr('hash')){
     			showPage($(location).attr('hash'));
     		} else {

@@ -1,6 +1,5 @@
 
-var DATA_CACHE_EXPIRY = 360; // no of mins before the data should be updated from server;
-var SOURCE = '';
+var DATA_CACHE_EXPIRY = 10; // no of mins before the data should be updated from server;
 
 $.ajaxSetup({
 	url: "../api/?format=json",
@@ -17,16 +16,19 @@ function showPage(hash){
 		}
 		showLogin(hash);
 		return;
-	}
+	} 
 	dataUpdate();
 	$('#content').empty();
-	
 	if (hash == '#register'){
 		showRegister();
-	} else if (hash == '#login'){
+	} else if (hash == '#login' && !loggedIn()){
 		showLogin();
 	} else if(hash.substring(0,3) == '#qt'){
-		loadQuiz(hash.substring(1));
+		if(getUrlVars().preview){
+			loadQuiz(hash.substring(1),true);
+		} else {
+			loadQuiz(hash.substring(1),false);
+		}
 	} else {
 		inQuiz = false;
 		showHome();
@@ -43,8 +45,8 @@ function confirmExitQuiz(page){
 			return;
 		}
 	}
-	if(SOURCE != ""){
-		document.location = SOURCE;
+	if(store.get('source') != ""){
+		document.location = store.get('source') ;
 	} else {
 		showPage('#home');
 	}
@@ -71,15 +73,7 @@ function showHome(){
 	if(store.get('suggest')){
 		var data = store.get('suggest');
 		for(var q in data){		   
-		   var ql= $('<div>').attr({'class':'quizlist clickable','onclick':'document.location="#'+data[q].ref +'"'});
-		   var quiz = $('<span>').attr({'class':'quiztitle'});
-		   quiz.append(data[q].title);
-		   $('#suggestresults').append(ql.append(quiz));
-		   if(data[q].description != null && data[q].description != ""){
-			   var desc = $("<span>").attr({'class':'quizdesc'});
-			   desc.text(" - " + data[q].description);
-			   ql.append(desc);
-		   }
+			addQuizListItem(data[q],'#suggestresults');
 	   }
 	} else {
 		$('#suggestresults').append("Loading suggestions...");
@@ -106,15 +100,7 @@ function doSearch(){
 						   $('#searchresults').append('No results found.');
 					   } 
 					   for(var q in data){
-						   var ql= $('<div>').attr({'class':'quizlist clickable','onclick':'document.location="#'+data[q].ref +'"'});
-						   var quiz = $('<span>').attr({'class':'quiztitle'});
-						   quiz.append(data[q].title);
-						   $('#searchresults').append(ql.append(quiz));
-						   if(data[q].description != null && data[q].description != ""){
-							   var desc = $("<span>").attr({'class':'quizdesc'});
-							   desc.text(" - " + data[q].description);
-							   ql.append(desc);
-						   }
+						   addQuizListItem(data[q],'#searchresults');
 					   }
 				   }
 			   },
@@ -126,13 +112,13 @@ function doSearch(){
 	}
 }
 
-function loadQuiz(id){
+function loadQuiz(id,force){
 	document.location = "#"+id;
 	$('#content').empty();
 	showLoading('quiz');
 	// find if this quiz is already in the cache
 	var quiz = store.get(id);
-	if(!quiz){
+	if(!quiz || force){
 		// load from server
 		$.ajax({
 			   data:{'method':'getquiz','username':store.get('username'),'password':store.get('password'),'ref':id}, 
@@ -360,14 +346,20 @@ function logout(force){
 	if(force){
 		store.clear();
 		store.init();
-		document.location="#home";
+		showUsername();
+		showPage("#login");
 	} else {
 		var lo = confirm('Are you sure you want to log out?\n\nYou will need an active connection to log in again.');
 		if(lo){
 			inQuiz = false;
 			store.clear();
 			store.init();
-			document.location="#home";
+			showUsername();
+			if(store.get('source') != ""){
+				document.location = store.get('source') + "logout.php";
+			} else {
+				showPage("#login");
+			}
 		}
 	}
 	
@@ -432,9 +424,7 @@ function loadSuggested(){
 					   $('#suggestresults').empty();
 					   var data = store.get('suggest');
 					   for(var q in data){
-						   var quiz = $('<div>').attr({'class':'quizlist clickable','onclick':'document.location="#'+data[q].ref +'"'});
-						   quiz.append(data[q].quiztitle);
-						   $('#suggestresults').append(quiz);
+						   addQuizListItem(data[q],'#suggestresults');
 					   }
 				   }
 			   }
@@ -443,7 +433,6 @@ function loadSuggested(){
 }
 
 function cacheQuiz(id){
-	console.log(id);
 	// check is already cached
 	if(!store.get(id)){
 		$.ajax({
@@ -454,6 +443,18 @@ function cacheQuiz(id){
 				   }
 			   }, 
 			});
+	}
+}
+
+function addQuizListItem(q,list){
+	var ql= $('<div>').attr({'class':'quizlist clickable','onclick':'document.location="#'+q.ref +'"'});
+	var quiz = $('<span>').attr({'class':'quiztitle'});
+	quiz.append(q.title);
+	$(list).append(ql.append(quiz));
+	if(q.description != null && q.description != ""){
+		var desc = $("<span>").attr({'class':'quizdesc'});
+		desc.text(" - " + q.description);
+		ql.append(desc);
 	}
 }
 
@@ -474,4 +475,16 @@ Date.prototype.addHours= function(h){
 Date.prototype.addDays= function(d){
     this.setDate(this.getDate()+d);
     return this;
+}
+
+function getUrlVars() {
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
 }

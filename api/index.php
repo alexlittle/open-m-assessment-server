@@ -100,7 +100,7 @@ if ($method != "search" && $method != "register" && $method != "login"){
 				if(!$q->quizdraft){
 					$o = array(	'id'=>$q->ref,
 									'name'=>$q->title,
-									'url'=>$url_prefix."?&format=json&method=getquiz&ref=".$q->ref);
+									'url'=>$url_prefix."?format=json&method=getquiz&ref=".$q->ref);
 					array_push($response,$o);
 				}
 			}
@@ -125,8 +125,7 @@ if ($method != "search" && $method != "register" && $method != "login"){
 		if($method == 'submit'){
 			$content = optional_param("content","",PARAM_TEXT);
 			if($content == ""){
-				$response->result = false;
-			
+				$response->error = "no content";
 			} else {
 				$json = json_decode(stripslashes($content));
 				if(is_array($json)){

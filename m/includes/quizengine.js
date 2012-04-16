@@ -476,7 +476,7 @@ function Quiz(){
 		$('#content').append(retake);
 		var refid = this.quiz.refid;
 		retake.click(function(){
-			loadQuiz(refid);
+			loadQuiz(refid,false);
 		});
 		
 		var takeAnother = $('<div>').attr({'class': 'resultopt clickable centre'}).append('Take another quiz');
