@@ -92,8 +92,8 @@ li {
 
 .formlabel, .formfield{
 	font-size:110%;
-	width:80%;
 	margin:auto;
+	width:80%;
 }
 
 .formfield input{
@@ -227,11 +227,73 @@ label.error{
 	font-size:60%;
 }
 
-#searchresults, #suggestresults {
+#searchresults, #suggestresults, #localq, #results {
 	width:80%;
 	margin:10px auto;
 }
 
 .centre {
 	text-align: center;
+}
+
+.th {
+	font-weight: bold;
+	text-align: center;
+}
+
+#rank {
+	text-align: center;
+}
+
+.result {
+	padding: 5px;
+}
+.rest {
+	float:left;
+	width:50%;
+	color:#77a240;
+}
+
+.resd {
+	float:left;
+	width:20%;
+	text-align: center;
+	font-size:80%;
+}
+
+.ress {
+	float:left;
+	width:20%;
+	text-align: center;
+}
+
+.resr {
+	float:left;
+	width:10%;
+	text-align: center;
+}
+
+.result:hover{
+	background: yellow;
+}
+
+.thrt {
+	float:left;
+	width:50%;
+	text-align: left;
+}
+
+.thrd {
+	float:left;
+	width:20%;
+}
+
+.thrs {
+	float:left;
+	width:20%;
+}
+
+.thrr {
+	float:left;
+	width:10%;
 }

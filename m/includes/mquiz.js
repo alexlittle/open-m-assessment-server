@@ -1,5 +1,5 @@
 
-var DATA_CACHE_EXPIRY = 10; // no of mins before the data should be updated from server;
+var DATA_CACHE_EXPIRY = 60; // no of mins before the data should be updated from server;
 
 $.ajaxSetup({
 	url: "../api/?format=json",
@@ -151,9 +151,9 @@ function showMenu(){
 
 function showLocalQuizzes(){
 	$('#content').empty();
-	
 	showMenu();
-	var localQuizzes = $('<div>').attr({'id':'localq','class':'formblock'}); 
+	var localQuizzes = $('<div>').attr({'id':'localq'}); 
+	localQuizzes.append("Quizzes stored locally:");
 	$('#content').append(localQuizzes);
 	var qs = store.get('quizzes');
 	for (var q in qs){
@@ -165,18 +165,29 @@ function showResults(){
 	$('#content').empty();
 	
 	showMenu();
-	var results = $('<div>').attr({'id':'results','class':'formblock'}); 
+	var results = $('<div>').attr({'id':'results'}); 
 	$('#content').append(results);
 	var qs = store.get('results');
+	if(qs.length>0){
+		var result = $('<div>').attr({'class':'th'});
+		result.append($('<div>').attr({'class':'thrt'}).text("Quiz"));
+		result.append($('<div>').attr({'class':'thrd'}).text("Date"));
+		result.append($('<div>').attr({'class':'thrs'}).text("Score"));
+		result.append($('<div>').attr({'class':'thrr'}).text("Rank"));
+		result.append("<div style='clear:both'></div>");
+		results.append(result);
+	} else {
+		results.append("You haven't taken any quizzes yet");
+	}
 	for (var q in qs){
-		console.log(qs[q]);
-		//addQuizListItem(qs[q],'#localq');
 		var result = $('<div>').attr({'class':'result'});
-		result.append($('<div>').attr({'class':'rest'}).text(qs[q].title));
-		result.append($('<div>').attr({'class':'resd'}).text(qs[q].quizdate));
-		result.append($('<div>').attr({'class':'ress'}).text(qs[q].userscore*100/qs[q].maxscore));
+		result.append($('<div>').attr({'class':'rest clickable','onclick':'document.location="#'+qs[q].quizid +'"','title':'try this quiz again'}).text(qs[q].title));
+		var d = new Date(qs[q].quizdate);
+		result.append($('<div>').attr({'class':'resd'}).text(dateFormat(d,'HH:MM d-mmm-yy')));
+		result.append($('<div>').attr({'class':'ress'}).text((qs[q].userscore*100/qs[q].maxscore).toFixed(0)+"%"));
 		result.append($('<div>').attr({'class':'resr'}).text(qs[q].rank));
-		$('#content').append(result);
+		result.append("<div style='clear:both'></div>");
+		results.append(result);
 	}
 	
 }

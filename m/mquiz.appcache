@@ -8,6 +8,7 @@ includes/mquiz.js
 includes/i8n.js
 includes/lang/en.js
 includes/mquizengine.js
+includes/dateformat.js
 
 includes/lib/flotr2.min.js
 includes/lib/jquery-1.7.1.min.js

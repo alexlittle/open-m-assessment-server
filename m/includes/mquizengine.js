@@ -471,6 +471,10 @@ function Quiz(){
 		var percent = total*100/this.quiz.maxscore;
 		$('#content').append("<div id='quizresults'>"+ percent.toFixed(0) +"%</div>");
 		
+		var rank = $('<div>').attr({'id':'rank','class': 'rank'});
+		$('#content').append(rank);
+		rank.hide();
+		
 		var retake = $('<div>').attr({'class': 'resultopt clickable centre'}).append('Take this quiz again');
 		$('#content').append(retake);
 		var refid = this.quiz.refid;
@@ -482,6 +486,12 @@ function Quiz(){
 		$('#content').append(takeAnother);
 		takeAnother.click(function(){
 			document.location = "#home";
+		});
+		
+		var viewResults = $('<div>').attr({'class': 'resultopt clickable centre'}).append('View all recent results');
+		$('#content').append(viewResults);
+		viewResults.click(function(){
+			document.location = "#results";
 		});
 		
 		//save for submission to server
@@ -497,13 +507,17 @@ function Quiz(){
 		$.ajax({
 		   data:{'method':'submit','username':store.get('username'),'password':store.get('password'),'content':JSON.stringify(content)}, 
 		   success:function(data){
-			   console.log(data);
 			   //check for any error messages
 			   if(!data || data.error){
 				   store.addArrayItem('unsentresults',content);
 			   } else {
 				   content.rank = data.rank;
 				   store.addArrayItem('results', content);
+				   // show ranking 
+				   if($('#rank')){
+					   $('#rank').append("Your ranking: " + data.rank);
+					   $('#rank').show();
+				   }
 			   }
 		   }, 
 		   error:function(data){
