@@ -496,19 +496,25 @@ function dataUpdate(){
 	var unsent = store.get('unsentresults');
 	
 	if(unsent){
-		$.ajax({
-			   data:{'method':'submit','username':store.get('username'),'password':store.get('password'),'content':JSON.stringify(unsent)}, 
-			   success:function(data){
-				   if(data && data.result){
-					   // all submitted ok so remove array
-					   store.clearKey('unsentresults');
-					   store.set('lastupdate',Date());
+		for(var u in unsent){
+			$.ajax({
+				   data:{'method':'submit','username':store.get('username'),'password':store.get('password'),'content':unsent[u]}, 
+				   success:function(data){
+					   
+					 //check for any error messages
+					   if(data && !data.error){
+						   unsent[u].rank = data.rank;
+						   store.addArrayItem('results',unsent[u]);
+						   store.set('lastupdate',Date());
+						   store.clearKey('unsentresults');
+					   }
+					   
+				   }, 
+				   error:function(data){
+					   // do nothing - will send on next update
 				   }
-			   }, 
-			   error:function(data){
-				   // do nothing - will send on next update
-			   }
-			});
+				});
+		}
 	}
 	
 	// update suggestions
@@ -529,7 +535,10 @@ function dataUpdate(){
 					   }
 				   }
 			   }
-		   }, 
+		   },
+		   error:function(data){
+			   // do nothing - run on next update
+		   }
 		});
 }
 

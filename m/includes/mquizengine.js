@@ -515,6 +515,7 @@ function Quiz(){
 				   store.addArrayItem('results', content);
 				   // show ranking 
 				   if($('#rank')){
+					   $('#rank').empty();
 					   $('#rank').append("Your ranking: " + data.rank);
 					   $('#rank').show();
 				   }

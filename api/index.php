@@ -128,20 +128,11 @@ if ($method != "search" && $method != "register" && $method != "login"){
 				$response->error = "no content";
 			} else {
 				$json = json_decode(stripslashes($content));
-				if(is_array($json)){
-					foreach($json as $i){
-						// only save results if not owner
-						if(!$API->isOwner($i->quizid)){
-							saveResult($i,$username);
-						}
-					}
-				} else {
-					// only save results if not owner
-					if(!$API->isOwner($json->quizid)){
-						saveResult($json,$username);
-						$ranking = $API->getRanking($json->quizid, $USER->userid);
-						$response->rank = $ranking['myrank'];
-					}
+				// only save results if not owner
+				if(!$API->isOwner($json->quizid)){
+					saveResult($json,$username);
+					$ranking = $API->getRanking($json->quizid, $USER->userid);
+					$response->rank = $ranking['myrank'];
 				}
 				$response->result = true;
 			}
