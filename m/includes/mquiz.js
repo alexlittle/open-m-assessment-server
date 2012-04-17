@@ -9,6 +9,52 @@ $.ajaxSetup({
 	timeout: 20000
 });
 
+
+var store = new Store();
+store.init();
+
+function Store(){
+	
+	this.init = function(){
+		if (!localStorage) {
+			localStorage.setItem('username', null);
+			localStorage.setItem('password', null);
+			localStorage.setItem('lang', 'EN');
+			localStorage.setItem('quizzes', null);
+			localStorage.setItem('results', null);
+		}
+	}
+	
+	this.get = function(key){
+		var value = localStorage.getItem(key);
+	    return value && JSON.parse(value);
+	}
+	
+	this.set = function(key,value){
+		localStorage.setItem(key,JSON.stringify(value));
+	}
+	
+	this.clear = function(){
+		localStorage.clear();
+	}
+	
+	this.clearKey = function(key){
+		this.set(key,null);
+	}
+	
+	this.addArrayItem = function(key,value){
+		//get current array
+		var c = this.get(key);
+		//var count = 0;
+		if(!c){
+			c = [];
+		} 
+		c.unshift(value);
+		this.set(key,c);
+	}
+	
+}
+
 function showPage(hash){
 	if(!loggedIn() && hash != '#register'){
 		if(!hash){
@@ -462,7 +508,6 @@ function dataUpdate(){
 				   store.clearKey('suggest');
 				   for(var q in data){
 					   store.addArrayItem('suggest',data[q]);
-					   cacheQuiz(data[q].ref);
 				   }
 				   store.set('lastupdate',Date());
 				   if($('#suggestresults')){
